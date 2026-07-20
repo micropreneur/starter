@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "starter-repo",
+      "type": "skill-md",
+      "description": "Make narrow, verified changes to a fork of micropreneur/starter.",
+      "url": "/.well-known/agent-skills/starter-repo/SKILL.md",
+      "digest": "sha256:1e582dc9f92d246e95ba531080f0792c34c1d78363ffd5ed359dcacd1a97afe6"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@micropreneur/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./biome": "./biome/base.jsonc",
+    "./tailwind.css": "./tailwind/preset.css"
+  },
+  "scripts": {
+    "lint": "pnpm --dir ../.. exec biome check packages/config"
+  },
+  "peerDependencies": {
+    "@biomejs/biome": "^2.5.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.7"
+  }
+}

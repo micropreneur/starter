@@ -1,0 +1,34 @@
+# Worker-scoped variables for local development. Copy to apps/web/.dev.vars.
+# .dev.vars is gitignored; never commit real secrets.
+
+# Auth adapter selection. Better Auth is the default when omitted.
+AUTH_PROVIDER=betterauth
+
+# The Durable Object echo seam is disabled unless explicitly enabled. When
+# enabled it remains same-origin, authenticated, user-scoped, and name-bounded.
+REALTIME_ENABLED=false
+
+# Optional locally: with BETTER_AUTH_URL unset or a localhost origin, the
+# adapter falls back to a development-only secret. Deployed Workers must set
+# this via `wrangler secret put BETTER_AUTH_SECRET` (random, 32+ characters).
+BETTER_AUTH_SECRET=
+
+# The public origin auth responses trust. Set to the deployed URL in production.
+BETTER_AUTH_URL=http://localhost:3000
+
+# Configure both to show Google sign-in. Register this local callback URL:
+# http://localhost:3000/api/auth/callback/google
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Local prints verification, reset, welcome, and deletion messages to the Vite
+# terminal. Use `resend` plus both secrets to exercise real delivery.
+EMAIL_PROVIDER=local
+RESEND_API_KEY=
+EMAIL_FROM=Micropreneur Starter <hello@example.com>
+
+# Optional Stripe test-mode billing. Configure all three together, then forward
+# sandbox events to http://localhost:3000/api/billing/webhook.
+STRIPE_SECRET_KEY=
+STRIPE_PRICE_ID=
+STRIPE_WEBHOOK_SECRET=

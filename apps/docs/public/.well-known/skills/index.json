@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "starter-repo",
+      "description": "Make narrow, verified changes to a fork of micropreneur/starter.",
+      "files": ["SKILL.md"]
+    }
+  ]
+}

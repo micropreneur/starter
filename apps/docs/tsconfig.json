@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": false,
+    "types": ["node", "@cloudflare/workers-types"]
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.mdx",
+    "vite.config.ts",
+    "worker-configuration.d.ts"
+  ]
+}

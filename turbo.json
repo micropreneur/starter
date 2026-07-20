@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".output/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "cf:deploy": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "db:generate": {
+      "dependsOn": ["^build"],
+      "outputs": ["migrations/**"]
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "registry:build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/r/**"]
+    }
+  }
+}

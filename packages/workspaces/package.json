@@ -1,0 +1,26 @@
+{
+  "name": "@micropreneur/workspaces",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "pnpm --dir ../.. exec biome check packages/workspaces",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@micropreneur/db": "workspace:*",
+    "drizzle-orm": "^0.45.2",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260809.1",
+    "miniflare": "^4.20260714.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  }
+}

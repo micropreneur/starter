@@ -1,0 +1,31 @@
+{
+  "name": "@micropreneur/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/server.ts",
+    "./knowledge": "./src/knowledge.ts",
+    "./registry": "./src/registry.ts"
+  },
+  "scripts": {
+    "dev": "tsx src/stdio.ts",
+    "start": "tsx src/stdio.ts",
+    "build": "tsup",
+    "lint": "pnpm --dir ../.. exec biome check packages/mcp",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@micropreneur/elements": "workspace:*",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.0.0",
+    "tsx": "^4.23.11",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  }
+}

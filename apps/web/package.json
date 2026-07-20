@@ -1,0 +1,59 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "scripts": {
+    "predev": "pnpm --filter @micropreneur/db db:generate && pnpm --filter @micropreneur/db db:migrate",
+    "dev": "vite dev --port 3000 --strictPort",
+    "generate-routes": "tsr generate",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "pnpm --dir ../.. exec biome check apps/web",
+    "test": "vitest run --config vitest.config.ts",
+    "preview": "pnpm build && vite preview",
+    "cf:deploy": "pnpm build && wrangler deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings --include-runtime false"
+  },
+  "dependencies": {
+    "@micropreneur/auth": "workspace:*",
+    "@micropreneur/billing": "workspace:*",
+    "@micropreneur/db": "workspace:*",
+    "@micropreneur/email": "workspace:*",
+    "@micropreneur/elements": "workspace:*",
+    "@micropreneur/operations": "workspace:*",
+    "@micropreneur/ui": "workspace:*",
+    "@micropreneur/workspaces": "workspace:*",
+    "@tanstack/react-devtools": "^0.10.9",
+    "@tanstack/react-form": "^1.33.4",
+    "@tanstack/react-router": "^1.170.23",
+    "@tanstack/react-router-devtools": "^1.167.1",
+    "@tanstack/react-start": "^1.168.40",
+    "lucide-react": "^1.30.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.51.1",
+    "@cloudflare/workers-types": "^5.20260809.1",
+    "@mdx-js/rollup": "^3.1.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/devtools-vite": "^0.8.3",
+    "@tanstack/router-cli": "^1.167.25",
+    "@tanstack/router-plugin": "^1.168.27",
+    "@types/mdx": "^2.0.14",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "remark-gfm": "^4.0.1",
+    "typescript": "^6.0.3",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.120.0",
+    "zod": "^4.1.12"
+  }
+}

@@ -1,0 +1,140 @@
+@import "@micropreneur/ui/globals.css";
+
+@source "./";
+@source "../../../packages/elements/src";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 20rem;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.preview-grid {
+  --preview-grid-line: color-mix(in srgb, var(--grain-line) 52%, transparent);
+
+  background-image:
+    linear-gradient(var(--preview-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--preview-grid-line) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .preview-grid {
+  --preview-grid-line: color-mix(in srgb, var(--grain-line) 28%, transparent);
+}
+
+.docs-scrollbar {
+  scrollbar-color: var(--border) transparent;
+  scrollbar-width: thin;
+}
+
+.dark .docs-header {
+  background: color-mix(in srgb, var(--sidebar) 72%, var(--background));
+}
+
+.docs-layout {
+  min-height: calc(100svh - 3.75rem);
+}
+
+.docs-left-rail,
+.docs-right-rail {
+  display: none;
+}
+
+.docs-prose {
+  --tw-prose-bullets: var(--muted-foreground);
+
+  font-size: 0.9375rem;
+  line-height: 1.75;
+}
+
+.docs-prose :where(h2) {
+  margin-top: 2.75rem;
+}
+
+.docs-prose :where(h3) {
+  margin-top: 2rem;
+}
+
+.docs-code-block code {
+  font-variant-ligatures: none;
+}
+
+.docs-outline-indicator {
+  background: var(--accent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 0 12px color-mix(in srgb, var(--accent) 38%, transparent);
+}
+
+.docs-steps {
+  counter-reset: docs-step;
+}
+
+.docs-step {
+  position: relative;
+  margin-left: 0.875rem;
+  min-height: 5rem;
+  counter-increment: docs-step;
+  border-left: 1px solid var(--border);
+  padding: 0 0 1.75rem 2rem;
+}
+
+.docs-step:last-child {
+  min-height: auto;
+  border-left-color: transparent;
+  padding-bottom: 0;
+}
+
+.docs-step::before {
+  position: absolute;
+  top: -0.125rem;
+  left: -0.875rem;
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--background);
+  color: var(--muted-foreground);
+  content: counter(docs-step, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 64rem) {
+  .docs-layout {
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+  }
+
+  .docs-left-rail {
+    position: sticky;
+    top: 3.75rem;
+    display: block;
+    height: calc(100svh - 3.75rem);
+    border-right: 1px solid var(--border);
+    background: color-mix(in srgb, var(--sidebar) 72%, var(--background));
+  }
+}
+
+@media (min-width: 80rem) {
+  .docs-layout {
+    grid-template-columns: 15rem minmax(0, 1fr) 15rem;
+  }
+
+  .docs-right-rail {
+    position: sticky;
+    top: 3.75rem;
+    display: block;
+    height: calc(100svh - 3.75rem);
+  }
+}

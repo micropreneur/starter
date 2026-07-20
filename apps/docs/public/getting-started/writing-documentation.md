@@ -1,0 +1,115 @@
+# Writing documentation
+
+> Build readable MDX guides with callouts, numbered steps, command tabs, and live Elements registry previews.
+
+Documentation lives beside the code it explains. Each article is an MDX file with typed metadata,
+ordinary Markdown, and a small set of purposeful components for information that Markdown cannot
+express clearly on its own.
+
+## Write in MDX
+
+Add an article beneath `apps/docs/src/content`. Its directory becomes the URL prefix, and its
+metadata controls navigation, search, ordering, and the right-side outline.
+
+```mdx
+export const meta = {
+  title: 'Configure the service',
+  description: 'Connect the service without exposing credentials.',
+  group: 'Integrations',
+  order: 5,
+  keywords: ['service', 'credentials'],
+  sections: [{ id: 'local-setup', title: 'Local setup' }],
+}
+
+## Local setup
+
+Explain the smallest working path first.
+```
+
+Keep headings in `meta.sections` synchronized with the rendered `##` headings. This powers the
+scroll-aware outline without parsing the page after it renders.
+
+<Callout title="Use components with restraint">
+  Prefer Markdown for prose, lists, tables, links, and code. Reach for an MDX component only when it
+  makes structure, comparison, or a live interface materially clearer.
+</Callout>
+
+## Guide a sequence
+
+Use steps when order carries meaning. Each step receives a stable number automatically, so authors
+can rearrange the source without renumbering the article.
+
+<Steps>
+  <Step title="Create the article">
+    Add the MDX file and describe its place in the navigation with the exported metadata.
+  </Step>
+  <Step title="Write the shortest successful path">
+    Lead with the commands and configuration that produce a working local result.
+  </Step>
+  <Step title="Verify every command">
+    Run the guide from a clean state before treating the article as complete.
+  </Step>
+</Steps>
+
+```mdx
+<Steps>
+  <Step title="Create the article">Add the MDX file.</Step>
+  <Step title="Verify the guide">Run every command.</Step>
+</Steps>
+```
+
+## Compare commands
+
+Use a code group when readers need equivalent commands for supported runtimes. Tabs use Base UI,
+remain keyboard accessible, and preserve the same terminal treatment as ordinary code blocks.
+
+<CodeGroup>
+  <CodeTab label="pnpm">
+    ```bash
+    corepack enable
+    pnpm install
+    pnpm dev
+    ```
+  </CodeTab>
+  <CodeTab label="Bun">
+    ```bash
+    bun install
+    bun run dev
+    ```
+  </CodeTab>
+</CodeGroup>
+
+```mdx
+<CodeGroup>
+  <CodeTab label="pnpm">Your fenced code block</CodeTab>
+  <CodeTab label="Bun">Your alternative command</CodeTab>
+</CodeGroup>
+```
+
+## Embed an Element
+
+An Element showcase reads the public catalog, renders the real workspace component, and derives the
+local registry command from the same item name. This keeps documentation, previews, and registry
+metadata on one source of truth.
+
+<ElementShowcase name="status-badge" />
+
+```mdx
+<ElementShowcase name="status-badge" />
+```
+
+Only free catalog items can render here. Premium source and license-gated registry behavior remain
+outside this public repository.
+
+## Publish agent interfaces
+
+MDX remains the article source of truth. After changing an article, component Markdown, or shared
+skill, regenerate the raw Markdown routes, `llms` files, JSON manifests, and MCP corpus:
+
+```bash
+pnpm docs:generate
+pnpm --filter docs agent:check
+```
+
+The docs build checks for drift instead of silently rewriting committed artifacts. Local docs
+development regenerates them before Vite starts, keeping the fast authoring loop intact.

@@ -1,0 +1,40 @@
+{
+  "name": "@micropreneur/elements",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./catalog": "./src/catalog.ts",
+    "./themes": "./src/themes.ts",
+    "./primitives": "./src/primitives.ts",
+    "./tooltip": "./src/tooltip.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "pnpm --dir ../.. exec biome check packages/elements",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.registry.json --noEmit",
+    "test": "vitest run",
+    "registry:validate": "vitest run src/catalog.test.ts src/themes.test.ts",
+    "registry:build": "pnpm registry:validate && shadcn build --output ./dist/r",
+    "registry:serve": "python3 -m http.server 4173 --directory ./dist"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.7.0",
+    "@micropreneur/ui": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.30.0",
+    "react": "^19.2.8",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "react-dom": "^19.2.8",
+    "shadcn": "^4.16.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  }
+}

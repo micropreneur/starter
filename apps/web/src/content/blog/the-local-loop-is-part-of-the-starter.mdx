@@ -1,0 +1,70 @@
+export const meta = {
+  author: 'Dan Schoonmaker',
+  category: 'Developer experience',
+  date: '2026-07-19',
+  description:
+    'Short, deterministic feedback loops are part of the product—especially when humans and coding agents share a repository.',
+  readTime: '6 min read',
+  sections: [
+    { id: 'the-loop-is-a-feature', title: 'The loop is a feature' },
+    { id: 'focus-first-root-gate-last', title: 'Focus first' },
+    { id: 'make-failure-actionable', title: 'Actionable failure' },
+  ],
+  title: 'The local loop is part of the starter',
+}
+
+A starter repo is judged by the first hour and the hundredth change. Installation matters, but
+so does the confidence to keep moving after the scaffolding stops being new.
+
+## The loop is a feature
+
+Developer experience is not a layer of polish around the repository. It is part of the product.
+For a small team—or one person working with an agent—slow feedback quietly compounds into fewer
+experiments and more abandoned ideas.
+
+The default loop should be:
+
+1. Start the owning package.
+2. Make one focused change.
+3. Run the smallest relevant check.
+4. Use the root gate before handoff.
+
+That sequence keeps iteration fast without confusing *fast* with *unchecked*.
+
+## Focus first, root gate last
+
+During implementation, run the narrow command that owns the behavior:
+
+```bash
+pnpm --filter web typecheck
+pnpm --filter web test
+```
+
+Before the work leaves your hands, run the complete contract:
+
+```bash
+pnpm turbo typecheck lint build test
+```
+
+| Moment | Command scope | Goal |
+| --- | --- | --- |
+| Exploring | One app or package | Learn quickly |
+| Implementing | Owning package and tests | Catch local regressions |
+| Handoff | Entire workspace | Prove integration |
+
+This pattern is especially useful for coding agents. The repository communicates both where to
+work and how to prove the result.
+
+## Make failure actionable
+
+The best command is not merely one that exits non-zero. It tells the next person what failed,
+where it failed, and which smaller command will reproduce it.
+
+**Typed boundaries**, local fixtures, and executable checks beat tribal knowledge. A short
+README command is useful; a script that verifies the claim is better.
+
+> World-class local DX means the next correct action is obvious—even when the first attempt
+> fails.
+
+That is why Starter treats `AGENTS.md`, package scripts, and the root gate as product surfaces.
+They are how the repository teaches every new fork to move with confidence.

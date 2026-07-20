@@ -1,0 +1,42 @@
+# Resend email
+
+> Switch from deterministic local email capture to verified Resend delivery on Cloudflare Workers.
+
+Authentication sends verification, welcome, password recovery, and account deletion messages
+through `EmailPort`. Local capture and Resend implement the same contract.
+
+## Local capture
+
+The default is deterministic and secret-free:
+
+```dotenv
+EMAIL_PROVIDER=local
+```
+
+Messages are written to the Vite terminal with an `[email:local]` prefix. Open the printed action
+URL to exercise verification, recovery, and deletion without an external provider.
+
+## Configure Resend
+
+Verify the sending domain in Resend, then set all production values outside version control:
+
+```dotenv
+EMAIL_PROVIDER=resend
+RESEND_API_KEY=
+EMAIL_FROM=Micropreneur Starter <hello@example.com>
+```
+
+The `EMAIL_FROM` address must belong to the verified domain. A non-local origin fails closed if
+email is enabled without valid provider configuration.
+
+## Verify the lifecycle
+
+Use a disposable address and complete each path:
+
+1. Sign up and receive the verification message.
+2. Verify the account and receive the welcome message.
+3. Request a password reset and confirm the token is single-use.
+4. Request account deletion and confirm the protected action.
+
+Worker delivery is deferred with `waitUntil`, so sending does not unnecessarily delay the auth
+response. Generic signup and recovery responses avoid revealing whether an address exists.

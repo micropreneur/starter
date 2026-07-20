@@ -1,0 +1,51 @@
+# Introduction
+
+> Understand what Starter includes, where product code belongs, and what to replace in your first fork.
+
+Micropreneur Starter is the public, MIT-licensed foundation for building a paid, single-user SaaS
+without reassembling the same infrastructure. Fork it, rename it, and replace the example domain
+with the product you actually want to ship.
+
+## What you get
+
+| Capability | Default implementation | Boundary |
+| --- | --- | --- |
+| Application | TanStack Start on Cloudflare Workers | `apps/web` |
+| Data | D1 and Drizzle | `packages/db` |
+| Authentication | Better Auth | `AuthPort` |
+| Email | Local capture or Resend | `EmailPort` |
+| Billing | One Stripe subscription | `BillingService` |
+| Interface | Base UI components and Elements | shadcn registry |
+
+The Operations Registry is intentionally removable. It proves authenticated CRUD, ownership,
+pagination, filters, and a paid CSV export without deciding what your product must become.
+
+## The first hour
+
+Start with a clean local loop:
+
+```bash
+git clone https://github.com/micropreneur/starter.git my-product
+cd my-product
+corepack enable
+pnpm install
+cp apps/web/.dev.vars.example apps/web/.dev.vars
+pnpm dev
+```
+
+Open `http://localhost:3000/sign-up`, create an account, and follow the verification URL printed
+as `[email:local]` in the terminal. The app creates one personal workspace during onboarding.
+
+<Callout title="No provider accounts required">
+  Google, Resend, and Stripe are optional in the default local loop. Add them only when you are
+  ready to verify those provider-backed paths.
+</Callout>
+
+## Keep the seams
+
+Application code should talk to ports, domain packages, and source-owned components. Provider SDKs
+stay in adapters. A fork can replace Better Auth, Resend, or Stripe without teaching every route a
+new vocabulary.
+
+Continue with [Running locally](/getting-started/running-locally) and keep the root `AGENTS.md`
+close while you make the first product-specific changes.

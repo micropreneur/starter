@@ -1,0 +1,67 @@
+export const meta = {
+  author: 'Dan Schoonmaker',
+  category: 'Interface',
+  date: '2026-07-12',
+  description:
+    'A source-delivered registry gives each product a common vocabulary without turning its interface into a locked dependency.',
+  readTime: '7 min read',
+  sections: [
+    { id: 'source-is-the-api', title: 'Source is the API' },
+    { id: 'a-shared-vocabulary', title: 'Shared vocabulary' },
+    { id: 'the-premium-seam', title: 'The premium seam' },
+  ],
+  title: 'Own the components, not another package',
+}
+
+Reusable UI is valuable. An interface that can only evolve when an upstream package agrees is
+not. Starter uses a shadcn registry so a fork receives component **source**, not a permanent
+runtime dependency.
+
+## Source is the API
+
+Installing an element copies a reviewed implementation into the product. From that point on, the
+fork owns the markup, styles, accessibility, and product-specific evolution.
+
+```bash
+npx shadcn@latest add \
+  http://localhost:4173/r/status-badge.json
+```
+
+The registry still provides consistency:
+
+- A predictable install command.
+- Machine-readable metadata for humans and coding agents.
+- Dependencies and file targets declared with the component.
+- A common Base UI and Tailwind vocabulary.
+
+But consistency does not require captivity.
+
+## A shared vocabulary
+
+Starter organizes interface concepts around a small product ontology: objects, properties,
+actions, and interfaces. Names such as `StatusBadge`, `CurrencyField`, `ApproveAction`, and
+`KanbanView` say what a component means, not only what shape it draws.
+
+| Layer | Example | Responsibility |
+| --- | --- | --- |
+| Primitive | `Button` | Accessible interaction foundation |
+| Property | `StatusBadge` | Display a meaningful state |
+| Interface | `DataGrid` | Arrange and inspect records |
+| Action | `ApproveAction` | Express a product decision |
+
+This vocabulary helps design, data, and agent instructions converge on the same concepts.
+
+## The premium seam
+
+The public registry and a future gated registry can share the same manifest shape while using
+different serving policies. That distinction is intentional:
+
+1. Free elements remain public and source-owned.
+2. Premium manifests can live in a separate private product.
+3. A Worker can validate a license before returning premium JSON.
+4. The consuming app still receives editable source.
+
+> Delivery policy can change without changing the component format.
+
+Starter does not build that gate. It leaves a clean boundary so a later product can add one
+without refactoring the free tier.

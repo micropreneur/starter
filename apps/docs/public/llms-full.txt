@@ -1,0 +1,1317 @@
+# Micropreneur Starter complete documentation
+
+> Generated from public MDX articles, component Markdown, and canonical shared skills.
+
+---
+
+Source: `apps/docs/src/content/getting-started/introduction.mdx`
+Canonical page: `/getting-started/introduction`
+
+# Introduction
+
+> Understand what Starter includes, where product code belongs, and what to replace in your first fork.
+
+Micropreneur Starter is the public, MIT-licensed foundation for building a paid, single-user SaaS
+without reassembling the same infrastructure. Fork it, rename it, and replace the example domain
+with the product you actually want to ship.
+
+## What you get
+
+| Capability | Default implementation | Boundary |
+| --- | --- | --- |
+| Application | TanStack Start on Cloudflare Workers | `apps/web` |
+| Data | D1 and Drizzle | `packages/db` |
+| Authentication | Better Auth | `AuthPort` |
+| Email | Local capture or Resend | `EmailPort` |
+| Billing | One Stripe subscription | `BillingService` |
+| Interface | Base UI components and Elements | shadcn registry |
+
+The Operations Registry is intentionally removable. It proves authenticated CRUD, ownership,
+pagination, filters, and a paid CSV export without deciding what your product must become.
+
+## The first hour
+
+Start with a clean local loop:
+
+```bash
+git clone https://github.com/micropreneur/starter.git my-product
+cd my-product
+corepack enable
+pnpm install
+cp apps/web/.dev.vars.example apps/web/.dev.vars
+pnpm dev
+```
+
+Open `http://localhost:3000/sign-up`, create an account, and follow the verification URL printed
+as `[email:local]` in the terminal. The app creates one personal workspace during onboarding.
+
+<Callout title="No provider accounts required">
+  Google, Resend, and Stripe are optional in the default local loop. Add them only when you are
+  ready to verify those provider-backed paths.
+</Callout>
+
+## Keep the seams
+
+Application code should talk to ports, domain packages, and source-owned components. Provider SDKs
+stay in adapters. A fork can replace Better Auth, Resend, or Stripe without teaching every route a
+new vocabulary.
+
+Continue with [Running locally](/getting-started/running-locally) and keep the root `AGENTS.md`
+close while you make the first product-specific changes.
+
+---
+
+Source: `apps/docs/src/content/getting-started/running-locally.mdx`
+Canonical page: `/getting-started/running-locally`
+
+# Running locally
+
+> Start the web app, docs, D1 database, registry, and focused feedback loops without production secrets.
+
+Starter is designed to be useful before any hosted integration is configured. The default loop
+uses local D1, prints email action links to the terminal, and disables paid actions explicitly.
+
+## Requirements
+
+- Node.js 22 or newer
+- Corepack and pnpm
+- A browser supported by Vite
+- Wrangler authentication only when you work with remote Cloudflare resources
+
+Check the active versions:
+
+```bash
+node --version
+corepack enable
+pnpm --version
+```
+
+## Start the workspace
+
+Copy the local Worker variables once, then start every development task through Turborepo:
+
+```bash
+cp apps/web/.dev.vars.example apps/web/.dev.vars
+pnpm install
+pnpm dev
+```
+
+The web app runs on `http://localhost:3000`. The docs app prefers `http://localhost:3001` and Vite
+selects the next available port if that port is already occupied.
+
+To run only one app:
+
+```bash
+pnpm --filter web dev
+pnpm --filter docs dev
+```
+
+## Local service behavior
+
+| Service | Local default |
+| --- | --- |
+| D1 | Wrangler-managed local database |
+| Email | Action URL printed as `[email:local]` |
+| Google OAuth | Hidden until both client values exist |
+| Stripe | Disabled until all three sandbox values exist |
+| Durable Objects | Realtime seam disabled with `REALTIME_ENABLED=false` |
+
+Partial provider configuration fails during startup. This is deliberate: an explicit error is
+safer than a provider path that appears available but cannot complete.
+
+## Feedback loops
+
+Run the smallest owning check while iterating:
+
+```bash
+pnpm --filter docs typecheck
+pnpm --filter @micropreneur/auth test
+pnpm --filter @micropreneur/elements registry:build
+pnpm --filter @micropreneur/mcp test
+```
+
+Before handing off a complete slice, run the repository gate:
+
+```bash
+pnpm turbo typecheck lint build test
+```
+
+## Reset local D1
+
+Migrations are applied automatically by the web app's `predev` hook. If local state is disposable
+and you need a completely fresh database, stop the dev server, remove only the app's local
+Wrangler state, and restart:
+
+```bash
+rm -rf apps/web/.wrangler/state
+pnpm --filter web dev
+```
+
+<Callout type="warning" title="Local data is deleted">
+  This removes the local D1 database and every development account. It does not touch a remote D1
+  database.
+</Callout>
+
+---
+
+Source: `apps/docs/src/content/getting-started/project-structure.mdx`
+Canonical page: `/getting-started/project-structure`
+
+# Project structure
+
+> Find the application composition root, provider adapters, removable domain example, and source-delivered UI.
+
+Starter is a Turborepo monorepo internally and one assembled SaaS externally. A customer should be
+able to run the product immediately without assembling a framework from loose packages.
+
+## Applications
+
+```text
+apps/
+├── web/   # TanStack Start composition root and Cloudflare Worker
+└── docs/  # This content-driven documentation and Elements gallery
+```
+
+`apps/web` owns route composition, environment bindings, and adapter selection. It should not own
+provider SDK behavior or reusable domain rules.
+
+## Packages
+
+```text
+packages/
+├── auth/        # AuthPort and provider adapters
+├── billing/     # BillingService, Stripe adapter, and entitlements
+├── db/          # D1 schema, Drizzle client, and migrations
+├── email/       # EmailPort, Resend, and local capture
+├── elements/    # Public shadcn registry
+├── mcp/         # Agent-facing component discovery
+├── operations/  # Removable example domain
+├── ui/          # Internal Base UI primitives
+└── workspaces/  # Personal workspace and onboarding metadata
+```
+
+## Where new code belongs
+
+Put product behavior in a focused domain package. Put provider-specific translation in an adapter.
+Keep Worker bindings at the application composition root.
+
+For example, a reporting product might replace `packages/operations` with `packages/reports` while
+continuing to use the existing auth, email, billing, database, and UI boundaries.
+
+<Callout title="A package is a boundary, not a goal">
+  Add a package when it creates clear ownership or enables focused tests. Do not split a small
+  feature merely to make the directory tree look architectural.
+</Callout>
+
+---
+
+Source: `apps/docs/src/content/getting-started/writing-documentation.mdx`
+Canonical page: `/getting-started/writing-documentation`
+
+# Writing documentation
+
+> Build readable MDX guides with callouts, numbered steps, command tabs, and live Elements registry previews.
+
+Documentation lives beside the code it explains. Each article is an MDX file with typed metadata,
+ordinary Markdown, and a small set of purposeful components for information that Markdown cannot
+express clearly on its own.
+
+## Write in MDX
+
+Add an article beneath `apps/docs/src/content`. Its directory becomes the URL prefix, and its
+metadata controls navigation, search, ordering, and the right-side outline.
+
+```mdx
+export const meta = {
+  title: 'Configure the service',
+  description: 'Connect the service without exposing credentials.',
+  group: 'Integrations',
+  order: 5,
+  keywords: ['service', 'credentials'],
+  sections: [{ id: 'local-setup', title: 'Local setup' }],
+}
+
+## Local setup
+
+Explain the smallest working path first.
+```
+
+Keep headings in `meta.sections` synchronized with the rendered `##` headings. This powers the
+scroll-aware outline without parsing the page after it renders.
+
+<Callout title="Use components with restraint">
+  Prefer Markdown for prose, lists, tables, links, and code. Reach for an MDX component only when it
+  makes structure, comparison, or a live interface materially clearer.
+</Callout>
+
+## Guide a sequence
+
+Use steps when order carries meaning. Each step receives a stable number automatically, so authors
+can rearrange the source without renumbering the article.
+
+<Steps>
+  <Step title="Create the article">
+    Add the MDX file and describe its place in the navigation with the exported metadata.
+  </Step>
+  <Step title="Write the shortest successful path">
+    Lead with the commands and configuration that produce a working local result.
+  </Step>
+  <Step title="Verify every command">
+    Run the guide from a clean state before treating the article as complete.
+  </Step>
+</Steps>
+
+```mdx
+<Steps>
+  <Step title="Create the article">Add the MDX file.</Step>
+  <Step title="Verify the guide">Run every command.</Step>
+</Steps>
+```
+
+## Compare commands
+
+Use a code group when readers need equivalent commands for supported runtimes. Tabs use Base UI,
+remain keyboard accessible, and preserve the same terminal treatment as ordinary code blocks.
+
+<CodeGroup>
+  <CodeTab label="pnpm">
+    ```bash
+    corepack enable
+    pnpm install
+    pnpm dev
+    ```
+  </CodeTab>
+  <CodeTab label="Bun">
+    ```bash
+    bun install
+    bun run dev
+    ```
+  </CodeTab>
+</CodeGroup>
+
+```mdx
+<CodeGroup>
+  <CodeTab label="pnpm">Your fenced code block</CodeTab>
+  <CodeTab label="Bun">Your alternative command</CodeTab>
+</CodeGroup>
+```
+
+## Embed an Element
+
+An Element showcase reads the public catalog, renders the real workspace component, and derives the
+local registry command from the same item name. This keeps documentation, previews, and registry
+metadata on one source of truth.
+
+<ElementShowcase name="status-badge" />
+
+```mdx
+<ElementShowcase name="status-badge" />
+```
+
+Only free catalog items can render here. Premium source and license-gated registry behavior remain
+outside this public repository.
+
+## Publish agent interfaces
+
+MDX remains the article source of truth. After changing an article, component Markdown, or shared
+skill, regenerate the raw Markdown routes, `llms` files, JSON manifests, and MCP corpus:
+
+```bash
+pnpm docs:generate
+pnpm --filter docs agent:check
+```
+
+The docs build checks for drift instead of silently rewriting committed artifacts. Local docs
+development regenerates them before Vite starts, keeping the fast authoring loop intact.
+
+---
+
+Source: `apps/docs/src/content/integrations/better-auth.mdx`
+Canonical page: `/integrations/better-auth`
+
+# Better Auth
+
+> Configure credential authentication and optional Google OAuth through the default AuthPort adapter.
+
+Better Auth is the functional default adapter. It persists users, accounts, sessions, and
+verification records in D1 while application routes depend only on `AuthPort`.
+
+## Local credentials
+
+Keep the default provider in `apps/web/.dev.vars`:
+
+```dotenv
+AUTH_PROVIDER=betterauth
+BETTER_AUTH_URL=http://localhost:3000
+```
+
+Local development may use the checked-in development-only secret when the origin is localhost.
+Create accounts at `/sign-up`; verification URLs are captured by the local email adapter.
+
+## Production secret
+
+A deployed Worker must receive a unique random secret and its public HTTPS origin:
+
+```bash
+pnpm --dir apps/web wrangler secret put BETTER_AUTH_SECRET
+```
+
+Set `BETTER_AUTH_URL` to the exact public application origin. Authentication fails closed when a
+deployed environment is missing either requirement.
+
+## Google OAuth
+
+Register this callback with the Google OAuth client:
+
+```text
+http://localhost:3000/api/auth/callback/google
+https://your-app.example.com/api/auth/callback/google
+```
+
+Then configure both values together:
+
+```dotenv
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
+Leaving both empty keeps credential authentication available and hides the Google action. Setting
+only one stops startup with an actionable configuration error.
+
+## The AuthPort boundary
+
+Provider SDK imports belong only in `packages/auth/src/adapters`. Routes should call shared methods
+such as `getUser`, `requireUser`, `signIn`, and `signOut` without depending on Better Auth response
+types.
+
+That rule preserves the option to implement another adapter without rewriting application code.
+
+---
+
+Source: `apps/docs/src/content/integrations/descope.mdx`
+Canonical page: `/integrations/descope`
+
+# Descope
+
+> Understand the typed Descope adapter seam, its current limitations, and the work required to make it functional.
+
+Descope is represented by a typed adapter so the authentication boundary can be evaluated without
+pretending the integration is complete.
+
+## Current status
+
+<Callout type="warning" title="Not a working provider">
+  The Descope adapter returns explicit typed `501` responses for unsupported operations. Do not
+  select `AUTH_PROVIDER=descope` in a user-facing environment yet.
+</Callout>
+
+No Descope session is treated as authenticated. The placeholder environment values are documented
+for the future adapter but are not proof of a working integration:
+
+```dotenv
+DESCOPE_PROJECT_ID=
+DESCOPE_MANAGEMENT_KEY=
+```
+
+## Why the seam exists
+
+The app already defines the behavior it needs through `AuthPort`. A complete Descope adapter must
+translate provider sessions, users, cookies, social authentication, and lifecycle operations into
+those shared types.
+
+This protects routes from a provider-specific rewrite later.
+
+## Implementing the adapter
+
+1. Keep every Descope SDK import inside `packages/auth/src/adapters/descope.ts`.
+2. Implement every `AuthPort` method instead of silently falling back to Better Auth.
+3. Preserve `Set-Cookie` headers on provider responses.
+4. Map provider identities to the shared user and session shapes.
+5. Run the same authentication contract tests used by the default adapter.
+6. Complete manual sign-in, cancellation, recovery, profile, and deletion smoke tests.
+
+Remove the `501` behavior only after those paths are verified.
+
+---
+
+Source: `apps/docs/src/content/integrations/resend.mdx`
+Canonical page: `/integrations/resend`
+
+# Resend email
+
+> Switch from deterministic local email capture to verified Resend delivery on Cloudflare Workers.
+
+Authentication sends verification, welcome, password recovery, and account deletion messages
+through `EmailPort`. Local capture and Resend implement the same contract.
+
+## Local capture
+
+The default is deterministic and secret-free:
+
+```dotenv
+EMAIL_PROVIDER=local
+```
+
+Messages are written to the Vite terminal with an `[email:local]` prefix. Open the printed action
+URL to exercise verification, recovery, and deletion without an external provider.
+
+## Configure Resend
+
+Verify the sending domain in Resend, then set all production values outside version control:
+
+```dotenv
+EMAIL_PROVIDER=resend
+RESEND_API_KEY=
+EMAIL_FROM=Micropreneur Starter <hello@example.com>
+```
+
+The `EMAIL_FROM` address must belong to the verified domain. A non-local origin fails closed if
+email is enabled without valid provider configuration.
+
+## Verify the lifecycle
+
+Use a disposable address and complete each path:
+
+1. Sign up and receive the verification message.
+2. Verify the account and receive the welcome message.
+3. Request a password reset and confirm the token is single-use.
+4. Request account deletion and confirm the protected action.
+
+Worker delivery is deferred with `waitUntil`, so sending does not unnecessarily delay the auth
+response. Generic signup and recovery responses avoid revealing whether an address exists.
+
+---
+
+Source: `apps/docs/src/content/integrations/stripe.mdx`
+Canonical page: `/integrations/stripe`
+
+# Stripe billing
+
+> Configure the one-plan Stripe sandbox, signed webhooks, customer portal, and registry export entitlement.
+
+Free Starter demonstrates one recurring Stripe price, hosted Checkout, the customer portal, local
+subscription state, and one independent entitlement: `registry.export`.
+
+## The billing slice
+
+Application code talks to `BillingService`; Stripe objects remain inside the adapter. Entitlements
+are evaluated from local product state rather than scattered checks against provider objects.
+
+Annual plans, trials, coupons, seats, usage billing, and Starter Pro licensing are intentionally
+outside this slice.
+
+## Configure the sandbox
+
+Create one recurring monthly price in Stripe test mode. Configure all three values together in
+`apps/web/.dev.vars`:
+
+```dotenv
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PRICE_ID=price_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+Leaving all three empty selects the disabled local adapter. Partial configuration stops startup.
+
+## Forward webhooks
+
+With the web app running, start the Stripe CLI listener:
+
+```bash
+stripe listen --forward-to http://localhost:3000/api/billing/webhook
+```
+
+Use the `whsec_...` value printed by that process as `STRIPE_WEBHOOK_SECRET`, then restart the web
+app after changing `.dev.vars`.
+
+## Verify paid access
+
+1. Create and verify a disposable Starter account.
+2. Open `/app/settings` and start Checkout.
+3. Complete Checkout with a Stripe test card.
+4. Wait for the signed subscription webhook.
+5. Confirm the customer portal opens.
+6. Open `/app/registry` and export CSV.
+
+Replay the same event to confirm idempotency, then exercise cancellation and payment failure.
+Webhook signatures, processed event IDs, and subscription timestamps protect local state from
+forged, duplicated, and out-of-order events.
+
+---
+
+Source: `apps/docs/src/content/cloudflare/deployment.mdx`
+Canonical page: `/cloudflare/deployment`
+
+# Deploy to Cloudflare
+
+> Create the D1 database, configure Worker bindings and secrets, apply remote migrations, and deploy deliberately.
+
+The web app targets Cloudflare Workers and declares its bindings in `apps/web/wrangler.jsonc`.
+Deployment is an explicit operator action; repository tests and agent workflows do not deploy.
+
+## Documentation Worker
+
+`apps/docs` is a separate stateless Worker that serves documentation assets, the public read-only
+MCP endpoint, Agent Skill discovery, and the staged Elements Free registry. It does not use D1,
+Durable Objects, or authentication.
+
+Forks should choose their own domains. Production domains are intentionally absent from the
+committed Wrangler configuration. After a successful local build, an operator can deploy with:
+
+```bash
+pnpm --filter docs build
+pnpm --filter docs exec wrangler deploy \
+  --strict \
+  --domain docs.example.com \
+  --domain elements.example.com \
+  --var PUBLIC_DOCS_ORIGIN:https://docs.example.com \
+  --var ELEMENTS_REGISTRY_URL:https://elements.example.com/r
+```
+
+The two custom domains point at one Worker. The request hostname decides whether the Worker serves
+docs or registry files. Preview and localhost hosts keep `/mcp` and `/r/*` on one origin.
+
+## What the Worker uses
+
+| Cloudflare service | Binding | Purpose |
+| --- | --- | --- |
+| Workers | application entrypoint | TanStack Start server and assets |
+| D1 | `DB` | auth, workspaces, registry, and billing state |
+| Durable Objects | `REALTIME_ROOM` | authenticated realtime echo seam |
+
+The Worker enables `nodejs_compat`, source maps, and observability. Realtime behavior remains off
+until `REALTIME_ENABLED=true`.
+
+## Create the database
+
+Authenticate Wrangler and create a database for the fork:
+
+```bash
+pnpm --dir apps/web wrangler login
+pnpm --dir apps/web wrangler d1 create my-product-db
+```
+
+Replace the placeholder `database_name` and `database_id` in `apps/web/wrangler.jsonc`. Rename the
+Worker from `micropreneur-starter-web` before the first deployment.
+
+## Configure secrets
+
+Set a unique Better Auth secret first:
+
+```bash
+pnpm --dir apps/web wrangler secret put BETTER_AUTH_SECRET
+```
+
+Add provider secrets only for integrations you actually enable. Never place real values in
+`wrangler.jsonc`, `.env.example`, or `.dev.vars.example`.
+
+Set `BETTER_AUTH_URL` to the final HTTPS origin. Google OAuth callback configuration must use the
+same origin.
+
+## Migrate and deploy
+
+Inspect generated migrations, apply them to the configured remote database, then deploy:
+
+```bash
+pnpm --filter @micropreneur/db db:generate
+pnpm --filter @micropreneur/db db:migrate:remote
+pnpm turbo typecheck lint build test
+pnpm --filter web cf:deploy
+```
+
+<Callout type="warning" title="Remote state changes">
+  Remote migrations and deployment affect Cloudflare resources. Run them only against the account
+  and database you resolved intentionally.
+</Callout>
+
+## After deployment
+
+Verify the public landing page, credential authentication, onboarding, registry isolation, and
+every configured provider path. A successful upload proves only that the Worker deployed; it does
+not prove OAuth callbacks, email delivery, or Stripe webhooks were accepted.
+
+---
+
+Source: `apps/docs/src/content/elements/installing-free.mdx`
+Canonical page: `/elements/installing-free`
+
+# Install Elements Free
+
+> Browse the public registry and install source-owned components and themes with the shadcn CLI.
+
+Elements Free is a public shadcn registry, not a bundled component dependency. Downstream projects
+install source files and own every line written by the CLI.
+
+## Browse the registry
+
+The hosted registry is ready to use without cloning Starter:
+
+```bash
+pnpm dlx shadcn@latest list https://elements.micropreneur.dev/r/registry.json
+```
+
+## Run it locally
+
+Docs development builds Elements and stages the registry into the same Worker asset directory:
+
+```bash
+pnpm --filter docs dev
+pnpm dlx shadcn@latest list http://localhost:3001/r/registry.json
+```
+
+For package-only work, `pnpm --filter @micropreneur/elements registry:serve` still serves the
+registry at `http://localhost:4173/r`.
+
+## Preview an item
+
+Documentation can render the real workspace component and read its title, ontology, kind, and
+description from the public registry catalog. The command beneath the preview automatically targets
+the same-origin staged registry locally and the public Elements domain in production.
+
+<ElementShowcase name="status-badge" />
+
+## Install an item
+
+Run the shadcn CLI from the target project:
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/status-badge.json
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/theme-starter.json
+```
+
+The target should be configured for shadcn's Base UI primitives. Registry items use target-project
+imports such as `@/components/ui/button` rather than importing this workspace package.
+
+Browse and test each item in the [component gallery](/elements/gallery).
+
+## Own the result
+
+The CLI writes source into the consuming project. Review the diff, adapt the vocabulary to the
+product, and keep accessibility behavior intact.
+
+Do not add `@micropreneur/elements` as an npm dependency in a downstream fork. Its workspace export
+exists so the Starter monorepo can exercise the same components before registry installation.
+
+---
+
+Source: `apps/docs/src/content/elements/elements-pro.mdx`
+Canonical page: `/elements/elements-pro`
+
+# Elements Pro
+
+> Understand the future authenticated registry contract without including premium source or a license gate in Starter.
+
+Elements Pro is designed as a separate private source repository and authenticated shadcn registry.
+The public Starter repository contains only the seam that lets both tiers coexist.
+
+## Current status
+
+<Callout type="warning" title="Documented contract, not a live registry">
+  Starter does not ship premium source, license validation, Stripe licensing, revocation, or a
+  production Elements Pro endpoint. Commands using `@elements-pro` become valid only after that
+  service publishes its final registry URL.
+</Callout>
+
+## Intended CLI contract
+
+A consuming project's `components.json` will configure a separate authenticated namespace:
+
+```json
+{
+  "registries": {
+    "@elements": "https://elements.micropreneur.dev/r/{name}.json",
+    "@elements-pro": {
+      "url": "https://elements-pro.micropreneur.dev/r/{name}.json",
+      "headers": {
+        "X-License-Key": "${ELEMENTS_PRO_LICENSE_KEY}"
+      }
+    }
+  }
+}
+```
+
+The license belongs in an uncommitted environment file:
+
+```dotenv
+ELEMENTS_PRO_LICENSE_KEY=
+```
+
+Once the endpoint exists, installation follows normal shadcn namespace syntax:
+
+```bash
+pnpm dlx shadcn@latest add @elements-pro/dashboard-shell
+```
+
+## Free and Pro stay separate
+
+The free manifest remains public, static, and MIT-licensed. The premium Worker validates the key and
+component entitlement before serving item JSON from the private manifest.
+
+Both registries deliver source through the same CLI, but neither tier imports or mirrors the other
+tier's source repository.
+
+## Private documentation later
+
+The Pro repository should own authenticated documentation when premium implementation begins. The
+planned seam is private article metadata, a signed-in docs session, and a server-side entitlement
+check before private MDX is loaded or returned.
+
+Do not place premium MDX, client-trusted entitlement checks, or a placeholder JWT verifier in the
+public Starter repository. The final contract belongs in the Pro workstream, where its identity and
+licensing systems can be tested together.
+
+---
+
+Source: `apps/docs/src/content/agents/mcp-server.mdx`
+Canonical page: `/agents/mcp-server`
+
+# MCP Server
+
+> Connect coding agents to public Starter documentation, skills, themes, and Elements through one read-only endpoint.
+
+Starter publishes the same public knowledge through a hosted Streamable HTTP endpoint and a local
+stdio process. Both transports use the same server factory, tool schemas, and generated corpus.
+
+## Hosted endpoint
+
+Connect remote MCP clients to:
+
+```text
+https://docs.micropreneur.dev/mcp
+```
+
+The endpoint is public, stateless, and read-only. It exposes no account data, secrets, mutations,
+premium source, or application database access.
+
+<Callout title="Public knowledge only">
+  The hosted server contains the same public guides, shared skills, themes, and Elements metadata
+  already committed to Starter. Authentication belongs in a future server only when a private
+  resource requires it.
+</Callout>
+
+## Local stdio
+
+From the repository root, start the local transport:
+
+```bash
+pnpm --filter @micropreneur/mcp dev
+```
+
+Set `ELEMENTS_REGISTRY_URL` when the install commands should point somewhere other than the local
+registry at `http://localhost:4173/r`.
+
+## Client setup
+
+Add the hosted server to Codex:
+
+```bash
+codex mcp add micropreneur-starter --url https://docs.micropreneur.dev/mcp
+```
+
+Add it to Claude Code:
+
+```bash
+claude mcp add --transport http micropreneur-starter https://docs.micropreneur.dev/mcp
+```
+
+Other clients can use this Streamable HTTP configuration:
+
+```json
+{
+  "mcpServers": {
+    "micropreneur-starter": {
+      "type": "http",
+      "url": "https://docs.micropreneur.dev/mcp"
+    }
+  }
+}
+```
+
+## Available tools
+
+The server exposes four read-only tool families:
+
+| Family | Tools |
+| --- | --- |
+| Components | `list_components`, `search_components`, `get_component` |
+| Themes | `list_themes`, `search_themes`, `get_theme` |
+| Documentation | `list_docs`, `search_docs`, `get_doc` |
+| Skills | `list_skills`, `search_skills`, `get_skill` |
+
+List and search calls return concise metadata. Get calls return the complete canonical record only
+after an agent has selected the relevant component, guide, theme, or skill.
+
+## Troubleshooting
+
+Use the MCP Inspector to verify the protocol without changing client configuration:
+
+```bash
+pnpm dlx @modelcontextprotocol/inspector@latest
+```
+
+Connect the Inspector to `http://localhost:3001/mcp` during local docs development or the hosted
+endpoint in production. If component commands point to the wrong host, check
+`ELEMENTS_REGISTRY_URL`. If a guide or skill is missing, regenerate the agent artifacts with
+`pnpm docs:generate` and run the docs drift check.
+
+---
+
+Source: `apps/docs/src/content/agents/agent-skills.mdx`
+Canonical page: `/agents/agent-skills`
+
+# Agent Skills
+
+> Share one canonical Starter workflow with repository agents and standards-based web discovery.
+
+Starter keeps agent guidance close to the repository while publishing the same skill for tools that
+discover instructions over HTTPS.
+
+## Canonical source
+
+The source of truth lives at:
+
+```text
+.agents/shared-skills/starter-repo/SKILL.md
+```
+
+Edit the canonical file once. The docs generator copies its exact UTF-8 bytes into raw skill routes,
+the complete LLM corpus, the MCP snapshot, and both well-known discovery formats.
+
+## Repository discovery
+
+`.agents/skills/starter-repo` is a relative symlink to the canonical directory. This keeps every
+fork compatible with agents that scan `.agents/skills` without maintaining duplicate instructions.
+
+The generator verifies the symlink target before publishing. On Windows, enable Developer Mode or
+use a Git environment that preserves symlinks when cloning.
+
+## Hosted discovery
+
+Current clients should begin at:
+
+```text
+https://docs.micropreneur.dev/.well-known/agent-skills/index.json
+```
+
+Older clients can use the compatible fallback:
+
+```text
+https://docs.micropreneur.dev/.well-known/skills/index.json
+```
+
+Install the published skill with the skills CLI:
+
+```bash
+pnpm dlx skills add https://docs.micropreneur.dev
+```
+
+The existing `/skills/index.json` and `/skills/starter-repo.md` routes remain available for simple
+consumers and existing Starter forks.
+
+## Integrity and loading
+
+The current discovery index uses the draft v0.2 format. Each skill entry includes its schema,
+artifact URL, `skill-md` type, and a SHA-256 digest of the exact served `SKILL.md` bytes.
+
+Agents can first load the small index, fetch the complete skill only when its description matches
+the task, and verify the digest before trusting its instructions. Starter publishes only the public
+single-file skill in this repository; private Pro guidance is not copied into the index.
+
+---
+
+Source: `apps/docs/src/content/agents/llms-integration.mdx`
+Canonical page: `/agents/llms-integration`
+
+# LLMs Integration
+
+> Consume Starter guides as raw Markdown, concise LLM indexes, or a structured public content manifest.
+
+Starter derives every machine-readable interface from the same MDX articles, Elements catalog, and
+canonical shared skills used by the human documentation site.
+
+## Raw Markdown
+
+Append `.md` to a documentation URL to fetch its Markdown representation:
+
+```text
+/getting-started/running-locally
+/getting-started/running-locally.md
+```
+
+Component references remain available beneath `/components/<name>.md`. The page actions menu can
+copy the Markdown, copy its URL, or open it directly in an AI assistant.
+
+## LLM indexes
+
+Use the smallest representation that fits the task:
+
+- `/llms.txt` lists every public guide, component, skill, and the MCP entrypoint.
+- `/llms-full.txt` concatenates the complete public corpus for one-shot ingestion.
+
+Both files contain public Starter source only. They do not contain secrets, application data, or
+private Elements Pro documentation.
+
+## Structured content
+
+`/agent-content.json` exposes document and skill metadata without requiring a client to parse the
+rendered application. The same generated data backs the local and hosted MCP tools.
+
+## Generation and drift
+
+After changing an article, component Markdown file, or shared skill, regenerate the interfaces:
+
+```bash
+pnpm docs:generate
+pnpm --filter docs agent:check
+```
+
+Local docs development regenerates artifacts before Vite starts. Builds and tests use check mode so
+stale committed output fails with the exact command required to repair it.
+
+## UTF-8 contract
+
+Raw Markdown is served as `text/markdown; charset=utf-8`; LLM indexes use UTF-8 plain text; JSON
+manifests use UTF-8 JSON. Generator tests retain tree glyphs such as `├──` and `└──` byte-for-byte so
+copying a raw page cannot silently introduce mojibake.
+
+---
+
+Source: `packages/elements/src/catalog.ts`
+Canonical page: `/elements/gallery`
+
+# Component gallery
+
+> Browse every public Elements component with live previews and install commands.
+
+Open the [interactive gallery](/elements/gallery) to preview components, filter by ontology, and copy install commands.
+
+## Components
+
+- [Button](/components/button.md) — A Base UI-backed action control with semantic variants.
+- [Card](/components/card.md) — A composed object container with header, content, action, footer slots, and a clipped-corner brand variant.
+- [Badge](/components/badge.md) — A compact property chip with semantic variants.
+- [Table](/components/table.md) — Thin-ruled table primitives with wide-tracked uppercase headers.
+- [StatusBadge](/components/status-badge.md) — A compact semantic property indicator for common lifecycle states.
+- [DataGrid](/components/data-grid.md) — A typed read-only grid foundation for object collections.
+- [LedgerList](/components/ledger-list.md) — A horizontal ledger-style row list with name, meta, mono figure, and status slots.
+- [MarginNote](/components/margin-note.md) — A small editorial annotation with a burnt-orange marker detail.
+- [IndexLabel](/components/index-label.md) — A tiny zero-padded index number in mono with wide tracking.
+- [MilestoneMarker](/components/milestone-marker.md) — A vertical milestone list with circular markers and connecting rules.
+- [EmptyState](/components/empty-state.md) — A branded empty state with serif headline, muted copy, and an action slot.
+- [DashboardShell](/components/dashboard-shell.md) — A responsive application shell with navigation, header, metric slots, and a content workspace.
+- [AuthCard](/components/auth-card.md) — A provider-neutral authentication card with accessible credential fields and action slots.
+- [SettingsLayout](/components/settings-layout.md) — A responsive settings shell with local navigation, page context, and a focused content region.
+- [FilterableDataTable](/components/filterable-data-table.md) — A typed table workflow with local search, a semantic filter, loading, empty, and error states.
+
+---
+
+Source: `apps/docs/public/components/button.md`
+Canonical page: `/elements/components/button`
+
+# Button
+
+Ontology: **Actions**
+
+Base UI-backed action control with semantic variants.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/button.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/card.md`
+Canonical page: `/elements/components/card`
+
+# Card
+
+Ontology: **Objects**
+
+Composed container with header, title, description, content, action, and footer slots.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/card.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/badge.md`
+Canonical page: `/elements/components/badge`
+
+# Badge
+
+Ontology: **Properties**
+
+Compact property chip with `default`, `secondary`, `destructive`, and `outline` variants. Prefer `StatusBadge` for lifecycle states.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/badge.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/table.md`
+Canonical page: `/elements/components/table`
+
+# Table
+
+Ontology: **Interfaces**
+
+Thin-ruled table primitives (`Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`) with wide-tracked uppercase headers. `DataGrid` builds on these.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/table.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/status-badge.md`
+Canonical page: `/elements/components/status-badge`
+
+# StatusBadge
+
+Ontology: **Properties**
+
+Compact semantic state indicator for neutral, positive, warning, and destructive states.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/status-badge.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/data-grid.md`
+Canonical page: `/elements/components/data-grid`
+
+# DataGrid
+
+Ontology: **Interfaces**
+
+Typed, intentionally small table/grid foundation. Sorting, filtering, and virtualization belong in product-specific extensions.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/data-grid.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/ledger-list.md`
+Canonical page: `/elements/components/ledger-list`
+
+# LedgerList
+
+Ontology: **Interfaces**
+
+Horizontal ledger-style row list. Each `LedgerRow` takes `index`, `name`, `meta`, a monospaced `figure`, a trailing `status` slot, and a `selected` state. Prefer this over tables for list surfaces.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/ledger-list.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/margin-note.md`
+Canonical page: `/elements/components/margin-note`
+
+# MarginNote
+
+Ontology: **Properties**
+
+Small editorial annotation with a burnt-orange marker rule. Use sparingly for asides and guidance next to content.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/margin-note.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/index-label.md`
+Canonical page: `/elements/components/index-label`
+
+# IndexLabel
+
+Ontology: **Properties**
+
+Tiny zero-padded index number (`01`, `02`, `03`) in the mono face with wide tracking. Pass `value={1}` or provide children directly.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/index-label.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/milestone-marker.md`
+Canonical page: `/elements/components/milestone-marker`
+
+# MilestoneMarker
+
+Ontology: **Interfaces**
+
+Vertical milestone list. `Milestones` wraps `MilestoneMarker` items, each with a circular marker, connecting rule, `title`, mono `meta`, and a `done` / `current` / `upcoming` status.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/milestone-marker.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/empty-state.md`
+Canonical page: `/elements/components/empty-state`
+
+# EmptyState
+
+Ontology: **Interfaces**
+
+Branded empty state on a paper-grain surface: serif display `title`, muted `description`, and an `action` slot. No illustration packs.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/empty-state.json
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/dashboard-shell.md`
+Canonical page: `/elements/components/dashboard-shell`
+
+# DashboardShell
+
+Ontology: **Interfaces**
+
+A responsive application shell with primary navigation, an optional header, metric slots, and a content workspace. Supply product-specific navigation and data through props; the block contains no router, authentication provider, or domain imports.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/dashboard-shell.json
+```
+
+```tsx
+<DashboardShell
+  brand="Acme"
+  header={<h1>Overview</h1>}
+  metrics={[{ label: 'Customers', value: '1,429', detail: '+8.1%' }]}
+  navItems={[{ label: 'Overview', href: '/app', active: true }]}
+>
+  <YourDashboardContent />
+</DashboardShell>
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/auth-card.md`
+Canonical page: `/elements/components/auth-card`
+
+# AuthCard
+
+Ontology: **Interfaces**
+
+A provider-neutral credential form composed from Card, Field, Input, and Button. Connect the form's `onSubmit` handler to your application's auth port; do not import an authentication SDK into the block.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/auth-card.json
+```
+
+```tsx
+<AuthCard
+  forgotPasswordHref="/forgot-password"
+  onSubmit={handleSignIn}
+  socialAction={<YourSocialSignInAction />}
+/>
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/settings-layout.md`
+Canonical page: `/elements/components/settings-layout`
+
+# SettingsLayout
+
+Ontology: **Interfaces**
+
+A responsive settings shell with local navigation, page context, and a focused content region. Navigation uses ordinary links so it works with any router and retains a useful no-JavaScript fallback.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/settings-layout.json
+```
+
+```tsx
+<SettingsLayout
+  heading="Settings"
+  description="Manage your account and product preferences."
+  items={[{ label: 'Profile', href: '/settings/profile', active: true }]}
+>
+  <ProfileForm />
+</SettingsLayout>
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `apps/docs/public/components/filterable-data-table.md`
+Canonical page: `/elements/components/filterable-data-table`
+
+# FilterableDataTable
+
+Ontology: **Interfaces**
+
+A typed local table workflow with text search, one semantic filter, a result count, and loading, empty, and error states. Supply row accessors rather than coupling the block to a domain model. Move filtering server-side when a product outgrows an in-memory collection.
+
+```bash
+pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/filterable-data-table.json
+```
+
+```tsx
+<FilterableDataTable
+  columns={columns}
+  rows={records}
+  getRowId={(record) => record.id}
+  getSearchText={(record) => `${record.name} ${record.owner}`}
+  getFilterValue={(record) => record.status}
+  filterOptions={[{ label: 'Active', value: 'active' }]}
+/>
+```
+
+Install from the public Elements Free registry; the CLI writes source into your project.
+
+---
+
+Source: `.agents/shared-skills/starter-repo/SKILL.md`
+
+---
+name: starter-repo
+description: Make narrow, verified changes to a fork of micropreneur/starter.
+---
+
+# starter-repo
+
+1. Read the root and nearest local `AGENTS.md`.
+2. Identify the owning app or package before editing.
+3. Keep auth provider code behind `AuthPort` and UI primitives on Base UI.
+4. Run the smallest package-level feedback loop while iterating.
+5. Finish with `pnpm turbo typecheck lint build test`.
+6. Never add secrets, premium source, billing flows, or deployment side effects.

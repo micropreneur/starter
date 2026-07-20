@@ -1,0 +1,63 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@micropreneur/config/tailwind.css";
+
+@import "@fontsource/instrument-serif";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+@plugin "@tailwindcss/typography";
+
+@source "../../../../apps/web/src";
+@source "../../../elements/src";
+@source "../";
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    line-height: 1.6;
+  }
+
+  .font-mono,
+  code,
+  kbd,
+  samp,
+  pre {
+    font-variant-numeric: tabular-nums;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@keyframes stack-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes cta-preview-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-2deg);
+  }
+
+  50% {
+    transform: translate3d(0, -0.75rem, 0) rotate(-1deg);
+  }
+}

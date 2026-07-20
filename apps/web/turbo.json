@@ -1,0 +1,22 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "generate-routes": {
+      "inputs": ["src/routes/**", "vite.config.ts"],
+      "outputs": ["src/routeTree.gen.ts"]
+    },
+    "build": {
+      "dependsOn": ["^build", "generate-routes"],
+      "outputs": ["dist/**", ".output/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck", "generate-routes"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build", "generate-routes"],
+      "outputs": []
+    }
+  }
+}

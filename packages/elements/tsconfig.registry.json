@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@/components/elements/empty-state": ["./registry/free/empty-state/empty-state.tsx"],
+      "@/components/ui/*": ["../ui/src/components/*"],
+      "@/lib/utils": ["../ui/src/lib/utils.ts"]
+    }
+  },
+  "include": ["registry/**/*.ts", "registry/**/*.tsx"]
+}

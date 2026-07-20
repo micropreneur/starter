@@ -1,0 +1,56 @@
+# Better Auth
+
+> Configure credential authentication and optional Google OAuth through the default AuthPort adapter.
+
+Better Auth is the functional default adapter. It persists users, accounts, sessions, and
+verification records in D1 while application routes depend only on `AuthPort`.
+
+## Local credentials
+
+Keep the default provider in `apps/web/.dev.vars`:
+
+```dotenv
+AUTH_PROVIDER=betterauth
+BETTER_AUTH_URL=http://localhost:3000
+```
+
+Local development may use the checked-in development-only secret when the origin is localhost.
+Create accounts at `/sign-up`; verification URLs are captured by the local email adapter.
+
+## Production secret
+
+A deployed Worker must receive a unique random secret and its public HTTPS origin:
+
+```bash
+pnpm --dir apps/web wrangler secret put BETTER_AUTH_SECRET
+```
+
+Set `BETTER_AUTH_URL` to the exact public application origin. Authentication fails closed when a
+deployed environment is missing either requirement.
+
+## Google OAuth
+
+Register this callback with the Google OAuth client:
+
+```text
+http://localhost:3000/api/auth/callback/google
+https://your-app.example.com/api/auth/callback/google
+```
+
+Then configure both values together:
+
+```dotenv
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
+Leaving both empty keeps credential authentication available and hides the Google action. Setting
+only one stops startup with an actionable configuration error.
+
+## The AuthPort boundary
+
+Provider SDK imports belong only in `packages/auth/src/adapters`. Routes should call shared methods
+such as `getUser`, `requireUser`, `signIn`, and `signOut` without depending on Better Auth response
+types.
+
+That rule preserves the option to implement another adapter without rewriting application code.

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "micropreneur-elements",
+  "homepage": "https://github.com/micropreneur/starter/tree/main/packages/elements",
+  "include": ["registry/free/registry.json", "registry/free/themes/registry.json"]
+}

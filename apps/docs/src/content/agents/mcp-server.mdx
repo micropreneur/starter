@@ -1,0 +1,99 @@
+export const meta = {
+  title: 'MCP Server',
+  description: 'Connect coding agents to public Starter documentation, skills, themes, and Elements through one read-only endpoint.',
+  group: 'Agents',
+  order: 1,
+  keywords: ['mcp', 'model context protocol', 'agents', 'codex', 'claude', 'components'],
+  sections: [
+    { id: 'hosted-endpoint', title: 'Hosted endpoint' },
+    { id: 'local-stdio', title: 'Local stdio' },
+    { id: 'client-setup', title: 'Client setup' },
+    { id: 'available-tools', title: 'Available tools' },
+    { id: 'troubleshooting', title: 'Troubleshooting' },
+  ],
+}
+
+Starter publishes the same public knowledge through a hosted Streamable HTTP endpoint and a local
+stdio process. Both transports use the same server factory, tool schemas, and generated corpus.
+
+## Hosted endpoint
+
+Connect remote MCP clients to:
+
+```text
+https://docs.micropreneur.dev/mcp
+```
+
+The endpoint is public, stateless, and read-only. It exposes no account data, secrets, mutations,
+premium source, or application database access.
+
+<Callout title="Public knowledge only">
+  The hosted server contains the same public guides, shared skills, themes, and Elements metadata
+  already committed to Starter. Authentication belongs in a future server only when a private
+  resource requires it.
+</Callout>
+
+## Local stdio
+
+From the repository root, start the local transport:
+
+```bash
+pnpm --filter @micropreneur/mcp dev
+```
+
+Set `ELEMENTS_REGISTRY_URL` when the install commands should point somewhere other than the local
+registry at `http://localhost:4173/r`.
+
+## Client setup
+
+Add the hosted server to Codex:
+
+```bash
+codex mcp add micropreneur-starter --url https://docs.micropreneur.dev/mcp
+```
+
+Add it to Claude Code:
+
+```bash
+claude mcp add --transport http micropreneur-starter https://docs.micropreneur.dev/mcp
+```
+
+Other clients can use this Streamable HTTP configuration:
+
+```json
+{
+  "mcpServers": {
+    "micropreneur-starter": {
+      "type": "http",
+      "url": "https://docs.micropreneur.dev/mcp"
+    }
+  }
+}
+```
+
+## Available tools
+
+The server exposes four read-only tool families:
+
+| Family | Tools |
+| --- | --- |
+| Components | `list_components`, `search_components`, `get_component` |
+| Themes | `list_themes`, `search_themes`, `get_theme` |
+| Documentation | `list_docs`, `search_docs`, `get_doc` |
+| Skills | `list_skills`, `search_skills`, `get_skill` |
+
+List and search calls return concise metadata. Get calls return the complete canonical record only
+after an agent has selected the relevant component, guide, theme, or skill.
+
+## Troubleshooting
+
+Use the MCP Inspector to verify the protocol without changing client configuration:
+
+```bash
+pnpm dlx @modelcontextprotocol/inspector@latest
+```
+
+Connect the Inspector to `http://localhost:3001/mcp` during local docs development or the hosted
+endpoint in production. If component commands point to the wrong host, check
+`ELEMENTS_REGISTRY_URL`. If a guide or skill is missing, regenerate the agent artifacts with
+`pnpm docs:generate` and run the docs drift check.

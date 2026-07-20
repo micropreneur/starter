@@ -1,0 +1,25 @@
+name: Feature request
+description: Propose a reusable OSS foundation improvement.
+title: '[feature]: '
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What reusable starter problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed foundation change
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This does not require starter-pro, elements-pro, advanced/team billing, or license-gate code.
+          required: true

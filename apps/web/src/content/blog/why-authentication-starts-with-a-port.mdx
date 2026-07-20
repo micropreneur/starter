@@ -1,0 +1,104 @@
+export const meta = {
+  author: 'Dan Schoonmaker',
+  category: 'Architecture',
+  date: '2026-07-26',
+  description:
+    'A provider should be replaceable without asking the rest of your application for permission.',
+  featured: true,
+  readTime: '8 min read',
+  sections: [
+    { id: 'the-boundary-is-the-product', title: 'The boundary' },
+    { id: 'a-small-contract', title: 'A small contract' },
+    { id: 'adapters-live-at-the-edge', title: 'Adapters at the edge' },
+    { id: 'what-changes-in-a-fork', title: 'What changes in a fork' },
+  ],
+  title: 'Why authentication starts with a port',
+}
+
+Every authentication integration looks simple—until it is not. The SDK leaks across your
+codebase, a migration turns into a scavenger hunt, and your *quick provider swap* becomes a
+quarter of careful rewrites.
+
+In Micropreneur Starter, authentication is a replaceable capability behind a **port**. The rest
+of the application depends on a small contract, not a vendor. Adapters live at the edge.
+
+## The boundary is the product
+
+A port is the application's way of saying, "Here is what I need. You decide how." Our
+`AuthPort` defines the use cases the app cares about—session, user, sign in, sign out—and
+nothing more.
+
+That boundary gives every fork:
+
+- Freedom to change providers without touching product code.
+- Testable application logic with no authentication SDK in sight.
+- A smaller surface area for agents and humans to understand.
+- Clear ownership when an integration needs to change.
+
+It is deliberately boring. That is the point.
+
+> If application code imports a provider SDK outside the adapter, you do not have a boundary—you
+> have a leak.
+
+## A small contract
+
+The contract is short enough to understand in one screen and broad enough to support the app
+shell:
+
+```ts
+export interface AuthPort {
+  getSession(request: Request): Promise<Session | null>
+  getUser(request: Request): Promise<User | null>
+  requireUser(request: Request): Promise<User>
+  signIn(input: SignInInput): Promise<SignInResult>
+  signOut(request: Request): Promise<void>
+}
+```
+
+Notice what is absent: provider-specific cookies, SDK response types, and product-specific
+permissions. Those details belong on the other side of the boundary.
+
+| Concern | Application | Adapter |
+| --- | --- | --- |
+| Current user | Calls `getUser()` | Reads the provider session |
+| Protected route | Calls `requireUser()` | Redirects or returns the user |
+| Sign in | Sends a typed input | Translates it for the provider |
+| Sign out | Requests the capability | Clears provider state |
+
+The table is more than documentation. It is a test for where new behavior belongs.
+
+## Adapters live at the edge
+
+Starter ships with Better Auth as the working default and Descope as the typed enterprise seam.
+Both implement the same port, so the composition root can select one without teaching the
+application a second vocabulary.
+
+1. The route asks the port for a user.
+2. The selected adapter talks to its provider.
+3. The adapter returns the shared domain shape.
+4. The route renders without knowing which provider answered.
+
+![The reusable Starter dashboard shell running with the default local authentication adapter.](/landing/dashboard-preview.jpg)
+
+*The application shell consumes the shared user shape; provider details remain outside it.*
+
+This separation also improves the local loop. A test can supply a tiny in-memory adapter, while
+the real Better Auth adapter works against local D1. Each layer gets the feedback it needs
+without pulling the whole stack into every test.
+
+## What changes in a fork
+
+Most projects should keep the default and start building their product. When a fork genuinely
+needs a different identity platform, the change stays bounded:
+
+- Implement `AuthPort` in a new adapter.
+- Map provider data into the shared `User` and `Session` shapes.
+- Add focused contract tests.
+- Select the adapter in the composition root.
+- Leave routes, UI, and domain code alone.
+
+That is the leverage of a good seam. It does not promise that providers are identical. It makes
+their differences explicit, local, and replaceable.
+
+The best architecture in a starter is not the one with the most abstractions. It is the one that
+lets the next project become itself without first fighting the foundation.

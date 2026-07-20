@@ -1,0 +1,43 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "micropreneur-starter-web",
+  "main": "src/server.ts",
+  "compatibility_date": "2026-07-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "upload_source_maps": true,
+  "vars": {
+    "AUTH_PROVIDER": "betterauth",
+    "REALTIME_ENABLED": "false"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "micropreneur-starter-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "../../packages/db/migrations"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "REALTIME_ROOM",
+        "class_name": "RealtimeRoom"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["RealtimeRoom"]
+    }
+  ]
+
+  // custom_domains (future forks only; do not enable in starter).
+  // Add a comma after the migrations array above before uncommenting:
+  // "routes": [
+  //   { "pattern": "app.example.com", "custom_domain": true }
+  // ]
+}

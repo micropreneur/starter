@@ -1,0 +1,46 @@
+{
+  "name": "docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "agent:generate": "tsx scripts/generate-agent-docs.ts",
+    "agent:check": "tsx scripts/generate-agent-docs.ts --check",
+    "registry:stage": "pnpm --filter @micropreneur/elements registry:build && tsx scripts/stage-registry.ts",
+    "predev": "pnpm registry:stage && pnpm agent:generate",
+    "dev": "vite --port 3001",
+    "prebuild": "pnpm registry:stage && pnpm agent:check",
+    "build": "vite build",
+    "cf:deploy": "pnpm build && wrangler deploy",
+    "cf-typegen": "wrangler types --env-interface DocsBindings --include-runtime false",
+    "lint": "pnpm --dir ../.. exec biome check apps/docs",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm agent:check && vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@micropreneur/elements": "workspace:*",
+    "@micropreneur/mcp": "workspace:*",
+    "@micropreneur/ui": "workspace:*",
+    "agents": "^0.21.0",
+    "lucide-react": "^1.30.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.51.1",
+    "@cloudflare/workers-types": "^5.20260809.1",
+    "@mdx-js/rollup": "^3.1.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/mdx": "^2.0.14",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "remark-gfm": "^4.0.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.11",
+    "typescript": "^6.0.3",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.120.0"
+  }
+}

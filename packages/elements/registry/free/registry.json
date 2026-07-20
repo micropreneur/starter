@@ -1,0 +1,499 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "Utils",
+      "description": "The cn class-merging helper shared by every element.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["foundation"],
+      "meta": {
+        "tier": "free"
+      }
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "A Base UI-backed action control with semantic variants.",
+      "author": "micropreneur",
+      "dependencies": ["@base-ui/react", "class-variance-authority", "clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "button/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/button.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Actions", "foundation"],
+      "meta": {
+        "ontology": "Actions",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/button.md"
+      }
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "A compact property chip with semantic variants.",
+      "author": "micropreneur",
+      "dependencies": ["@base-ui/react", "class-variance-authority", "clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "badge/badge.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/badge.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Properties", "foundation"],
+      "meta": {
+        "ontology": "Properties",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/badge.md"
+      }
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "A composed object container with header, content, action, footer slots, and a clipped-corner brand variant.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "card/card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/card.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Objects", "foundation"],
+      "meta": {
+        "ontology": "Objects",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/card.md"
+      }
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "Thin-ruled table primitives with wide-tracked uppercase headers.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "table/table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/table.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "foundation"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/table.md"
+      }
+    },
+    {
+      "name": "status-badge",
+      "type": "registry:component",
+      "title": "StatusBadge",
+      "description": "A compact semantic property indicator for common lifecycle states.",
+      "author": "micropreneur",
+      "dependencies": ["@base-ui/react", "class-variance-authority", "clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "status-badge/status-badge.tsx",
+          "type": "registry:component",
+          "target": "components/elements/status-badge.tsx"
+        },
+        {
+          "path": "badge/badge.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/badge.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Properties", "foundation"],
+      "meta": {
+        "ontology": "Properties",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/status-badge.md"
+      }
+    },
+    {
+      "name": "data-grid",
+      "type": "registry:component",
+      "title": "DataGrid",
+      "description": "A typed read-only grid foundation for object collections.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "data-grid/data-grid.tsx",
+          "type": "registry:component",
+          "target": "components/elements/data-grid.tsx"
+        },
+        {
+          "path": "table/table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/table.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "foundation"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/data-grid.md"
+      }
+    },
+    {
+      "name": "ledger-list",
+      "type": "registry:component",
+      "title": "LedgerList",
+      "description": "A horizontal ledger-style row list with name, meta, mono figure, and status slots.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "ledger-list/ledger-list.tsx",
+          "type": "registry:component",
+          "target": "components/elements/ledger-list.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "foundation"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/ledger-list.md"
+      }
+    },
+    {
+      "name": "margin-note",
+      "type": "registry:component",
+      "title": "MarginNote",
+      "description": "A small editorial annotation with a burnt-orange marker detail.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "margin-note/margin-note.tsx",
+          "type": "registry:component",
+          "target": "components/elements/margin-note.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Properties", "foundation"],
+      "meta": {
+        "ontology": "Properties",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/margin-note.md"
+      }
+    },
+    {
+      "name": "index-label",
+      "type": "registry:component",
+      "title": "IndexLabel",
+      "description": "A tiny zero-padded index number in mono with wide tracking.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "index-label/index-label.tsx",
+          "type": "registry:component",
+          "target": "components/elements/index-label.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Properties", "foundation"],
+      "meta": {
+        "ontology": "Properties",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/index-label.md"
+      }
+    },
+    {
+      "name": "milestone-marker",
+      "type": "registry:component",
+      "title": "MilestoneMarker",
+      "description": "A vertical milestone list with circular markers and connecting rules.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "milestone-marker/milestone-marker.tsx",
+          "type": "registry:component",
+          "target": "components/elements/milestone-marker.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "foundation"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/milestone-marker.md"
+      }
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:component",
+      "title": "EmptyState",
+      "description": "A branded empty state with serif headline, muted copy, and an action slot.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "empty-state/empty-state.tsx",
+          "type": "registry:component",
+          "target": "components/elements/empty-state.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "foundation"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "primitive": "base-ui",
+        "docs": "/components/empty-state.md"
+      }
+    },
+    {
+      "name": "dashboard-shell",
+      "type": "registry:block",
+      "title": "DashboardShell",
+      "description": "A responsive application shell with navigation, header, metric slots, and a content workspace.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "dashboard-shell/dashboard-shell.tsx",
+          "type": "registry:block",
+          "target": "components/blocks/dashboard-shell.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "blocks"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "kind": "block",
+        "primitive": "base-ui",
+        "docs": "/components/dashboard-shell.md"
+      }
+    },
+    {
+      "name": "auth-card",
+      "type": "registry:block",
+      "title": "AuthCard",
+      "description": "A provider-neutral authentication card with accessible credential fields and action slots.",
+      "author": "micropreneur",
+      "dependencies": ["@base-ui/react", "class-variance-authority", "clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "auth-card/auth-card.tsx",
+          "type": "registry:block",
+          "target": "components/blocks/auth-card.tsx"
+        },
+        {
+          "path": "button/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/button.tsx"
+        },
+        {
+          "path": "card/card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/card.tsx"
+        },
+        {
+          "path": "field/field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/field.tsx"
+        },
+        {
+          "path": "input/input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/input.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "blocks"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "kind": "block",
+        "primitive": "base-ui",
+        "docs": "/components/auth-card.md"
+      }
+    },
+    {
+      "name": "settings-layout",
+      "type": "registry:block",
+      "title": "SettingsLayout",
+      "description": "A responsive settings shell with local navigation, page context, and a focused content region.",
+      "author": "micropreneur",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "settings-layout/settings-layout.tsx",
+          "type": "registry:block",
+          "target": "components/blocks/settings-layout.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "blocks"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "kind": "block",
+        "primitive": "base-ui",
+        "docs": "/components/settings-layout.md"
+      }
+    },
+    {
+      "name": "filterable-data-table",
+      "type": "registry:block",
+      "title": "FilterableDataTable",
+      "description": "A typed table workflow with local search, a semantic filter, loading, empty, and error states.",
+      "author": "micropreneur",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "clsx",
+        "lucide-react",
+        "tailwind-merge"
+      ],
+      "files": [
+        {
+          "path": "filterable-data-table/filterable-data-table.tsx",
+          "type": "registry:block",
+          "target": "components/blocks/filterable-data-table.tsx"
+        },
+        {
+          "path": "button/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/button.tsx"
+        },
+        {
+          "path": "input/input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/input.tsx"
+        },
+        {
+          "path": "native-select/native-select.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/native-select.tsx"
+        },
+        {
+          "path": "skeleton/skeleton.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/skeleton.tsx"
+        },
+        {
+          "path": "table/table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/table.tsx"
+        },
+        {
+          "path": "empty-state/empty-state.tsx",
+          "type": "registry:component",
+          "target": "components/elements/empty-state.tsx"
+        },
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ],
+      "categories": ["Interfaces", "blocks"],
+      "meta": {
+        "ontology": "Interfaces",
+        "tier": "free",
+        "kind": "block",
+        "primitive": "base-ui",
+        "docs": "/components/filterable-data-table.md"
+      }
+    }
+  ]
+}

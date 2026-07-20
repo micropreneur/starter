@@ -1,0 +1,99 @@
+export const meta = {
+  title: 'Deploy to Cloudflare',
+  description: 'Create the D1 database, configure Worker bindings and secrets, apply remote migrations, and deploy deliberately.',
+  group: 'Cloudflare',
+  order: 1,
+  keywords: ['cloudflare', 'workers', 'deploy', 'wrangler', 'd1', 'durable objects', 'secrets'],
+  sections: [
+    { id: 'documentation-worker', title: 'Documentation Worker' },
+    { id: 'what-the-worker-uses', title: 'What the Worker uses' },
+    { id: 'create-the-database', title: 'Create the database' },
+    { id: 'configure-secrets', title: 'Configure secrets' },
+    { id: 'migrate-and-deploy', title: 'Migrate and deploy' },
+    { id: 'after-deployment', title: 'After deployment' },
+  ],
+}
+
+The web app targets Cloudflare Workers and declares its bindings in `apps/web/wrangler.jsonc`.
+Deployment is an explicit operator action; repository tests and agent workflows do not deploy.
+
+## Documentation Worker
+
+`apps/docs` is a separate stateless Worker that serves documentation assets, the public read-only
+MCP endpoint, Agent Skill discovery, and the staged Elements Free registry. It does not use D1,
+Durable Objects, or authentication.
+
+Forks should choose their own domains. Production domains are intentionally absent from the
+committed Wrangler configuration. After a successful local build, an operator can deploy with:
+
+```bash
+pnpm --filter docs build
+pnpm --filter docs exec wrangler deploy \
+  --strict \
+  --domain docs.example.com \
+  --domain elements.example.com \
+  --var PUBLIC_DOCS_ORIGIN:https://docs.example.com \
+  --var ELEMENTS_REGISTRY_URL:https://elements.example.com/r
+```
+
+The two custom domains point at one Worker. The request hostname decides whether the Worker serves
+docs or registry files. Preview and localhost hosts keep `/mcp` and `/r/*` on one origin.
+
+## What the Worker uses
+
+| Cloudflare service | Binding | Purpose |
+| --- | --- | --- |
+| Workers | application entrypoint | TanStack Start server and assets |
+| D1 | `DB` | auth, workspaces, registry, and billing state |
+| Durable Objects | `REALTIME_ROOM` | authenticated realtime echo seam |
+
+The Worker enables `nodejs_compat`, source maps, and observability. Realtime behavior remains off
+until `REALTIME_ENABLED=true`.
+
+## Create the database
+
+Authenticate Wrangler and create a database for the fork:
+
+```bash
+pnpm --dir apps/web wrangler login
+pnpm --dir apps/web wrangler d1 create my-product-db
+```
+
+Replace the placeholder `database_name` and `database_id` in `apps/web/wrangler.jsonc`. Rename the
+Worker from `micropreneur-starter-web` before the first deployment.
+
+## Configure secrets
+
+Set a unique Better Auth secret first:
+
+```bash
+pnpm --dir apps/web wrangler secret put BETTER_AUTH_SECRET
+```
+
+Add provider secrets only for integrations you actually enable. Never place real values in
+`wrangler.jsonc`, `.env.example`, or `.dev.vars.example`.
+
+Set `BETTER_AUTH_URL` to the final HTTPS origin. Google OAuth callback configuration must use the
+same origin.
+
+## Migrate and deploy
+
+Inspect generated migrations, apply them to the configured remote database, then deploy:
+
+```bash
+pnpm --filter @micropreneur/db db:generate
+pnpm --filter @micropreneur/db db:migrate:remote
+pnpm turbo typecheck lint build test
+pnpm --filter web cf:deploy
+```
+
+<Callout type="warning" title="Remote state changes">
+  Remote migrations and deployment affect Cloudflare resources. Run them only against the account
+  and database you resolved intentionally.
+</Callout>
+
+## After deployment
+
+Verify the public landing page, credential authentication, onboarding, registry isolation, and
+every configured provider path. A successful upload proves only that the Worker deployed; it does
+not prove OAuth callbacks, email delivery, or Stripe webhooks were accepted.

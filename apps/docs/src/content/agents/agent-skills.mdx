@@ -1,0 +1,67 @@
+export const meta = {
+  title: 'Agent Skills',
+  description: 'Share one canonical Starter workflow with repository agents and standards-based web discovery.',
+  group: 'Agents',
+  order: 2,
+  keywords: ['agent skills', 'skill.md', 'well-known', 'discovery', 'symlinks', 'sha-256'],
+  sections: [
+    { id: 'canonical-source', title: 'Canonical source' },
+    { id: 'repository-discovery', title: 'Repository discovery' },
+    { id: 'hosted-discovery', title: 'Hosted discovery' },
+    { id: 'integrity-and-loading', title: 'Integrity and loading' },
+  ],
+}
+
+Starter keeps agent guidance close to the repository while publishing the same skill for tools that
+discover instructions over HTTPS.
+
+## Canonical source
+
+The source of truth lives at:
+
+```text
+.agents/shared-skills/starter-repo/SKILL.md
+```
+
+Edit the canonical file once. The docs generator copies its exact UTF-8 bytes into raw skill routes,
+the complete LLM corpus, the MCP snapshot, and both well-known discovery formats.
+
+## Repository discovery
+
+`.agents/skills/starter-repo` is a relative symlink to the canonical directory. This keeps every
+fork compatible with agents that scan `.agents/skills` without maintaining duplicate instructions.
+
+The generator verifies the symlink target before publishing. On Windows, enable Developer Mode or
+use a Git environment that preserves symlinks when cloning.
+
+## Hosted discovery
+
+Current clients should begin at:
+
+```text
+https://docs.micropreneur.dev/.well-known/agent-skills/index.json
+```
+
+Older clients can use the compatible fallback:
+
+```text
+https://docs.micropreneur.dev/.well-known/skills/index.json
+```
+
+Install the published skill with the skills CLI:
+
+```bash
+pnpm dlx skills add https://docs.micropreneur.dev
+```
+
+The existing `/skills/index.json` and `/skills/starter-repo.md` routes remain available for simple
+consumers and existing Starter forks.
+
+## Integrity and loading
+
+The current discovery index uses the draft v0.2 format. Each skill entry includes its schema,
+artifact URL, `skill-md` type, and a SHA-256 digest of the exact served `SKILL.md` bytes.
+
+Agents can first load the small index, fetch the complete skill only when its description matches
+the task, and verify the digest before trusting its instructions. Starter publishes only the public
+single-file skill in this repository; private Pro guidance is not copied into the index.

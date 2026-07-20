@@ -1,0 +1,517 @@
+{
+  "docs": [
+    {
+      "description": "Understand what Starter includes, where product code belongs, and what to replace in your first fork.",
+      "group": "Getting started",
+      "id": "getting-started/introduction",
+      "keywords": [
+        "quickstart",
+        "starter",
+        "saas",
+        "architecture",
+        "free starter"
+      ],
+      "path": "/getting-started/introduction",
+      "rawPath": "/getting-started/introduction.md",
+      "sourcePath": "apps/docs/src/content/getting-started/introduction.mdx",
+      "title": "Introduction",
+      "type": "article"
+    },
+    {
+      "description": "Start the web app, docs, D1 database, registry, and focused feedback loops without production secrets.",
+      "group": "Getting started",
+      "id": "getting-started/running-locally",
+      "keywords": [
+        "local development",
+        "pnpm dev",
+        "d1",
+        "migrations",
+        "tests",
+        "ports"
+      ],
+      "path": "/getting-started/running-locally",
+      "rawPath": "/getting-started/running-locally.md",
+      "sourcePath": "apps/docs/src/content/getting-started/running-locally.mdx",
+      "title": "Running locally",
+      "type": "article"
+    },
+    {
+      "description": "Find the application composition root, provider adapters, removable domain example, and source-delivered UI.",
+      "group": "Getting started",
+      "id": "getting-started/project-structure",
+      "keywords": [
+        "monorepo",
+        "packages",
+        "apps",
+        "architecture",
+        "ports adapters"
+      ],
+      "path": "/getting-started/project-structure",
+      "rawPath": "/getting-started/project-structure.md",
+      "sourcePath": "apps/docs/src/content/getting-started/project-structure.mdx",
+      "title": "Project structure",
+      "type": "article"
+    },
+    {
+      "description": "Build readable MDX guides with callouts, numbered steps, command tabs, and live Elements registry previews.",
+      "group": "Getting started",
+      "id": "getting-started/writing-documentation",
+      "keywords": [
+        "mdx",
+        "documentation",
+        "components",
+        "steps",
+        "tabs",
+        "previews"
+      ],
+      "path": "/getting-started/writing-documentation",
+      "rawPath": "/getting-started/writing-documentation.md",
+      "sourcePath": "apps/docs/src/content/getting-started/writing-documentation.mdx",
+      "title": "Writing documentation",
+      "type": "article"
+    },
+    {
+      "description": "Configure credential authentication and optional Google OAuth through the default AuthPort adapter.",
+      "group": "Integrations",
+      "id": "integrations/better-auth",
+      "keywords": [
+        "auth",
+        "better auth",
+        "google oauth",
+        "credentials",
+        "session"
+      ],
+      "path": "/integrations/better-auth",
+      "rawPath": "/integrations/better-auth.md",
+      "sourcePath": "apps/docs/src/content/integrations/better-auth.mdx",
+      "title": "Better Auth",
+      "type": "article"
+    },
+    {
+      "description": "Understand the typed Descope adapter seam, its current limitations, and the work required to make it functional.",
+      "group": "Integrations",
+      "id": "integrations/descope",
+      "keywords": [
+        "descope",
+        "auth",
+        "adapter",
+        "501",
+        "agentic identity"
+      ],
+      "path": "/integrations/descope",
+      "rawPath": "/integrations/descope.md",
+      "sourcePath": "apps/docs/src/content/integrations/descope.mdx",
+      "title": "Descope",
+      "type": "article"
+    },
+    {
+      "description": "Switch from deterministic local email capture to verified Resend delivery on Cloudflare Workers.",
+      "group": "Integrations",
+      "id": "integrations/resend",
+      "keywords": [
+        "resend",
+        "email",
+        "verification",
+        "password reset",
+        "welcome"
+      ],
+      "path": "/integrations/resend",
+      "rawPath": "/integrations/resend.md",
+      "sourcePath": "apps/docs/src/content/integrations/resend.mdx",
+      "title": "Resend email",
+      "type": "article"
+    },
+    {
+      "description": "Configure the one-plan Stripe sandbox, signed webhooks, customer portal, and registry export entitlement.",
+      "group": "Integrations",
+      "id": "integrations/stripe",
+      "keywords": [
+        "stripe",
+        "billing",
+        "checkout",
+        "webhook",
+        "subscription",
+        "entitlement"
+      ],
+      "path": "/integrations/stripe",
+      "rawPath": "/integrations/stripe.md",
+      "sourcePath": "apps/docs/src/content/integrations/stripe.mdx",
+      "title": "Stripe billing",
+      "type": "article"
+    },
+    {
+      "description": "Create the D1 database, configure Worker bindings and secrets, apply remote migrations, and deploy deliberately.",
+      "group": "Cloudflare",
+      "id": "cloudflare/deployment",
+      "keywords": [
+        "cloudflare",
+        "workers",
+        "deploy",
+        "wrangler",
+        "d1",
+        "durable objects",
+        "secrets"
+      ],
+      "path": "/cloudflare/deployment",
+      "rawPath": "/cloudflare/deployment.md",
+      "sourcePath": "apps/docs/src/content/cloudflare/deployment.mdx",
+      "title": "Deploy to Cloudflare",
+      "type": "article"
+    },
+    {
+      "description": "Browse the public registry and install source-owned components and themes with the shadcn CLI.",
+      "group": "Elements",
+      "id": "elements/installing-free",
+      "keywords": [
+        "elements",
+        "shadcn",
+        "registry",
+        "components",
+        "themes",
+        "cli"
+      ],
+      "path": "/elements/installing-free",
+      "rawPath": "/elements/installing-free.md",
+      "sourcePath": "apps/docs/src/content/elements/installing-free.mdx",
+      "title": "Install Elements Free",
+      "type": "article"
+    },
+    {
+      "description": "Understand the future authenticated registry contract without including premium source or a license gate in Starter.",
+      "group": "Elements",
+      "id": "elements/elements-pro",
+      "keywords": [
+        "elements pro",
+        "premium",
+        "registry",
+        "license",
+        "shadcn",
+        "namespace"
+      ],
+      "path": "/elements/elements-pro",
+      "rawPath": "/elements/elements-pro.md",
+      "sourcePath": "apps/docs/src/content/elements/elements-pro.mdx",
+      "title": "Elements Pro",
+      "type": "article"
+    },
+    {
+      "description": "Connect coding agents to public Starter documentation, skills, themes, and Elements through one read-only endpoint.",
+      "group": "Agents",
+      "id": "agents/mcp-server",
+      "keywords": [
+        "mcp",
+        "model context protocol",
+        "agents",
+        "codex",
+        "claude",
+        "components"
+      ],
+      "path": "/agents/mcp-server",
+      "rawPath": "/agents/mcp-server.md",
+      "sourcePath": "apps/docs/src/content/agents/mcp-server.mdx",
+      "title": "MCP Server",
+      "type": "article"
+    },
+    {
+      "description": "Share one canonical Starter workflow with repository agents and standards-based web discovery.",
+      "group": "Agents",
+      "id": "agents/agent-skills",
+      "keywords": [
+        "agent skills",
+        "skill.md",
+        "well-known",
+        "discovery",
+        "symlinks",
+        "sha-256"
+      ],
+      "path": "/agents/agent-skills",
+      "rawPath": "/agents/agent-skills.md",
+      "sourcePath": "apps/docs/src/content/agents/agent-skills.mdx",
+      "title": "Agent Skills",
+      "type": "article"
+    },
+    {
+      "description": "Consume Starter guides as raw Markdown, concise LLM indexes, or a structured public content manifest.",
+      "group": "Agents",
+      "id": "agents/llms-integration",
+      "keywords": [
+        "llms.txt",
+        "llms-full.txt",
+        "markdown",
+        "agents",
+        "json",
+        "utf-8"
+      ],
+      "path": "/agents/llms-integration",
+      "rawPath": "/agents/llms-integration.md",
+      "sourcePath": "apps/docs/src/content/agents/llms-integration.mdx",
+      "title": "LLMs Integration",
+      "type": "article"
+    },
+    {
+      "description": "Browse every public Elements component with live previews and install commands.",
+      "group": "Elements",
+      "id": "elements/gallery",
+      "keywords": [
+        "elements",
+        "components",
+        "gallery",
+        "registry",
+        "shadcn"
+      ],
+      "path": "/elements/gallery",
+      "rawPath": "/elements/gallery.md",
+      "sourcePath": "packages/elements/src/catalog.ts",
+      "title": "Component gallery",
+      "type": "article"
+    },
+    {
+      "description": "A Base UI-backed action control with semantic variants.",
+      "group": "Elements / Actions",
+      "id": "components/button",
+      "keywords": [
+        "button",
+        "Actions",
+        "primitive",
+        "registry:ui"
+      ],
+      "path": "/elements/components/button",
+      "rawPath": "/components/button.md",
+      "sourcePath": "apps/docs/public/components/button.md",
+      "title": "Button",
+      "type": "component"
+    },
+    {
+      "description": "A composed object container with header, content, action, footer slots, and a clipped-corner brand variant.",
+      "group": "Elements / Objects",
+      "id": "components/card",
+      "keywords": [
+        "card",
+        "Objects",
+        "primitive",
+        "registry:ui"
+      ],
+      "path": "/elements/components/card",
+      "rawPath": "/components/card.md",
+      "sourcePath": "apps/docs/public/components/card.md",
+      "title": "Card",
+      "type": "component"
+    },
+    {
+      "description": "A compact property chip with semantic variants.",
+      "group": "Elements / Properties",
+      "id": "components/badge",
+      "keywords": [
+        "badge",
+        "Properties",
+        "primitive",
+        "registry:ui"
+      ],
+      "path": "/elements/components/badge",
+      "rawPath": "/components/badge.md",
+      "sourcePath": "apps/docs/public/components/badge.md",
+      "title": "Badge",
+      "type": "component"
+    },
+    {
+      "description": "Thin-ruled table primitives with wide-tracked uppercase headers.",
+      "group": "Elements / Interfaces",
+      "id": "components/table",
+      "keywords": [
+        "table",
+        "Interfaces",
+        "primitive",
+        "registry:ui"
+      ],
+      "path": "/elements/components/table",
+      "rawPath": "/components/table.md",
+      "sourcePath": "apps/docs/public/components/table.md",
+      "title": "Table",
+      "type": "component"
+    },
+    {
+      "description": "A compact semantic property indicator for common lifecycle states.",
+      "group": "Elements / Properties",
+      "id": "components/status-badge",
+      "keywords": [
+        "status-badge",
+        "Properties",
+        "component",
+        "registry:component"
+      ],
+      "path": "/elements/components/status-badge",
+      "rawPath": "/components/status-badge.md",
+      "sourcePath": "apps/docs/public/components/status-badge.md",
+      "title": "StatusBadge",
+      "type": "component"
+    },
+    {
+      "description": "A typed read-only grid foundation for object collections.",
+      "group": "Elements / Interfaces",
+      "id": "components/data-grid",
+      "keywords": [
+        "data-grid",
+        "Interfaces",
+        "component",
+        "registry:component"
+      ],
+      "path": "/elements/components/data-grid",
+      "rawPath": "/components/data-grid.md",
+      "sourcePath": "apps/docs/public/components/data-grid.md",
+      "title": "DataGrid",
+      "type": "component"
+    },
+    {
+      "description": "A horizontal ledger-style row list with name, meta, mono figure, and status slots.",
+      "group": "Elements / Interfaces",
+      "id": "components/ledger-list",
+      "keywords": [
+        "ledger-list",
+        "Interfaces",
+        "component",
+        "registry:component"
+      ],
+      "path": "/elements/components/ledger-list",
+      "rawPath": "/components/ledger-list.md",
+      "sourcePath": "apps/docs/public/components/ledger-list.md",
+      "title": "LedgerList",
+      "type": "component"
+    },
+    {
+      "description": "A small editorial annotation with a burnt-orange marker detail.",
+      "group": "Elements / Properties",
+      "id": "components/margin-note",
+      "keywords": [
+        "margin-note",
+        "Properties",
+        "component",
+        "registry:component"
+      ],
+      "path": "/elements/components/margin-note",
+      "rawPath": "/components/margin-note.md",
+      "sourcePath": "apps/docs/public/components/margin-note.md",
+      "title": "MarginNote",
+      "type": "component"
+    },
+    {
+      "description": "A tiny zero-padded index number in mono with wide tracking.",
+      "group": "Elements / Properties",
+      "id": "components/index-label",
+      "keywords": [
+        "index-label",
+        "Properties",
+        "component",
+        "registry:component"
+      ],
+      "path": "/elements/components/index-label",
+      "rawPath": "/components/index-label.md",
+      "sourcePath": "apps/docs/public/components/index-label.md",
+      "title": "IndexLabel",
+      "type": "component"
+    },
+    {
+      "description": "A vertical milestone list with circular markers and connecting rules.",
+      "group": "Elements / Interfaces",
+      "id": "components/milestone-marker",
+      "keywords": [
+        "milestone-marker",
+        "Interfaces",
+        "component",
+        "registry:component"
+      ],
+      "path": "/elements/components/milestone-marker",
+      "rawPath": "/components/milestone-marker.md",
+      "sourcePath": "apps/docs/public/components/milestone-marker.md",
+      "title": "MilestoneMarker",
+      "type": "component"
+    },
+    {
+      "description": "A branded empty state with serif headline, muted copy, and an action slot.",
+      "group": "Elements / Interfaces",
+      "id": "components/empty-state",
+      "keywords": [
+        "empty-state",
+        "Interfaces",
+        "component",
+        "registry:component"
+      ],
+      "path": "/elements/components/empty-state",
+      "rawPath": "/components/empty-state.md",
+      "sourcePath": "apps/docs/public/components/empty-state.md",
+      "title": "EmptyState",
+      "type": "component"
+    },
+    {
+      "description": "A responsive application shell with navigation, header, metric slots, and a content workspace.",
+      "group": "Elements / Interfaces",
+      "id": "components/dashboard-shell",
+      "keywords": [
+        "dashboard-shell",
+        "Interfaces",
+        "block",
+        "registry:block"
+      ],
+      "path": "/elements/components/dashboard-shell",
+      "rawPath": "/components/dashboard-shell.md",
+      "sourcePath": "apps/docs/public/components/dashboard-shell.md",
+      "title": "DashboardShell",
+      "type": "component"
+    },
+    {
+      "description": "A provider-neutral authentication card with accessible credential fields and action slots.",
+      "group": "Elements / Interfaces",
+      "id": "components/auth-card",
+      "keywords": [
+        "auth-card",
+        "Interfaces",
+        "block",
+        "registry:block"
+      ],
+      "path": "/elements/components/auth-card",
+      "rawPath": "/components/auth-card.md",
+      "sourcePath": "apps/docs/public/components/auth-card.md",
+      "title": "AuthCard",
+      "type": "component"
+    },
+    {
+      "description": "A responsive settings shell with local navigation, page context, and a focused content region.",
+      "group": "Elements / Interfaces",
+      "id": "components/settings-layout",
+      "keywords": [
+        "settings-layout",
+        "Interfaces",
+        "block",
+        "registry:block"
+      ],
+      "path": "/elements/components/settings-layout",
+      "rawPath": "/components/settings-layout.md",
+      "sourcePath": "apps/docs/public/components/settings-layout.md",
+      "title": "SettingsLayout",
+      "type": "component"
+    },
+    {
+      "description": "A typed table workflow with local search, a semantic filter, loading, empty, and error states.",
+      "group": "Elements / Interfaces",
+      "id": "components/filterable-data-table",
+      "keywords": [
+        "filterable-data-table",
+        "Interfaces",
+        "block",
+        "registry:block"
+      ],
+      "path": "/elements/components/filterable-data-table",
+      "rawPath": "/components/filterable-data-table.md",
+      "sourcePath": "apps/docs/public/components/filterable-data-table.md",
+      "title": "FilterableDataTable",
+      "type": "component"
+    }
+  ],
+  "skills": [
+    {
+      "description": "Make narrow, verified changes to a fork of micropreneur/starter.",
+      "name": "starter-repo",
+      "rawPath": "/skills/starter-repo.md",
+      "sourcePath": ".agents/shared-skills/starter-repo/SKILL.md"
+    }
+  ]
+}

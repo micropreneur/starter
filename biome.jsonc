@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["./packages/config/biome/base.jsonc"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main",
+    "root": "."
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!!**/node_modules",
+      "!!**/dist",
+      "!!**/.output",
+      "!!**/.turbo",
+      "!!**/.wrangler",
+      "!!**/coverage",
+      "!**/routeTree.gen.ts",
+      "!**/worker-configuration.d.ts",
+      "!apps/docs/public/agent-content.json",
+      "!packages/mcp/src/generated/agent-content.json",
+      "!pnpm-lock.yaml"
+    ]
+  }
+}

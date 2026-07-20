@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1784589716434,
+      "tag": "0000_moaning_siren",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1785541687943,
+      "tag": "0001_gray_patch",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1786906590452,
+      "tag": "0002_stiff_santa_claus",
+      "breakpoints": true
+    }
+  ]
+}
