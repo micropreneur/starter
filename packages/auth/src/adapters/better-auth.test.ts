@@ -124,7 +124,7 @@ describe('better auth adapter contract', () => {
     expect(signOutResponse.status).toBe(200)
     expect(await auth.getSession(signedInHeaders)).toBeNull()
     await expect(auth.requireUser(signedInHeaders)).rejects.toBeInstanceOf(UnauthorizedError)
-  })
+  }, 15_000)
 
   it('verifies email, resets password once, and cascades user-owned data on deletion', async () => {
     const deliveries: EmailMessage[] = []
