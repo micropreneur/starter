@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
-    "shadcn": "^4.16.2",
+    "shadcn": "^4.19.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
