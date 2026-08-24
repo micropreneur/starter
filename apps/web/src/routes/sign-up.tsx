@@ -12,7 +12,7 @@ export const Route = createFileRoute('/sign-up')({
 })
 
 function SignUpPage() {
-  const { googleOAuth } = Route.useLoaderData()
+  const { googleOAuth, turnstileSiteKey } = Route.useLoaderData()
 
   return (
     <AuthPageShell
@@ -21,7 +21,7 @@ function SignUpPage() {
       standalone
       title="Create your starter account"
     >
-      <SignUpForm googleOAuth={googleOAuth} />
+      <SignUpForm googleOAuth={googleOAuth} turnstileSiteKey={turnstileSiteKey} />
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{' '}
         <Link

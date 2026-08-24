@@ -19,7 +19,7 @@ export class OperationRecordNotFoundError extends Error {
 
 export async function createOperationRecord(
   database: Database,
-  userId: string,
+  workspaceId: string,
   input: OperationRecordInput,
 ): Promise<OperationRecord> {
   const parsed = operationRecordInputSchema.parse(input)
@@ -33,7 +33,7 @@ export async function createOperationRecord(
     status: parsed.status,
     summary: parsed.summary,
     title: parsed.title,
-    userId,
+    workspaceId,
   })
 
   if (parsed.tags.length === 0) await recordInsert
@@ -54,19 +54,19 @@ export async function createOperationRecord(
     createdAt: now,
     id,
     updatedAt: now,
-    userId,
+    workspaceId,
   }
 }
 
 export async function getOperationRecord(
   database: Database,
-  userId: string,
+  workspaceId: string,
   id: string,
 ): Promise<OperationRecord | null> {
   const [record] = await database
     .select()
     .from(operationRecords)
-    .where(and(eq(operationRecords.id, id), eq(operationRecords.userId, userId)))
+    .where(and(eq(operationRecords.id, id), eq(operationRecords.workspaceId, workspaceId)))
     .limit(1)
 
   if (!record) return null
@@ -85,11 +85,11 @@ export async function getOperationRecord(
 
 export async function listOperationRecords(
   database: Database,
-  userId: string,
+  workspaceId: string,
   input: OperationRecordListInput,
 ) {
   const parsed = operationRecordListSchema.parse(input)
-  const filters = [eq(operationRecords.userId, userId)]
+  const filters = [eq(operationRecords.workspaceId, workspaceId)]
 
   if (parsed.search) {
     const textFilter = or(
@@ -160,7 +160,7 @@ export async function listOperationRecords(
 
 export async function updateOperationRecord(
   database: Database,
-  userId: string,
+  workspaceId: string,
   id: string,
   input: OperationRecordInput,
 ): Promise<OperationRecord> {
@@ -168,7 +168,7 @@ export async function updateOperationRecord(
   const [owned] = await database
     .select({ id: operationRecords.id })
     .from(operationRecords)
-    .where(and(eq(operationRecords.id, id), eq(operationRecords.userId, userId)))
+    .where(and(eq(operationRecords.id, id), eq(operationRecords.workspaceId, workspaceId)))
     .limit(1)
   if (!owned) throw new OperationRecordNotFoundError()
 
@@ -182,7 +182,7 @@ export async function updateOperationRecord(
       title: parsed.title,
       updatedAt: new Date(),
     })
-    .where(and(eq(operationRecords.id, id), eq(operationRecords.userId, userId)))
+    .where(and(eq(operationRecords.id, id), eq(operationRecords.workspaceId, workspaceId)))
 
   const tagDelete = database.delete(operationRecordTags).where(eq(operationRecordTags.recordId, id))
   if (parsed.tags.length === 0) await database.batch([recordUpdate, tagDelete])
@@ -199,15 +199,15 @@ export async function updateOperationRecord(
     ])
   }
 
-  const record = await getOperationRecord(database, userId, id)
+  const record = await getOperationRecord(database, workspaceId, id)
   if (!record) throw new OperationRecordNotFoundError()
   return record
 }
 
-export async function deleteOperationRecord(database: Database, userId: string, id: string) {
+export async function deleteOperationRecord(database: Database, workspaceId: string, id: string) {
   const deleted = await database
     .delete(operationRecords)
-    .where(and(eq(operationRecords.id, id), eq(operationRecords.userId, userId)))
+    .where(and(eq(operationRecords.id, id), eq(operationRecords.workspaceId, workspaceId)))
     .returning({ id: operationRecords.id })
 
   if (deleted.length === 0) throw new OperationRecordNotFoundError()
@@ -227,6 +227,6 @@ function toOperationRecord(
     tags,
     title: record.title,
     updatedAt: record.updatedAt,
-    userId: record.userId,
+    workspaceId: record.workspaceId,
   }
 }

@@ -22,7 +22,7 @@ const metrics = [
 
 const starterSections = [
   {
-    description: 'A complete user-owned CRUD and filtering example.',
+    description: 'A complete workspace-scoped CRUD and filtering example.',
     icon: TableProperties,
     title: 'Operations Registry',
     to: '/app/registry' as const,

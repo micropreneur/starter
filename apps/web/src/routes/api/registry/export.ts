@@ -2,6 +2,7 @@ import { env as cloudflareEnv } from 'cloudflare:workers'
 import { FeatureNotAvailableError } from '@micropreneur/billing'
 import { createDb } from '@micropreneur/db'
 import { listOperationRecords } from '@micropreneur/operations'
+import { requireActiveWorkspace } from '@micropreneur/workspaces'
 import { createFileRoute } from '@tanstack/react-router'
 
 import type { WebEnv } from '../../../env'
@@ -25,10 +26,11 @@ export const Route = createFileRoute('/api/registry/export')({
           throw error
         }
         const database = createDb((cloudflareEnv as unknown as WebEnv).DB)
+        const workspace = await requireActiveWorkspace(database, user.id)
         const rows = []
         let page = 1
         while (true) {
-          const result = await listOperationRecords(database, user.id, {
+          const result = await listOperationRecords(database, workspace.id, {
             page,
             pageSize: 50,
             search: '',

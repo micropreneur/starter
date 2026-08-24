@@ -2,7 +2,7 @@
 
 ## What this repository is
 
-`micropreneur/starter` is a public MIT-licensed, fork-and-go base for paid SaaS projects. It is the open foundation layer only. Free Starter v1 demonstrates a paid, single-user product and provisions one personal workspace for onboarding; Operations Registry ownership remains user-scoped until its explicit workspace-migration slice. Free Starter includes one-plan end-user Stripe billing and an independent entitlement example. Do not add `starter-pro`, `elements-pro`, team management, workspace billing, premium components, license gates, ACP logic, or a project generator here.
+`micropreneur/starter` is a public MIT-licensed, fork-and-go base for paid SaaS projects. It is the open foundation layer only. Free Starter v1 demonstrates a paid, single-user product and provisions one personal workspace for onboarding and Operations Registry ownership. Free Starter includes one-plan end-user Stripe billing and an independent entitlement example. Do not add `starter-pro`, `elements-pro`, team management, workspace billing, premium components, license gates, ACP logic, or a project generator here.
 
 ## Locked stack
 
@@ -53,7 +53,7 @@ For Worker bindings, run `pnpm --filter web cf-typegen`. Do not deploy from agen
 - `packages/auth`: port and provider adapters.
 - `packages/email`: email port with Resend and deterministic local capture adapters.
 - `packages/billing`: one-plan billing port, Stripe adapter, webhook state, and entitlements.
-- `packages/operations`: removable user-owned Operations Registry example domain.
+- `packages/operations`: removable personal-workspace Operations Registry example domain.
 - `packages/workspaces`: one personal workspace, owner membership, and onboarding metadata.
 - `packages/db`: D1 client and schema.
 - `packages/ui`: internal Base UI shadcn primitives.
