@@ -37,9 +37,17 @@ function loadTurnstile(): Promise<TurnstileApi> {
     script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
     script.onload = () => {
       if (window.turnstile) resolve(window.turnstile)
-      else reject(new Error('Turnstile loaded without exposing its client API.'))
+      else {
+        scriptPromise = undefined
+        script.remove()
+        reject(new Error('Turnstile loaded without exposing its client API.'))
+      }
     }
-    script.onerror = () => reject(new Error('Turnstile could not be loaded.'))
+    script.onerror = () => {
+      scriptPromise = undefined
+      script.remove()
+      reject(new Error('Turnstile could not be loaded.'))
+    }
     document.head.appendChild(script)
   })
   return scriptPromise

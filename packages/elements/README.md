@@ -73,7 +73,8 @@ Five normalized palettes are derived from the Apache-2.0-licensed TweakCN projec
 The intended flow is:
 
 1. Stripe records a purchase and issues a license key.
-2. A user's `components.json` configures `@elements-pro` with `X-License-Key: ${ELEMENTS_PRO_LICENSE_KEY}`.
+2. A user's `components.json` configures `@elements-pro` with
+   `Authorization: Bearer ${ELEMENTS_PRO_LICENSE_KEY}`.
 3. A Cloudflare Worker validates that key and its component entitlement.
 4. The Worker serves the requested premium shadcn item JSON from the private manifest.
 5. The CLI writes source into the consuming project exactly as it does for this free registry.
