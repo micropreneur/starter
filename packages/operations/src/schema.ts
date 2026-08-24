@@ -37,7 +37,7 @@ export type OperationRecordListInput = z.infer<typeof operationRecordListSchema>
 
 export interface OperationRecord extends OperationRecordInput {
   id: string
-  userId: string
+  workspaceId: string
   createdAt: Date
   updatedAt: Date
 }

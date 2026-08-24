@@ -12,6 +12,7 @@ import { isStandaloneAuthPath } from '../lib/site-layout'
 
 const THEME_BOOTSTRAP = `(function(){try{var k='theme';var s=localStorage.getItem(k);var d=s==='dark'||(s!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`
 const FLOATING_HEADER_THRESHOLD = 50
+const SANDBOX_MODE = import.meta.env.VITE_PUBLIC_SANDBOX_MODE === 'true'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -60,6 +61,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <TooltipProvider>
+          {SANDBOX_MODE ? <SandboxNotice /> : null}
           <SiteHeader />
           {children}
         </TooltipProvider>
@@ -92,17 +94,19 @@ function SiteHeader() {
 
   return (
     <>
-      <div className="dark border-b border-border/70 bg-background px-4 py-2 text-foreground">
-        <a
-          className="mx-auto flex max-w-7xl items-center justify-center gap-2 text-center text-xs text-muted-foreground transition-colors hover:text-foreground"
-          href="https://github.com/micropreneur/starter"
-          rel="noreferrer"
-          target="_blank"
-        >
-          Open source, MIT licensed, and built for the next micro SaaS
-          <ArrowUpRight className="size-3.5" />
-        </a>
-      </div>
+      {!SANDBOX_MODE ? (
+        <div className="dark border-b border-border/70 bg-background px-4 py-2 text-foreground">
+          <a
+            className="mx-auto flex max-w-7xl items-center justify-center gap-2 text-center text-xs text-muted-foreground transition-colors hover:text-foreground"
+            href="https://github.com/micropreneur/starter"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Open source, MIT licensed, and built for the next micro SaaS
+            <ArrowUpRight className="size-3.5" />
+          </a>
+        </div>
+      ) : null}
       <div className="h-14">
         <header
           className="relative z-20 h-14 border-b border-border/70 bg-background transition-[background-color,border-color,padding] duration-300 ease-out data-[floating=true]:fixed data-[floating=true]:inset-x-0 data-[floating=true]:top-4 data-[floating=true]:z-50 data-[floating=true]:h-auto data-[floating=true]:border-b-0 data-[floating=true]:bg-transparent data-[floating=true]:px-4 data-[floating=true]:sm:px-6"
@@ -178,5 +182,17 @@ function SiteHeader() {
         </header>
       </div>
     </>
+  )
+}
+
+function SandboxNotice() {
+  return (
+    <div
+      className="border-b border-amber-400/30 bg-amber-300/15 px-4 py-2 text-center text-xs font-medium text-amber-950 dark:text-amber-100"
+      role="status"
+    >
+      Public sandbox · Test data may be reset · Stripe checkout uses test mode and never creates a
+      real charge
+    </div>
   )
 }

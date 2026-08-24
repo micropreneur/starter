@@ -11,6 +11,8 @@ import { NativeSelect, NativeSelectOption } from '@micropreneur/elements/primiti
 import { CircleCheck } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 
+import { TurnstileWidget } from './turnstile-widget'
+
 export function SignInForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
   return (
     <div className="grid gap-5">
@@ -20,7 +22,15 @@ export function SignInForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
   )
 }
 
-export function SignUpForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
+export function SignUpForm({
+  googleOAuth = false,
+  turnstileSiteKey,
+}: {
+  googleOAuth?: boolean
+  turnstileSiteKey?: string
+}) {
+  const [challengeResetKey, setChallengeResetKey] = useState(0)
+  const [challengeToken, setChallengeToken] = useState<string>()
   const [error, setError] = useState<string>()
   const [created, setCreated] = useState(false)
   const [pending, setPending] = useState(false)
@@ -28,6 +38,10 @@ export function SignUpForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(undefined)
+    if (turnstileSiteKey && !challengeToken) {
+      setError('Complete the verification challenge before creating your account.')
+      return
+    }
     setPending(true)
 
     const form = new FormData(event.currentTarget)
@@ -36,6 +50,7 @@ export function SignUpForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
         email: form.get('email'),
         name: form.get('name'),
         password: form.get('password'),
+        turnstileToken: challengeToken,
         workspace: {
           name: form.get('workspaceName'),
           primaryGoal: form.get('primaryGoal'),
@@ -49,6 +64,7 @@ export function SignUpForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
     if (!response.ok) {
       setError(await readError(response))
       setPending(false)
+      if (turnstileSiteKey) setChallengeResetKey((value) => value + 1)
       return
     }
 
@@ -119,6 +135,15 @@ export function SignUpForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
           </div>
           <WorkspaceOnboardingFields idPrefix="sign-up" />
 
+          {turnstileSiteKey ? (
+            <TurnstileWidget
+              action="sign_up"
+              key={challengeResetKey}
+              onTokenChange={setChallengeToken}
+              siteKey={turnstileSiteKey}
+            />
+          ) : null}
+
           {error ? <FieldError>{error}</FieldError> : null}
           <Button className="mt-1 w-full" disabled={pending} type="submit">
             {pending ? 'Creating your workspace…' : 'Create account'}
@@ -129,25 +154,39 @@ export function SignUpForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
   )
 }
 
-export function PasswordResetRequestForm() {
+export function PasswordResetRequestForm({ turnstileSiteKey }: { turnstileSiteKey?: string }) {
+  const [challengeResetKey, setChallengeResetKey] = useState(0)
+  const [challengeToken, setChallengeToken] = useState<string>()
   const [message, setMessage] = useState<string>()
   const [pending, setPending] = useState(false)
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (turnstileSiteKey && !challengeToken) {
+      setMessage('Complete the verification challenge before requesting a reset link.')
+      return
+    }
     setPending(true)
     const form = new FormData(event.currentTarget)
     const response = await fetch('/api/request-password-reset', {
       body: JSON.stringify({
         email: form.get('email'),
         redirectTo: `${window.location.origin}/reset-password`,
+        turnstileToken: challengeToken,
       }),
       headers: { 'content-type': 'application/json' },
       method: 'POST',
     })
-    const body = (await response.json().catch(() => null)) as { message?: string } | null
-    setMessage(body?.message ?? 'If an account exists, a reset link has been sent.')
+    const body = (await response.json().catch(() => null)) as {
+      error?: string
+      message?: string
+    } | null
+    setMessage(
+      (response.ok ? body?.message : body?.error) ??
+        'If an account exists, a reset link has been sent.',
+    )
     setPending(false)
+    if (turnstileSiteKey) setChallengeResetKey((value) => value + 1)
   }
 
   return (
@@ -163,6 +202,14 @@ export function PasswordResetRequestForm() {
             type="email"
           />
         </Field>
+        {turnstileSiteKey ? (
+          <TurnstileWidget
+            action="password_reset"
+            key={challengeResetKey}
+            onTokenChange={setChallengeToken}
+            siteKey={turnstileSiteKey}
+          />
+        ) : null}
         {message ? (
           <p
             className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground"

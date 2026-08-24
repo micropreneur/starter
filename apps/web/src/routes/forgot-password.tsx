@@ -1,19 +1,22 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { PasswordResetRequestForm } from '../components/auth-forms'
 import { AuthPageShell } from '../components/auth-page-shell'
+import { getAuthCapabilities } from '../lib/auth.functions'
 
 export const Route = createFileRoute('/forgot-password')({
+  loader: () => getAuthCapabilities(),
   component: ForgotPasswordPage,
 })
 
 function ForgotPasswordPage() {
+  const { turnstileSiteKey } = Route.useLoaderData()
   return (
     <AuthPageShell
       description="We will send a single-use link if an account exists for the address."
       eyebrow="Account recovery"
       title="Reset your password"
     >
-      <PasswordResetRequestForm />
+      <PasswordResetRequestForm turnstileSiteKey={turnstileSiteKey} />
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Remembered it?{' '}
         <Link

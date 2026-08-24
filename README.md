@@ -30,7 +30,7 @@ Create an account at `/sign-up`, answer the three personal workspace questions, 
 | `packages/auth` | Provider-neutral auth port with a Better Auth adapter and a typed Descope stub |
 | `packages/email` | Email port with Resend and local capture adapters |
 | `packages/billing` | One-plan Stripe service, webhook state, and entitlements |
-| `packages/operations` | Removable user-owned Operations Registry example |
+| `packages/operations` | Removable personal-workspace Operations Registry example |
 | `packages/workspaces` | Single-member personal workspace and onboarding seam |
 | `packages/db` | D1 client, Drizzle schema, and migrations |
 | `packages/mcp` | Docs, skill, component, and theme discovery MCP server |

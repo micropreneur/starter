@@ -7,19 +7,19 @@ Free Starter proves the shortest coherent path to a paid, single-user SaaS:
 - Credential auth plus optional Google OAuth through `AuthPort`.
 - Dedicated auth routes and one automatically provisioned personal workspace with activation onboarding.
 - Verification, recovery, profile, password, and confirmed deletion through `EmailPort`.
-- A removable Operations Registry with user-owned CRUD, fixed workflow states, tags, filters, pagination, and authorization tests.
+- A removable Operations Registry with personal-workspace CRUD, fixed workflow states, tags, filters, pagination, and authorization tests.
 - One monthly Stripe price through `BillingService`, local subscription state, idempotent webhooks, the customer portal, and an app-owned `registry.export` entitlement.
 - A secret-light local path: D1 and captured email work without provider credentials; billing is visibly disabled until all Stripe sandbox values exist.
 
 ## Planned sequence
 
-### 1. Harden and release Free Starter v1
+### 1. Maintain the Free Starter release gate
 
-Finish the current release from a clean checkout before beginning the Operations Registry ownership migration. The release gate covers migrations, authentication, personal workspace onboarding, account lifecycle, Operations Registry isolation and CRUD, Stripe sandbox billing and entitlements, registry installation, MCP discovery, browser QA, and secret/artifact review.
+Keep the release healthy from a clean checkout. The gate covers migrations, authentication, personal workspace onboarding, account lifecycle, Operations Registry isolation and CRUD, Stripe sandbox billing and entitlements, registry installation, MCP discovery, browser QA, and secret/artifact review.
 
-### 2. Finish the single-member workspace substrate in Free Starter
+### 2. Preserve the single-member workspace substrate in Free Starter
 
-Free Starter now creates one personal workspace and owner membership for every user, stores signup onboarding answers, and resolves the dashboard workspace from authenticated identity. The remaining slice migrates Operations Registry ownership from `userId` to `workspaceId`. Every migrated server function must resolve membership internally, and integration tests must prove cross-workspace isolation.
+Free Starter creates one personal workspace and owner membership for every user, stores signup onboarding answers, resolves the dashboard workspace from authenticated identity, and scopes Operations Registry records to that workspace. Every server function resolves membership internally, and integration tests prove cross-workspace isolation.
 
 This is an architectural seam, not a team feature. Free Starter does not expose multiple-workspace creation, invitations, roles, ownership transfer, seat billing, or custom domains.
 

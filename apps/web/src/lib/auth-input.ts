@@ -16,20 +16,26 @@ export function parseSignInInput(value: unknown): SignInInput | null {
 export interface SignUpRequest {
   account: SignUpInput
   onboarding: WorkspaceOnboardingInput
+  turnstileToken?: string
 }
 
 const signUpRequestSchema = z.object({
   email: z.email(),
   name: z.string().trim().min(1).max(80),
   password: z.string().min(8).max(128),
+  turnstileToken: z.string().max(2048).optional(),
   workspace: workspaceOnboardingSchema,
 })
 
 export function parseSignUpRequest(value: unknown): SignUpRequest | null {
   const parsed = signUpRequestSchema.safeParse(value)
   if (!parsed.success) return null
-  const { workspace, ...account } = parsed.data
-  return { account, onboarding: workspace }
+  const { turnstileToken, workspace, ...account } = parsed.data
+  return {
+    account,
+    onboarding: workspace,
+    ...(turnstileToken ? { turnstileToken } : {}),
+  }
 }
 
 export function invalidInputResponse(expected: string): Response {

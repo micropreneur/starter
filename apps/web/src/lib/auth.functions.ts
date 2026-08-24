@@ -4,6 +4,7 @@ import { getRequestHeaders } from '@tanstack/react-start/server'
 
 import type { WebEnv } from '../env'
 import { getAuth } from './auth.server'
+import { resolveTurnstileConfig } from './turnstile.server'
 
 export const getCurrentUser = createServerFn({ method: 'GET' }).handler(async () => {
   return getAuth().getUser(getRequestHeaders())
@@ -13,6 +14,7 @@ export const getAuthCapabilities = createServerFn({ method: 'GET' }).handler(asy
   const env = cloudflareEnv as unknown as WebEnv
   return {
     googleOAuth: Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
+    turnstileSiteKey: resolveTurnstileConfig(env)?.siteKey,
   }
 })
 

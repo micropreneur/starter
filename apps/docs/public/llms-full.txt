@@ -721,9 +721,9 @@ A consuming project's `components.json` will configure a separate authenticated 
   "registries": {
     "@elements": "https://elements.micropreneur.dev/r/{name}.json",
     "@elements-pro": {
-      "url": "https://elements-pro.micropreneur.dev/r/{name}.json",
+      "url": "https://pro.elements.micropreneur.dev/r/{name}.json",
       "headers": {
-        "X-License-Key": "${ELEMENTS_PRO_LICENSE_KEY}"
+        "Authorization": "Bearer ${ELEMENTS_PRO_LICENSE_KEY}"
       }
     }
   }
@@ -739,7 +739,7 @@ ELEMENTS_PRO_LICENSE_KEY=
 Once the endpoint exists, installation follows normal shadcn namespace syntax:
 
 ```bash
-pnpm dlx shadcn@latest add @elements-pro/dashboard-shell
+pnpm dlx shadcn@latest add @elements-pro/onboarding-wizard
 ```
 
 ## Free and Pro stay separate

@@ -132,9 +132,9 @@ export const operationRecords = sqliteTable(
   'operation_records',
   {
     id: id('id'),
-    userId: text('user_id')
+    workspaceId: text('workspace_id')
       .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
+      .references(() => workspaces.id, { onDelete: 'cascade' }),
     title: text('title').notNull(),
     summary: text('summary').notNull().default(''),
     status: text('status', {
@@ -150,11 +150,11 @@ export const operationRecords = sqliteTable(
     updatedAt: updatedAt(),
   },
   (table) => [
-    index('operation_records_user_id_idx').on(table.userId),
-    index('operation_records_user_status_idx').on(table.userId, table.status),
-    index('operation_records_user_priority_idx').on(table.userId, table.priority),
-    index('operation_records_user_review_at_idx').on(table.userId, table.reviewAt),
-    index('operation_records_user_updated_at_idx').on(table.userId, table.updatedAt),
+    index('operation_records_workspace_id_idx').on(table.workspaceId),
+    index('operation_records_workspace_status_idx').on(table.workspaceId, table.status),
+    index('operation_records_workspace_priority_idx').on(table.workspaceId, table.priority),
+    index('operation_records_workspace_review_at_idx').on(table.workspaceId, table.reviewAt),
+    index('operation_records_workspace_updated_at_idx').on(table.workspaceId, table.updatedAt),
   ],
 )
 

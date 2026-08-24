@@ -201,9 +201,37 @@ describe('better auth adapter contract', () => {
 
     await database
       .prepare(
-        'INSERT INTO operation_records (id, user_id, title, summary, status, priority, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO workspaces (id, name, kind, created_by_user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
       )
-      .bind('owned-record', user.id, 'Owned', '', 'draft', 'medium', Date.now(), Date.now())
+      .bind(
+        `personal:${user.id}`,
+        "Lifecycle User's workspace",
+        'personal',
+        user.id,
+        Date.now(),
+        Date.now(),
+      )
+      .run()
+    await database
+      .prepare(
+        'INSERT INTO workspace_members (workspace_id, user_id, role, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
+      )
+      .bind(`personal:${user.id}`, user.id, 'owner', 'active', Date.now(), Date.now())
+      .run()
+    await database
+      .prepare(
+        'INSERT INTO operation_records (id, workspace_id, title, summary, status, priority, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      )
+      .bind(
+        'owned-record',
+        `personal:${user.id}`,
+        'Owned',
+        '',
+        'draft',
+        'medium',
+        Date.now(),
+        Date.now(),
+      )
       .run()
 
     const deleteResponse = await auth.deleteUser(

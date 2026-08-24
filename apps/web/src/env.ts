@@ -13,6 +13,8 @@ export interface WebEnv {
   STRIPE_PRICE_ID?: string
   STRIPE_SECRET_KEY?: string
   STRIPE_WEBHOOK_SECRET?: string
+  TURNSTILE_SECRET_KEY?: string
+  TURNSTILE_SITE_KEY?: string
   DB: D1Database
   REALTIME_ROOM: DurableObjectNamespace<RealtimeRoom>
 }

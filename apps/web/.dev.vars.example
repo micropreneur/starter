@@ -32,3 +32,8 @@ EMAIL_FROM=Micropreneur Starter <hello@example.com>
 STRIPE_SECRET_KEY=
 STRIPE_PRICE_ID=
 STRIPE_WEBHOOK_SECRET=
+
+# Optional abuse protection. Configure both values or neither. Use Cloudflare's
+# test keys for local verification; production keys should not allow localhost.
+TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=

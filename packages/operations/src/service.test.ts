@@ -16,6 +16,8 @@ const migrationsDirectory = new URL('../../db/migrations/', import.meta.url)
 
 let miniflare: Miniflare
 let database: ReturnType<typeof createDb>
+const workspaceA = 'personal:user-a'
+const workspaceB = 'personal:user-b'
 
 beforeAll(async () => {
   miniflare = new Miniflare({
@@ -25,15 +27,14 @@ beforeAll(async () => {
   })
   const d1 = (await miniflare.getD1Database('DB')) as unknown as D1Database
 
-  for (const filename of readdirSync(migrationsDirectory)
+  const migrations = readdirSync(migrationsDirectory)
     .filter((name) => name.endsWith('.sql'))
-    .sort()) {
-    const migration = readFileSync(new URL(filename, migrationsDirectory), 'utf8')
-    for (const statement of migration.split('--> statement-breakpoint')) {
-      const sql = statement.trim()
-      if (sql) await d1.prepare(sql).run()
-    }
-  }
+    .sort()
+  const workspaceOwnershipMigration = '0003_freezing_sir_ram.sql'
+  const migrationIndex = migrations.indexOf(workspaceOwnershipMigration)
+  if (migrationIndex === -1) throw new Error('The workspace ownership migration is missing.')
+
+  for (const filename of migrations.slice(0, migrationIndex)) await applyMigration(d1, filename)
 
   await d1
     .prepare(
@@ -55,8 +56,33 @@ beforeAll(async () => {
     )
     .run()
 
+  await d1
+    .prepare(
+      'INSERT INTO operation_records (id, user_id, title, summary, status, priority, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    )
+    .bind(
+      'legacy-user-owned-record',
+      'user-a',
+      'Legacy user-owned record',
+      'Migrated before the workspace boundary.',
+      'active',
+      'medium',
+      Date.now(),
+      Date.now(),
+    )
+    .run()
+
+  for (const filename of migrations.slice(migrationIndex)) await applyMigration(d1, filename)
   database = createDb(d1)
 })
+
+async function applyMigration(d1: D1Database, filename: string) {
+  const migration = readFileSync(new URL(filename, migrationsDirectory), 'utf8')
+  for (const statement of migration.split('--> statement-breakpoint')) {
+    const sql = statement.trim()
+    if (sql) await d1.prepare(sql).run()
+  }
+}
 
 afterAll(async () => {
   await miniflare.dispose()
@@ -72,11 +98,23 @@ const input = {
 }
 
 describe('operations service', () => {
-  it('creates, lists, filters, and updates records for their owner', async () => {
-    const created = await createOperationRecord(database, 'user-a', input)
+  it('backfills existing user-owned records into the personal workspace', async () => {
+    await expect(
+      getOperationRecord(database, workspaceA, 'legacy-user-owned-record'),
+    ).resolves.toMatchObject({
+      id: 'legacy-user-owned-record',
+      workspaceId: workspaceA,
+    })
+    await expect(
+      getOperationRecord(database, workspaceB, 'legacy-user-owned-record'),
+    ).resolves.toBeNull()
+  })
+
+  it('creates, lists, filters, and updates records for their workspace', async () => {
+    const created = await createOperationRecord(database, workspaceA, input)
     expect(created.tags).toEqual(['security', 'vendor'])
 
-    const listed = await listOperationRecords(database, 'user-a', {
+    const listed = await listOperationRecords(database, workspaceA, {
       page: 1,
       pageSize: 20,
       search: 'Acme',
@@ -86,7 +124,7 @@ describe('operations service', () => {
     expect(listed.total).toBe(1)
     expect(listed.items[0]?.id).toBe(created.id)
 
-    const updated = await updateOperationRecord(database, 'user-a', created.id, {
+    const updated = await updateOperationRecord(database, workspaceA, created.id, {
       ...input,
       priority: 'medium',
       status: 'needs_review',
@@ -96,22 +134,22 @@ describe('operations service', () => {
     expect(updated.tags).toEqual(['review'])
   })
 
-  it("does not disclose or mutate another user's records", async () => {
-    const created = await createOperationRecord(database, 'user-a', {
+  it("does not disclose or mutate another workspace's records", async () => {
+    const created = await createOperationRecord(database, workspaceA, {
       ...input,
       title: 'Private record',
     })
 
-    expect(await getOperationRecord(database, 'user-b', created.id)).toBeNull()
+    expect(await getOperationRecord(database, workspaceB, created.id)).toBeNull()
     await expect(
-      updateOperationRecord(database, 'user-b', created.id, input),
+      updateOperationRecord(database, workspaceB, created.id, input),
     ).rejects.toBeInstanceOf(OperationRecordNotFoundError)
-    await expect(deleteOperationRecord(database, 'user-b', created.id)).rejects.toBeInstanceOf(
+    await expect(deleteOperationRecord(database, workspaceB, created.id)).rejects.toBeInstanceOf(
       OperationRecordNotFoundError,
     )
 
-    await deleteOperationRecord(database, 'user-a', created.id)
-    expect(await getOperationRecord(database, 'user-a', created.id)).toBeNull()
+    await deleteOperationRecord(database, workspaceA, created.id)
+    expect(await getOperationRecord(database, workspaceA, created.id)).toBeNull()
   })
 
   it('filters tags inside the owner-scoped query without expanding record IDs', async () => {
@@ -123,7 +161,7 @@ describe('operations service', () => {
       status: input.status,
       summary: input.summary,
       title: `Other user record ${index}`,
-      userId: 'user-b',
+      workspaceId: workspaceB,
     }))
 
     for (let index = 0; index < otherRecords.length; index += 10) {
@@ -137,13 +175,13 @@ describe('operations service', () => {
       )
     }
 
-    const owned = await createOperationRecord(database, 'user-a', {
+    const owned = await createOperationRecord(database, workspaceA, {
       ...input,
       tags: [tag],
       title: 'Owned tagged record',
     })
 
-    const result = await listOperationRecords(database, 'user-a', {
+    const result = await listOperationRecords(database, workspaceA, {
       page: 1,
       pageSize: 20,
       search: '',
@@ -170,13 +208,13 @@ describe('operations service', () => {
 
     try {
       await expect(
-        createOperationRecord(database, 'user-a', {
+        createOperationRecord(database, workspaceA, {
           ...input,
           tags: ['reject-atomicity'],
           title: 'Atomic create failure',
         }),
       ).rejects.toThrow('rejected test tag')
-      const failedCreate = await listOperationRecords(database, 'user-a', {
+      const failedCreate = await listOperationRecords(database, workspaceA, {
         page: 1,
         pageSize: 20,
         search: 'Atomic create failure',
@@ -184,19 +222,19 @@ describe('operations service', () => {
       })
       expect(failedCreate.total).toBe(0)
 
-      const original = await createOperationRecord(database, 'user-a', {
+      const original = await createOperationRecord(database, workspaceA, {
         ...input,
         tags: ['original'],
         title: 'Atomic update record',
       })
       await expect(
-        updateOperationRecord(database, 'user-a', original.id, {
+        updateOperationRecord(database, workspaceA, original.id, {
           ...input,
           tags: ['reject-atomicity'],
           title: 'Partially updated title',
         }),
       ).rejects.toThrow('rejected test tag')
-      await expect(getOperationRecord(database, 'user-a', original.id)).resolves.toMatchObject({
+      await expect(getOperationRecord(database, workspaceA, original.id)).resolves.toMatchObject({
         tags: ['original'],
         title: 'Atomic update record',
       })
