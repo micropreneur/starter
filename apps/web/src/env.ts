@@ -1,6 +1,7 @@
 import type { RealtimeRoom } from './durable-objects/realtime-room'
 
 export interface WebEnv {
+  AUTH_RATE_LIMITER?: RateLimit
   AUTH_PROVIDER?: string
   BETTER_AUTH_SECRET?: string
   BETTER_AUTH_URL?: string
