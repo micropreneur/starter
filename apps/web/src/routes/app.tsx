@@ -14,6 +14,7 @@ import { createFileRoute, Outlet, redirect, useRouterState } from '@tanstack/rea
 
 import { AppSidebar } from '../components/app-sidebar'
 import { ThemeToggle } from '../components/theme-toggle'
+import { APP_NOTICE_HEIGHT, APP_NOTICE_VISIBLE, APP_SHELL_HEIGHT } from '../lib/deployment-mode'
 import { getAppContext } from '../lib/workspace.functions'
 
 export const Route = createFileRoute('/app')({
@@ -36,8 +37,20 @@ function AppLayout() {
       : 'Overview'
 
   return (
-    <SidebarProvider>
-      <AppSidebar user={user} workspace={workspace} />
+    <SidebarProvider style={{ minHeight: APP_SHELL_HEIGHT }}>
+      <AppSidebar
+        style={
+          APP_NOTICE_VISIBLE
+            ? {
+                bottom: 'auto',
+                height: APP_SHELL_HEIGHT,
+                top: APP_NOTICE_HEIGHT,
+              }
+            : undefined
+        }
+        user={user}
+        workspace={workspace}
+      />
       <SidebarInset className="min-w-0 overflow-hidden">
         <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border/70">
           <div className="flex min-w-0 items-center gap-2 px-4">
