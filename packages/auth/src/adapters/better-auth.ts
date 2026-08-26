@@ -84,8 +84,8 @@ export function createBetterAuthAdapter(options: BetterAuthAdapterOptions): Auth
               template: 'welcome',
             })
           },
-          autoSignInAfterVerification: true,
-          sendOnSignIn: true,
+          autoSignInAfterVerification: false,
+          sendOnSignIn: false,
           sendOnSignUp: true,
           sendVerificationEmail: async ({ user, url }) => {
             await sendEmail(options, {
@@ -159,7 +159,12 @@ export function createBetterAuthAdapter(options: BetterAuthAdapterOptions): Auth
     signUp(input: SignUpInput, headers: Headers) {
       return auth.api.signUpEmail({
         asResponse: true,
-        body: input,
+        body: {
+          callbackURL: input.callbackUrl,
+          email: input.email,
+          name: input.name,
+          password: input.password,
+        },
         headers,
       })
     },

@@ -18,6 +18,7 @@ export interface SignInInput {
 }
 
 export interface SignUpInput extends SignInInput {
+  callbackUrl?: string
   name: string
 }
 

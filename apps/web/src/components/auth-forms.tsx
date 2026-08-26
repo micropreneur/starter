@@ -7,25 +7,32 @@ import {
   FieldLabel,
   Input,
 } from '@micropreneur/elements'
-import { NativeSelect, NativeSelectOption } from '@micropreneur/elements/primitives'
 import { CircleCheck } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 
 import { TurnstileWidget } from './turnstile-widget'
 
-export function SignInForm({ googleOAuth = false }: { googleOAuth?: boolean }) {
+export function SignInForm({
+  callbackUrl = '/app',
+  googleOAuth = false,
+}: {
+  callbackUrl?: string
+  googleOAuth?: boolean
+}) {
   return (
     <div className="grid gap-5">
-      {googleOAuth ? <GoogleSignIn /> : null}
-      <CredentialSignInForm />
+      {googleOAuth ? <GoogleSignIn callbackUrl={callbackUrl} /> : null}
+      <CredentialSignInForm callbackUrl={callbackUrl} />
     </div>
   )
 }
 
 export function SignUpForm({
+  callbackUrl = '/app',
   googleOAuth = false,
   turnstileSiteKey,
 }: {
+  callbackUrl?: string
   googleOAuth?: boolean
   turnstileSiteKey?: string
 }) {
@@ -47,14 +54,13 @@ export function SignUpForm({
     const form = new FormData(event.currentTarget)
     const response = await fetch('/api/sign-up', {
       body: JSON.stringify({
+        callbackUrl,
         email: form.get('email'),
         name: form.get('name'),
         password: form.get('password'),
         turnstileToken: challengeToken,
         workspace: {
           name: form.get('workspaceName'),
-          primaryGoal: form.get('primaryGoal'),
-          productType: form.get('productType'),
         },
       }),
       headers: { 'content-type': 'application/json' },
@@ -84,7 +90,7 @@ export function SignUpForm({
         </div>
         <a
           className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-          href="/sign-in"
+          href={`/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`}
         >
           Go to sign in →
         </a>
@@ -96,7 +102,7 @@ export function SignUpForm({
     <div className="grid gap-5">
       {googleOAuth ? (
         <>
-          <GoogleSignIn />
+          <GoogleSignIn callbackUrl={callbackUrl} />
           <p className="-mt-2 text-xs text-muted-foreground">
             New Google accounts finish the same workspace setup after authentication.
           </p>
@@ -130,7 +136,7 @@ export function SignUpForm({
           <div className="mt-2 border-t pt-5">
             <p className="label-caps text-muted-foreground">Your personal workspace</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              These answers give the starter a useful first state. You can change them later.
+              Name the private workspace that belongs only to your account. You can change it later.
             </p>
           </div>
           <WorkspaceOnboardingFields idPrefix="sign-up" />
@@ -228,55 +234,22 @@ export function PasswordResetRequestForm({ turnstileSiteKey }: { turnstileSiteKe
 
 export function WorkspaceOnboardingFields({ idPrefix }: { idPrefix: string }) {
   return (
-    <>
-      <Field>
-        <FieldLabel htmlFor={`${idPrefix}-workspace-name`}>Workspace name</FieldLabel>
-        <Input
-          autoComplete="organization"
-          id={`${idPrefix}-workspace-name`}
-          maxLength={80}
-          minLength={2}
-          name="workspaceName"
-          placeholder="Acme Studio"
-          required
-        />
-      </Field>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field>
-          <FieldLabel htmlFor={`${idPrefix}-product-type`}>What are you building?</FieldLabel>
-          <NativeSelect
-            className="w-full"
-            id={`${idPrefix}-product-type`}
-            name="productType"
-            required
-          >
-            <NativeSelectOption value="saas">SaaS product</NativeSelectOption>
-            <NativeSelectOption value="marketplace">Marketplace</NativeSelectOption>
-            <NativeSelectOption value="client_service">Client service</NativeSelectOption>
-            <NativeSelectOption value="internal_tool">Internal tool</NativeSelectOption>
-            <NativeSelectOption value="other">Something else</NativeSelectOption>
-          </NativeSelect>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor={`${idPrefix}-primary-goal`}>First goal</FieldLabel>
-          <NativeSelect
-            className="w-full"
-            id={`${idPrefix}-primary-goal`}
-            name="primaryGoal"
-            required
-          >
-            <NativeSelectOption value="validate">Validate the idea</NativeSelectOption>
-            <NativeSelectOption value="launch">Launch the first version</NativeSelectOption>
-            <NativeSelectOption value="grow">Grow an existing product</NativeSelectOption>
-            <NativeSelectOption value="migrate">Move an existing product</NativeSelectOption>
-          </NativeSelect>
-        </Field>
-      </div>
-    </>
+    <Field>
+      <FieldLabel htmlFor={`${idPrefix}-workspace-name`}>Workspace name</FieldLabel>
+      <Input
+        autoComplete="organization"
+        id={`${idPrefix}-workspace-name`}
+        maxLength={80}
+        minLength={2}
+        name="workspaceName"
+        placeholder="Acme Studio"
+        required
+      />
+    </Field>
   )
 }
 
-function CredentialSignInForm() {
+function CredentialSignInForm({ callbackUrl }: { callbackUrl: string }) {
   const [error, setError] = useState<string>()
   const [pending, setPending] = useState(false)
 
@@ -298,7 +271,7 @@ function CredentialSignInForm() {
       return
     }
 
-    window.location.assign('/app')
+    window.location.assign(callbackUrl)
   }
 
   return (
@@ -336,7 +309,7 @@ function CredentialSignInForm() {
   )
 }
 
-function GoogleSignIn() {
+function GoogleSignIn({ callbackUrl = '/app' }: { callbackUrl?: string }) {
   const [error, setError] = useState<string>()
   const [pending, setPending] = useState(false)
 
@@ -344,7 +317,10 @@ function GoogleSignIn() {
     setPending(true)
     setError(undefined)
     const response = await fetch('/api/sign-in-social', {
-      body: JSON.stringify({ callbackUrl: `${window.location.origin}/app`, provider: 'google' }),
+      body: JSON.stringify({
+        callbackUrl: `${window.location.origin}${callbackUrl}`,
+        provider: 'google',
+      }),
       headers: { 'content-type': 'application/json' },
       method: 'POST',
     })

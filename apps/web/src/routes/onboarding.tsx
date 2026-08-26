@@ -30,17 +30,6 @@ function OnboardingPage() {
       await completeWorkspaceOnboarding({
         data: {
           name: String(form.get('workspaceName') ?? ''),
-          primaryGoal: String(form.get('primaryGoal') ?? '') as
-            | 'validate'
-            | 'launch'
-            | 'grow'
-            | 'migrate',
-          productType: String(form.get('productType') ?? '') as
-            | 'saas'
-            | 'marketplace'
-            | 'client_service'
-            | 'internal_tool'
-            | 'other',
         },
       })
       window.location.assign('/app')
@@ -52,7 +41,7 @@ function OnboardingPage() {
 
   return (
     <AuthPageShell
-      description={`Welcome, ${user.name}. Answer three quick questions before opening your dashboard.`}
+      description={`Welcome, ${user.name}. Name your personal workspace before opening the dashboard.`}
       eyebrow="One last step"
       title="Shape your personal workspace"
     >
