@@ -87,7 +87,7 @@ describe('personal workspace onboarding', () => {
     ).resolves.toHaveLength(1)
   })
 
-  it('stores activation answers without accepting a workspace ID', async () => {
+  it('names the personal workspace without accepting a workspace ID', async () => {
     await bootstrapPersonalWorkspace(database, {
       email: 'grace-workspace@example.com',
       id: 'workspace-user-b',
@@ -97,23 +97,19 @@ describe('personal workspace onboarding', () => {
     await expect(
       completePersonalWorkspaceOnboarding(database, 'workspace-user-b', {
         name: 'Compiler Club',
-        primaryGoal: 'launch',
-        productType: 'saas',
       }),
     ).resolves.toMatchObject({
       name: 'Compiler Club',
       onboardingComplete: true,
-      primaryGoal: 'launch',
-      productType: 'saas',
+      primaryGoal: null,
+      productType: null,
     })
 
     await expect(
       completePersonalWorkspaceOnboardingForEmail(database, 'GRACE-WORKSPACE@example.com', {
         name: 'Compiler Club v2',
-        primaryGoal: 'grow',
-        productType: 'marketplace',
       }),
-    ).resolves.toMatchObject({ name: 'Compiler Club v2', primaryGoal: 'grow' })
+    ).resolves.toMatchObject({ name: 'Compiler Club v2', primaryGoal: null, productType: null })
   })
 
   it('fails closed for missing and inactive memberships', async () => {

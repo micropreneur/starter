@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { getAuth } from '../../lib/auth.server'
 import { invalidInputResponse, readJsonBody } from '../../lib/auth-input'
+import { requireSameOrigin, requireSameOriginUrl } from '../../lib/request-security'
 
 const inputSchema = z.object({ callbackUrl: z.string().url(), email: z.email() })
 
@@ -10,8 +11,10 @@ export const Route = createFileRoute('/api/send-verification')({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        requireSameOrigin(request)
         const parsed = inputSchema.safeParse(await readJsonBody(request))
         if (!parsed.success) return invalidInputResponse('a valid email and callback URL')
+        requireSameOriginUrl(parsed.data.callbackUrl, request)
         try {
           await getAuth().sendVerificationEmail(
             parsed.data.email,

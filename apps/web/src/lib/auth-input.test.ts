@@ -15,14 +15,16 @@ describe('auth input validation', () => {
     })
     expect(
       parseSignUpRequest({
+        callbackUrl: '/invitations/winv_example',
         email: 'a@example.com',
         name: 'Ada',
         password: 'a-strong-password',
-        workspace: { name: 'Ada Labs', primaryGoal: 'launch', productType: 'saas' },
+        workspace: { name: 'Ada Labs' },
       }),
     ).toEqual({
       account: { email: 'a@example.com', name: 'Ada', password: 'a-strong-password' },
-      onboarding: { name: 'Ada Labs', primaryGoal: 'launch', productType: 'saas' },
+      callbackUrl: '/invitations/winv_example',
+      onboarding: { name: 'Ada Labs' },
     })
   })
 
@@ -38,7 +40,7 @@ describe('auth input validation', () => {
         email: 'a@example.com',
         name: '  ',
         password: 'a-strong-password',
-        workspace: { name: 'Ada Labs', primaryGoal: 'launch', productType: 'saas' },
+        workspace: { name: 'Ada Labs' },
       }),
     ).toBeNull()
     expect(
@@ -46,7 +48,16 @@ describe('auth input validation', () => {
         email: 'a@example.com',
         name: 'Ada',
         password: 'a-strong-password',
-        workspace: { name: '', primaryGoal: 'launch', productType: 'saas' },
+        workspace: { name: '' },
+      }),
+    ).toBeNull()
+    expect(
+      parseSignUpRequest({
+        callbackUrl: 'https://attacker.example',
+        email: 'a@example.com',
+        name: 'Ada',
+        password: 'a-strong-password',
+        workspace: { name: 'Ada Labs' },
       }),
     ).toBeNull()
   })

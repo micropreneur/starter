@@ -1,7 +1,12 @@
 import { type Database, users, workspaceMembers, workspaces } from '@micropreneur/db'
 import { and, eq, sql } from 'drizzle-orm'
 
-import { type WorkspaceOnboardingInput, workspaceOnboardingSchema } from './schema'
+import {
+  type WorkspaceOnboardingInput,
+  type WorkspacePrimaryGoal,
+  type WorkspaceProductType,
+  workspaceOnboardingSchema,
+} from './schema'
 
 export interface WorkspaceUser {
   email: string
@@ -15,8 +20,8 @@ export interface ActiveWorkspace {
   kind: 'personal'
   name: string
   onboardingComplete: boolean
-  primaryGoal: WorkspaceOnboardingInput['primaryGoal'] | null
-  productType: WorkspaceOnboardingInput['productType'] | null
+  primaryGoal: WorkspacePrimaryGoal | null
+  productType: WorkspaceProductType | null
   role: 'owner'
 }
 
@@ -92,8 +97,6 @@ export async function completePersonalWorkspaceOnboarding(
     .set({
       name: parsed.name,
       onboardingCompletedAt: new Date(),
-      primaryGoal: parsed.primaryGoal,
-      productType: parsed.productType,
       updatedAt: new Date(),
     })
     .where(

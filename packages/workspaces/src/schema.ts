@@ -12,8 +12,8 @@ export const workspacePrimaryGoals = ['validate', 'launch', 'grow', 'migrate'] a
 
 export const workspaceOnboardingSchema = z.object({
   name: z.string().trim().min(2).max(80),
-  primaryGoal: z.enum(workspacePrimaryGoals),
-  productType: z.enum(workspaceProductTypes),
 })
 
 export type WorkspaceOnboardingInput = z.infer<typeof workspaceOnboardingSchema>
+export type WorkspacePrimaryGoal = (typeof workspacePrimaryGoals)[number]
+export type WorkspaceProductType = (typeof workspaceProductTypes)[number]

@@ -1,30 +1,36 @@
 import { describe, expect, it } from 'vitest'
 
-import { requireSameOrigin } from './request-security'
+import { requireSameOrigin, requireSameOriginUrl } from './request-security'
 
-describe('same-origin mutation guard', () => {
-  it('accepts the request origin and rejects missing or cross-site origins', () => {
+describe('request security', () => {
+  it('accepts same-origin mutation requests and callbacks', () => {
+    const request = new Request('https://starter.example/api/sign-in-social', {
+      headers: { origin: 'https://starter.example' },
+    })
+    expect(() => requireSameOrigin(request)).not.toThrow()
+    expect(() =>
+      requireSameOriginUrl('https://starter.example/invitations/token', request),
+    ).not.toThrow()
+  })
+
+  it('rejects missing or cross-origin request origins', () => {
+    expect(() =>
+      requireSameOrigin(new Request('https://starter.example/api/sign-in-social')),
+    ).toThrow(Response)
     expect(() =>
       requireSameOrigin(
-        new Request('http://localhost:3000/api/account/profile', {
-          headers: { origin: 'http://localhost:3000' },
+        new Request('https://starter.example/api/sign-in-social', {
+          headers: { origin: 'https://attacker.example' },
         }),
       ),
-    ).not.toThrow()
-
-    for (const origin of [undefined, 'https://attacker.example']) {
-      try {
-        requireSameOrigin(
-          new Request('http://localhost:3000/api/account/profile', {
-            headers: origin ? { origin } : undefined,
-          }),
-        )
-        throw new Error('Expected the request to be rejected.')
-      } catch (error) {
-        expect(error).toBeInstanceOf(Response)
-        if (!(error instanceof Response)) throw error
-        expect(error.status).toBe(403)
-      }
-    }
+    ).toThrow(Response)
   })
+
+  it.each(['not-a-url', 'https://attacker.example/app'])(
+    'rejects invalid callback %s',
+    (callback) => {
+      const request = new Request('https://starter.example/api/sign-in-social')
+      expect(() => requireSameOriginUrl(callback, request)).toThrow(Response)
+    },
+  )
 })

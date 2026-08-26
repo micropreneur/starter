@@ -140,13 +140,25 @@ describe('better auth adapter contract', () => {
       password: 'initial-password',
     }
 
-    const signUp = await auth.signUp(credentials, new Headers())
+    const verificationCallback =
+      'http://localhost:3000/sign-in?callbackUrl=%2Finvitations%2Fwinv_example'
+    const signUp = await auth.signUp(
+      { ...credentials, callbackUrl: verificationCallback },
+      new Headers(),
+    )
     expect(signUp.status).toBe(200)
+    expect(deliveries.filter((delivery) => delivery.template === 'verify_email')).toHaveLength(1)
     expect(deliveries.at(-1)?.template).toBe('verify_email')
+
+    const unverifiedSignIn = await auth.signIn(credentials, new Headers())
+    expect(unverifiedSignIn.status).toBe(403)
+    expect(deliveries.filter((delivery) => delivery.template === 'verify_email')).toHaveLength(1)
+
     const verificationUrl = requiredUrl(deliveries.at(-1))
     const verification = await auth.handleRequest(new Request(verificationUrl))
     expect(verification.status).toBeGreaterThanOrEqual(300)
     expect(verification.status).toBeLessThan(400)
+    expect(verification.headers.get('location')).toBe(verificationCallback)
     expect(deliveries.at(-1)?.template).toBe('welcome')
 
     const signIn = await auth.signIn(credentials, new Headers())
