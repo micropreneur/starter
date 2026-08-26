@@ -8,11 +8,11 @@ import { ArrowUpRight, GitFork } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { ThemeToggle } from '../components/theme-toggle'
+import { APP_NOTICE_HEIGHT, SANDBOX_MODE } from '../lib/deployment-mode'
 import { isStandaloneAuthPath } from '../lib/site-layout'
 
 const THEME_BOOTSTRAP = `(function(){try{var k='theme';var s=localStorage.getItem(k);var d=s==='dark'||(s!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`
 const FLOATING_HEADER_THRESHOLD = 50
-const SANDBOX_MODE = import.meta.env.VITE_PUBLIC_SANDBOX_MODE === 'true'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -52,6 +52,9 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const keepNoticeVisible = pathname.startsWith('/app')
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -61,7 +64,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <TooltipProvider>
-          {SANDBOX_MODE ? <SandboxNotice /> : null}
+          {SANDBOX_MODE ? <SandboxNotice sticky={keepNoticeVisible} /> : null}
           <SiteHeader />
           {children}
         </TooltipProvider>
@@ -185,11 +188,12 @@ function SiteHeader() {
   )
 }
 
-function SandboxNotice() {
+function SandboxNotice({ sticky }: { sticky: boolean }) {
   return (
     <div
-      className="border-b border-amber-400/30 bg-amber-300/15 px-4 py-2 text-center text-xs font-medium text-amber-950 dark:text-amber-100"
+      className={`flex items-center justify-center border-b border-amber-400/30 bg-amber-100 px-4 py-1 text-center text-xs font-medium text-amber-950 dark:bg-amber-950 dark:text-amber-100 ${sticky ? 'sticky top-0 z-30' : ''}`}
       role="status"
+      style={{ minHeight: APP_NOTICE_HEIGHT }}
     >
       Public sandbox · Test data may be reset · Stripe checkout uses test mode and never creates a
       real charge
