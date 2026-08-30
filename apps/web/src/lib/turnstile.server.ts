@@ -5,8 +5,15 @@ import type { WebEnv } from '../env'
 const siteverifyResponseSchema = z.object({
   action: z.string().optional(),
   hostname: z.string().optional(),
+  metadata: z
+    .object({
+      result_with_testing_key: z.boolean().optional(),
+    })
+    .optional(),
   success: z.boolean(),
 })
+
+const deterministicTestSiteKey = '1x00000000000000000000AA'
 
 export type TurnstileAction = 'password_reset' | 'sign_up'
 
@@ -57,6 +64,10 @@ export async function verifyTurnstileChallenge({
     if (!response.ok) return false
     const parsed = siteverifyResponseSchema.safeParse(await response.json())
     if (!parsed.success || !parsed.data.success) return false
+    if (config.siteKey === deterministicTestSiteKey) {
+      return parsed.data.metadata?.result_with_testing_key === true
+    }
+    if (parsed.data.metadata?.result_with_testing_key) return false
     if (parsed.data.action !== action) return false
     return parsed.data.hostname === new URL(request.url).hostname
   } catch (error) {
