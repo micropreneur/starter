@@ -41,6 +41,48 @@ describe('Turnstile validation', () => {
     ).resolves.toBe(false)
   })
 
+  it('supports Cloudflare deterministic pass keys without weakening production validation', async () => {
+    const deterministicEnv = {
+      TURNSTILE_SECRET_KEY: 'deterministic-test-secret',
+      TURNSTILE_SITE_KEY: '1x00000000000000000000AA',
+    } as WebEnv
+    const testingResponse = vi.fn<typeof fetch>().mockResolvedValue(
+      Response.json({
+        hostname: 'example.com',
+        metadata: { result_with_testing_key: true },
+        success: true,
+      }),
+    )
+
+    await expect(
+      verifyTurnstileChallenge({
+        action: 'password_reset',
+        env: deterministicEnv,
+        fetcher: testingResponse,
+        request,
+        token: 'XXXX.DUMMY.TOKEN.XXXX',
+      }),
+    ).resolves.toBe(true)
+    await expect(
+      verifyTurnstileChallenge({
+        action: 'password_reset',
+        env,
+        fetcher: testingResponse,
+        request,
+        token: 'XXXX.DUMMY.TOKEN.XXXX',
+      }),
+    ).resolves.toBe(false)
+    await expect(
+      verifyTurnstileChallenge({
+        action: 'password_reset',
+        env: deterministicEnv,
+        fetcher: vi.fn<typeof fetch>().mockResolvedValue(Response.json({ success: true })),
+        request,
+        token: 'XXXX.DUMMY.TOKEN.XXXX',
+      }),
+    ).resolves.toBe(false)
+  })
+
   it('fails closed for missing, oversized, rejected, and unreachable challenges', async () => {
     const rejected = vi
       .fn<typeof fetch>()
