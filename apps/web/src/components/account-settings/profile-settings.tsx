@@ -15,6 +15,7 @@ import { useRouter } from '@tanstack/react-router'
 import { Mail, UserRound } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 
+import { FileUploadSettings } from '../file-upload-settings'
 import {
   type AccountOverview,
   FormFeedback,
@@ -22,7 +23,6 @@ import {
   responseError,
   SettingsSection,
 } from './shared'
-import { FileUploadSettings } from '../file-upload-settings'
 
 export function ProfileSettings({
   account,
