@@ -34,7 +34,7 @@ account and rejects paid actions.
    stripe listen --forward-to http://localhost:3000/api/billing/webhook
    ```
 
-4. Open `/app/settings`, start Checkout, return to the app, and confirm the portal opens.
+4. Open `/app/settings/billing`, start Checkout, return to the app, and confirm the portal opens.
 5. Complete the Checkout with a Stripe test card, wait for the signed webhook, and confirm
    `/app/registry` exposes CSV export.
 6. Replay the same event and confirm it is ignored, then test subscription cancellation and a

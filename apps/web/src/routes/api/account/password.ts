@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { getAuth } from '../../../lib/auth.server'
 import { invalidInputResponse, readJsonBody } from '../../../lib/auth-input'
-import { requireSameOrigin } from '../../../lib/request-security'
+import { requireAuthenticatedMutation } from '../../../lib/protected-request.server'
 
 const inputSchema = z.object({
   currentPassword: z.string().min(8).max(128),
@@ -14,12 +14,11 @@ export const Route = createFileRoute('/api/account/password')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        requireSameOrigin(request)
-        const headers = new Headers(request.headers)
-        await getAuth().requireUser(headers)
+        const auth = getAuth()
+        const { headers } = await requireAuthenticatedMutation(request, auth)
         const parsed = inputSchema.safeParse(await readJsonBody(request))
         if (!parsed.success) return invalidInputResponse('current and new passwords')
-        return getAuth().changePassword(parsed.data, headers)
+        return auth.changePassword(parsed.data, headers)
       },
     },
   },

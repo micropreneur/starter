@@ -8,7 +8,7 @@ Application code imports only `AuthPort`, `createAuth`, and provider-neutral typ
 
 - `getSession`, `getUser`, and `requireUser`
 - credential and provider-neutral social sign-in, sign-up, and sign-out
-- verification, recovery, profile, password, linked-account, and deletion operations
+- verification, recovery, profile, email, password, linked-account, and deletion operations
 - `handleRequest` for the provider's HTTP endpoint
 
 `AUTH_PROVIDER=betterauth|descope` is resolved once in the web composition root. Better Auth is the default. It uses the D1 Drizzle client and Better Auth's TanStack Start cookies plugin. Google is added only when both OAuth values exist; credentials continue to work when neither exists. `EmailPort` supplies verification, reset, welcome, and deletion mail without exposing Resend here.
@@ -18,7 +18,7 @@ uses it to provision one personal workspace for credential and social accounts w
 auth package depend on workspace rules. Signup onboarding answers are applied by the web
 orchestration layer after `AuthPort.signUp` succeeds.
 
-The adapter fails closed: it throws unless `BETTER_AUTH_SECRET` is set or the composition root explicitly opts into the checked-in development-only secret, which `apps/web` does only for a local origin. Contract tests exercise credential auth, optional Google configuration, email verification, single-use reset tokens, linked methods, and deletion cascades against Miniflare D1.
+The adapter fails closed: it throws unless `BETTER_AUTH_SECRET` is set or the composition root explicitly opts into the checked-in development-only secret, which `apps/web` does only for a local origin. Contract tests exercise credential auth, optional Google configuration, verified profile/email/password changes, single-use reset tokens, linked methods, and deletion cascades against Miniflare D1.
 
 Google callbacks are `<BETTER_AUTH_URL>/api/auth/callback/google`; locally that is `http://localhost:3000/api/auth/callback/google`.
 

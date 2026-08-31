@@ -29,6 +29,7 @@ import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiAccountDeleteRouteImport } from './routes/api/account/delete'
+import { Route as ApiAccountEmailRouteImport } from './routes/api/account/email'
 import { Route as ApiAccountPasswordRouteImport } from './routes/api/account/password'
 import { Route as ApiAccountProfileRouteImport } from './routes/api/account/profile'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -38,6 +39,11 @@ import { Route as ApiBillingWebhookRouteImport } from './routes/api/billing/webh
 import { Route as ApiRegistryExportRouteImport } from './routes/api/registry/export'
 import { Route as AppRegistryIndexRouteImport } from './routes/app.registry.index'
 import { Route as AppRegistryRecordIdRouteImport } from './routes/app.registry.$recordId'
+import { Route as AppSettingsIndexRouteImport } from './routes/app.settings.index'
+import { Route as AppSettingsBillingRouteImport } from './routes/app.settings.billing'
+import { Route as AppSettingsDangerRouteImport } from './routes/app.settings.danger'
+import { Route as AppSettingsProfileRouteImport } from './routes/app.settings.profile'
+import { Route as AppSettingsSecurityRouteImport } from './routes/app.settings.security'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -139,6 +145,11 @@ const ApiAccountDeleteRoute = ApiAccountDeleteRouteImport.update({
   path: '/api/account/delete',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAccountEmailRoute = ApiAccountEmailRouteImport.update({
+  id: '/api/account/email',
+  path: '/api/account/email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAccountPasswordRoute = ApiAccountPasswordRouteImport.update({
   id: '/api/account/password',
   path: '/api/account/password',
@@ -184,6 +195,31 @@ const AppRegistryRecordIdRoute = AppRegistryRecordIdRouteImport.update({
   path: '/registry/$recordId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
+const AppSettingsBillingRoute = AppSettingsBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
+const AppSettingsDangerRoute = AppSettingsDangerRouteImport.update({
+  id: '/danger',
+  path: '/danger',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
+const AppSettingsProfileRoute = AppSettingsProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
+const AppSettingsSecurityRoute = AppSettingsSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AppSettingsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -201,11 +237,12 @@ export interface FileRoutesByFullPath {
   '/api/sign-in-social': typeof ApiSignInSocialRoute
   '/api/sign-out': typeof ApiSignOutRoute
   '/api/sign-up': typeof ApiSignUpRoute
-  '/app/settings': typeof AppSettingsRoute
+  '/app/settings': typeof AppSettingsRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/api/account/delete': typeof ApiAccountDeleteRoute
+  '/api/account/email': typeof ApiAccountEmailRoute
   '/api/account/password': typeof ApiAccountPasswordRoute
   '/api/account/profile': typeof ApiAccountProfileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -214,7 +251,12 @@ export interface FileRoutesByFullPath {
   '/api/billing/webhook': typeof ApiBillingWebhookRoute
   '/api/registry/export': typeof ApiRegistryExportRoute
   '/app/registry/$recordId': typeof AppRegistryRecordIdRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/danger': typeof AppSettingsDangerRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings/security': typeof AppSettingsSecurityRoute
   '/app/registry/': typeof AppRegistryIndexRoute
+  '/app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -230,11 +272,11 @@ export interface FileRoutesByTo {
   '/api/sign-in-social': typeof ApiSignInSocialRoute
   '/api/sign-out': typeof ApiSignOutRoute
   '/api/sign-up': typeof ApiSignUpRoute
-  '/app/settings': typeof AppSettingsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/app': typeof AppIndexRoute
   '/blog': typeof BlogIndexRoute
   '/api/account/delete': typeof ApiAccountDeleteRoute
+  '/api/account/email': typeof ApiAccountEmailRoute
   '/api/account/password': typeof ApiAccountPasswordRoute
   '/api/account/profile': typeof ApiAccountProfileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -243,7 +285,12 @@ export interface FileRoutesByTo {
   '/api/billing/webhook': typeof ApiBillingWebhookRoute
   '/api/registry/export': typeof ApiRegistryExportRoute
   '/app/registry/$recordId': typeof AppRegistryRecordIdRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/danger': typeof AppSettingsDangerRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings/security': typeof AppSettingsSecurityRoute
   '/app/registry': typeof AppRegistryIndexRoute
+  '/app/settings': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -262,11 +309,12 @@ export interface FileRoutesById {
   '/api/sign-in-social': typeof ApiSignInSocialRoute
   '/api/sign-out': typeof ApiSignOutRoute
   '/api/sign-up': typeof ApiSignUpRoute
-  '/app/settings': typeof AppSettingsRoute
+  '/app/settings': typeof AppSettingsRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/app/': typeof AppIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/api/account/delete': typeof ApiAccountDeleteRoute
+  '/api/account/email': typeof ApiAccountEmailRoute
   '/api/account/password': typeof ApiAccountPasswordRoute
   '/api/account/profile': typeof ApiAccountProfileRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -275,7 +323,12 @@ export interface FileRoutesById {
   '/api/billing/webhook': typeof ApiBillingWebhookRoute
   '/api/registry/export': typeof ApiRegistryExportRoute
   '/app/registry/$recordId': typeof AppRegistryRecordIdRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/danger': typeof AppSettingsDangerRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings/security': typeof AppSettingsSecurityRoute
   '/app/registry/': typeof AppRegistryIndexRoute
+  '/app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -300,6 +353,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/blog/'
     | '/api/account/delete'
+    | '/api/account/email'
     | '/api/account/password'
     | '/api/account/profile'
     | '/api/auth/$'
@@ -308,7 +362,12 @@ export interface FileRouteTypes {
     | '/api/billing/webhook'
     | '/api/registry/export'
     | '/app/registry/$recordId'
+    | '/app/settings/billing'
+    | '/app/settings/danger'
+    | '/app/settings/profile'
+    | '/app/settings/security'
     | '/app/registry/'
+    | '/app/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -324,11 +383,11 @@ export interface FileRouteTypes {
     | '/api/sign-in-social'
     | '/api/sign-out'
     | '/api/sign-up'
-    | '/app/settings'
     | '/blog/$slug'
     | '/app'
     | '/blog'
     | '/api/account/delete'
+    | '/api/account/email'
     | '/api/account/password'
     | '/api/account/profile'
     | '/api/auth/$'
@@ -337,7 +396,12 @@ export interface FileRouteTypes {
     | '/api/billing/webhook'
     | '/api/registry/export'
     | '/app/registry/$recordId'
+    | '/app/settings/billing'
+    | '/app/settings/danger'
+    | '/app/settings/profile'
+    | '/app/settings/security'
     | '/app/registry'
+    | '/app/settings'
   id:
     | '__root__'
     | '/'
@@ -360,6 +424,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/blog/'
     | '/api/account/delete'
+    | '/api/account/email'
     | '/api/account/password'
     | '/api/account/profile'
     | '/api/auth/$'
@@ -368,7 +433,12 @@ export interface FileRouteTypes {
     | '/api/billing/webhook'
     | '/api/registry/export'
     | '/app/registry/$recordId'
+    | '/app/settings/billing'
+    | '/app/settings/danger'
+    | '/app/settings/profile'
+    | '/app/settings/security'
     | '/app/registry/'
+    | '/app/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -388,6 +458,7 @@ export interface RootRouteChildren {
   ApiSignOutRoute: typeof ApiSignOutRoute
   ApiSignUpRoute: typeof ApiSignUpRoute
   ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
+  ApiAccountEmailRoute: typeof ApiAccountEmailRoute
   ApiAccountPasswordRoute: typeof ApiAccountPasswordRoute
   ApiAccountProfileRoute: typeof ApiAccountProfileRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -539,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAccountDeleteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/account/email': {
+      id: '/api/account/email'
+      path: '/api/account/email'
+      fullPath: '/api/account/email'
+      preLoaderRoute: typeof ApiAccountEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/account/password': {
       id: '/api/account/password'
       path: '/api/account/password'
@@ -602,18 +680,73 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRegistryRecordIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/settings/': {
+      id: '/app/settings/'
+      path: '/'
+      fullPath: '/app/settings/'
+      preLoaderRoute: typeof AppSettingsIndexRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/billing': {
+      id: '/app/settings/billing'
+      path: '/billing'
+      fullPath: '/app/settings/billing'
+      preLoaderRoute: typeof AppSettingsBillingRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/danger': {
+      id: '/app/settings/danger'
+      path: '/danger'
+      fullPath: '/app/settings/danger'
+      preLoaderRoute: typeof AppSettingsDangerRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/profile': {
+      id: '/app/settings/profile'
+      path: '/profile'
+      fullPath: '/app/settings/profile'
+      preLoaderRoute: typeof AppSettingsProfileRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/security': {
+      id: '/app/settings/security'
+      path: '/security'
+      fullPath: '/app/settings/security'
+      preLoaderRoute: typeof AppSettingsSecurityRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
   }
 }
 
+interface AppSettingsRouteChildren {
+  AppSettingsBillingRoute: typeof AppSettingsBillingRoute
+  AppSettingsDangerRoute: typeof AppSettingsDangerRoute
+  AppSettingsProfileRoute: typeof AppSettingsProfileRoute
+  AppSettingsSecurityRoute: typeof AppSettingsSecurityRoute
+  AppSettingsIndexRoute: typeof AppSettingsIndexRoute
+}
+
+const AppSettingsRouteChildren: AppSettingsRouteChildren = {
+  AppSettingsBillingRoute: AppSettingsBillingRoute,
+  AppSettingsDangerRoute: AppSettingsDangerRoute,
+  AppSettingsProfileRoute: AppSettingsProfileRoute,
+  AppSettingsSecurityRoute: AppSettingsSecurityRoute,
+  AppSettingsIndexRoute: AppSettingsIndexRoute,
+}
+
+const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(
+  AppSettingsRouteChildren,
+)
+
 interface AppRouteChildren {
-  AppSettingsRoute: typeof AppSettingsRoute
+  AppSettingsRoute: typeof AppSettingsRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppRegistryRecordIdRoute: typeof AppRegistryRecordIdRoute
   AppRegistryIndexRoute: typeof AppRegistryIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppSettingsRoute: AppSettingsRoute,
+  AppSettingsRoute: AppSettingsRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppRegistryRecordIdRoute: AppRegistryRecordIdRoute,
   AppRegistryIndexRoute: AppRegistryIndexRoute,
@@ -650,6 +783,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSignOutRoute: ApiSignOutRoute,
   ApiSignUpRoute: ApiSignUpRoute,
   ApiAccountDeleteRoute: ApiAccountDeleteRoute,
+  ApiAccountEmailRoute: ApiAccountEmailRoute,
   ApiAccountPasswordRoute: ApiAccountPasswordRoute,
   ApiAccountProfileRoute: ApiAccountProfileRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

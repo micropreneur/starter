@@ -101,6 +101,9 @@ export function createBetterAuthAdapter(options: BetterAuthAdapterOptions): Auth
     socialProviders: google ? { google } : undefined,
     trustedOrigins: [baseURL],
     user: {
+      changeEmail: {
+        enabled: true,
+      },
       deleteUser: {
         enabled: true,
         sendDeleteAccountVerification: options.email
@@ -194,6 +197,13 @@ export function createBetterAuthAdapter(options: BetterAuthAdapterOptions): Auth
     },
     updateUser(input, headers) {
       return auth.api.updateUser({ asResponse: true, body: input, headers })
+    },
+    changeEmail(input, headers) {
+      return auth.api.changeEmail({
+        asResponse: true,
+        body: { callbackURL: input.callbackUrl, newEmail: input.newEmail },
+        headers,
+      })
     },
     changePassword(input, headers) {
       return auth.api.changePassword({

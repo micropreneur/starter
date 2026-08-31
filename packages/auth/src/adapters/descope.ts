@@ -52,6 +52,9 @@ export function createDescopeAdapter(): AuthPort {
     async updateUser() {
       return notImplemented()
     },
+    async changeEmail() {
+      return notImplemented()
+    },
     async changePassword() {
       return notImplemented()
     },

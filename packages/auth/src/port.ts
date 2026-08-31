@@ -44,6 +44,11 @@ export interface UpdateUserInput {
   name?: string
 }
 
+export interface ChangeEmailInput {
+  callbackUrl: string
+  newEmail: string
+}
+
 export interface ChangePasswordInput {
   currentPassword: string
   newPassword: string
@@ -77,6 +82,7 @@ export interface AuthPort {
   requestPasswordReset(input: PasswordResetRequestInput, headers: Headers): Promise<Response>
   resetPassword(input: ResetPasswordInput, headers: Headers): Promise<Response>
   updateUser(input: UpdateUserInput, headers: Headers): Promise<Response>
+  changeEmail(input: ChangeEmailInput, headers: Headers): Promise<Response>
   changePassword(input: ChangePasswordInput, headers: Headers): Promise<Response>
   listAccounts(headers: Headers): Promise<AuthAccount[]>
   deleteUser(input: DeleteUserInput, headers: Headers): Promise<Response>
