@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { getBlogPosts } from '../lib/blog'
-import { renderSitemap, STATIC_SITEMAP_ENTRIES } from '../lib/seo'
+import { getStaticSitemapEntries, renderSitemap } from '../lib/seo'
 
 export const Route = createFileRoute('/sitemap.xml')({
   server: {
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/sitemap.xml')({
           priority: 0.6,
         }))
 
-        return new Response(renderSitemap([...STATIC_SITEMAP_ENTRIES, ...blogEntries]), {
+        return new Response(renderSitemap([...getStaticSitemapEntries(), ...blogEntries]), {
           headers: {
             'cache-control': 'public, max-age=0, s-maxage=3600',
             'content-type': 'application/xml; charset=utf-8',

@@ -3,6 +3,10 @@ import { describe, expect, it } from 'vitest'
 import {
   absoluteSiteUrl,
   DEFAULT_SITE_ORIGIN,
+  getSiteOriginConfigurationError,
+  getStaticSitemapEntries,
+  INDEXABLE_PUBLIC_PAGE_PATHS,
+  legalTemplatePageHead,
   normalizeSiteOrigin,
   PRIVATE_PAGE_PATHS,
   PUBLIC_PAGE_PATHS,
@@ -10,12 +14,18 @@ import {
   publicPageHead,
   renderRobotsTxt,
   renderSitemap,
-  STATIC_SITEMAP_ENTRIES,
+  resolveLegalPagesIndexable,
 } from './seo'
 
 describe('route SEO inventory', () => {
-  it('keeps every static public page in the sitemap inventory', () => {
-    expect(STATIC_SITEMAP_ENTRIES.map((entry) => entry.path)).toEqual(PUBLIC_PAGE_PATHS)
+  it('excludes unfinished legal templates from the default sitemap inventory', () => {
+    expect(getStaticSitemapEntries().map((entry) => entry.path)).toEqual(
+      INDEXABLE_PUBLIC_PAGE_PATHS,
+    )
+    expect(getStaticSitemapEntries(true).map((entry) => entry.path)).toEqual(PUBLIC_PAGE_PATHS)
+    expect(getStaticSitemapEntries(false).map((entry) => entry.path)).toEqual(
+      INDEXABLE_PUBLIC_PAGE_PATHS,
+    )
   })
 
   it('keeps private pages out of the public route inventory', () => {
@@ -59,12 +69,34 @@ describe('page metadata', () => {
       name: 'robots',
     })
   })
+
+  it('keeps legal templates canonical but noindex until a fork activates them', () => {
+    const options = {
+      description: 'Replace this legal template before launch.',
+      path: '/privacy',
+      title: 'Privacy policy template',
+    }
+
+    const templateHead = legalTemplatePageHead(options)
+    expect(templateHead.links).toContainEqual({
+      href: 'https://starter.micropreneur.dev/privacy',
+      rel: 'canonical',
+    })
+    expect(templateHead.meta).toContainEqual({
+      content: 'noindex, nofollow, noarchive',
+      name: 'robots',
+    })
+    expect(legalTemplatePageHead(options, true).meta).toContainEqual({
+      content: 'index, follow',
+      name: 'robots',
+    })
+  })
 })
 
 describe('sitemap and robots output', () => {
   it('renders unique static and dynamic routes as absolute XML locations', () => {
     const sitemap = renderSitemap([
-      ...STATIC_SITEMAP_ENTRIES,
+      ...getStaticSitemapEntries(),
       {
         changeFrequency: 'monthly',
         lastModified: '2026-08-30',
@@ -99,5 +131,24 @@ describe('site URL normalization', () => {
     expect(absoluteSiteUrl('/faq', 'https://example.com/base')).toBe('https://example.com/faq')
     expect(normalizeSiteOrigin('javascript:alert(1)')).toBe(DEFAULT_SITE_ORIGIN)
     expect(normalizeSiteOrigin('not a URL')).toBe(DEFAULT_SITE_ORIGIN)
+  })
+
+  it('requires an explicit canonical origin for non-local forks', () => {
+    expect(getSiteOriginConfigurationError('https://starter.micropreneur.dev/pricing')).toBeNull()
+    expect(getSiteOriginConfigurationError('http://localhost:3000/pricing')).toBeNull()
+    expect(
+      getSiteOriginConfigurationError('https://product.example/pricing', 'https://product.example'),
+    ).toBeNull()
+    expect(getSiteOriginConfigurationError('https://product.example/pricing')).toContain(
+      'VITE_PUBLIC_SITE_URL',
+    )
+  })
+
+  it('activates legal indexing only for an explicit true value', () => {
+    expect(resolveLegalPagesIndexable('true')).toBe(true)
+    expect(resolveLegalPagesIndexable('TRUE')).toBe(true)
+    expect(resolveLegalPagesIndexable(' true ')).toBe(true)
+    expect(resolveLegalPagesIndexable('false')).toBe(false)
+    expect(resolveLegalPagesIndexable(undefined)).toBe(false)
   })
 })

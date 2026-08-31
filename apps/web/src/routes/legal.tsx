@@ -11,7 +11,7 @@ import { ArrowRight, Check, FileText, ShieldCheck } from 'lucide-react'
 
 import { LegalTemplateNotice } from '../components/legal-document'
 import { MarketingPageHero, MarketingPageShell } from '../components/marketing-page-shell'
-import { publicPageHead } from '../lib/seo'
+import { legalTemplatePageHead } from '../lib/seo'
 
 const launchChecklist = [
   'Name the legal entity that operates the product.',
@@ -24,7 +24,7 @@ const launchChecklist = [
 
 export const Route = createFileRoute('/legal')({
   head: () =>
-    publicPageHead({
+    legalTemplatePageHead({
       description:
         'Customizable privacy and terms templates for a Micropreneur Starter fork, with a concrete checklist for replacing placeholders before launch.',
       path: '/legal',

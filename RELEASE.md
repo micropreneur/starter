@@ -26,6 +26,11 @@ confirm settings show uploads as disabled while the rest of the local loop remai
 Request account deletion and verify both images remain until email confirmation, then confirm the
 avatar and personal-workspace logo collections are removed with the account.
 
+Before building a public fork, set `VITE_PUBLIC_SITE_URL` to its final HTTPS origin. Replace every
+placeholder and product claim in `/legal`, `/privacy`, and `/terms`; keep
+`VITE_PUBLIC_LEGAL_PAGES_INDEXABLE=false` until those pages are ready, then set it to `true` and
+confirm all three appear in `sitemap.xml`.
+
 Build and serve the free registry, then install one item into a disposable Base UI project:
 
 ```bash

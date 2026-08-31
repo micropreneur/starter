@@ -2,17 +2,18 @@ export const SITE_NAME = 'Micropreneur Starter'
 export const DEFAULT_SITE_ORIGIN = 'https://starter.micropreneur.dev'
 
 const configuredSiteOrigin = import.meta.env.VITE_PUBLIC_SITE_URL?.trim()
+const configuredLegalPagesIndexable = import.meta.env.VITE_PUBLIC_LEGAL_PAGES_INDEXABLE?.trim()
 
 export const SITE_ORIGIN = normalizeSiteOrigin(configuredSiteOrigin ?? DEFAULT_SITE_ORIGIN)
+export const LEGAL_PAGES_INDEXABLE = resolveLegalPagesIndexable(configuredLegalPagesIndexable)
+
+export const INDEXABLE_PUBLIC_PAGE_PATHS = ['/', '/pricing', '/faq', '/blog'] as const
+
+export const LEGAL_TEMPLATE_PAGE_PATHS = ['/legal', '/privacy', '/terms'] as const
 
 export const PUBLIC_PAGE_PATHS = [
-  '/',
-  '/pricing',
-  '/faq',
-  '/blog',
-  '/legal',
-  '/privacy',
-  '/terms',
+  ...INDEXABLE_PUBLIC_PAGE_PATHS,
+  ...LEGAL_TEMPLATE_PAGE_PATHS,
 ] as const
 
 export const PRIVATE_PAGE_PATHS = [
@@ -31,11 +32,14 @@ export type SitemapEntry = {
   priority: number
 }
 
-export const STATIC_SITEMAP_ENTRIES = [
+const INDEXABLE_SITEMAP_ENTRIES = [
   { changeFrequency: 'weekly', path: '/', priority: 1 },
   { changeFrequency: 'monthly', path: '/pricing', priority: 0.8 },
   { changeFrequency: 'monthly', path: '/faq', priority: 0.7 },
   { changeFrequency: 'weekly', path: '/blog', priority: 0.7 },
+] as const satisfies ReadonlyArray<SitemapEntry>
+
+const LEGAL_TEMPLATE_SITEMAP_ENTRIES = [
   { changeFrequency: 'yearly', path: '/legal', priority: 0.3 },
   { changeFrequency: 'yearly', path: '/privacy', priority: 0.3 },
   { changeFrequency: 'yearly', path: '/terms', priority: 0.3 },
@@ -50,14 +54,28 @@ type PublicPageHeadOptions = {
   type?: 'article' | 'website'
 }
 
-export function publicPageHead({
-  description,
-  imageAlt = 'Micropreneur Starter, a fork-and-go SaaS foundation',
-  path,
-  publishedTime,
-  title,
-  type = 'website',
-}: PublicPageHeadOptions) {
+export function legalTemplatePageHead(
+  options: PublicPageHeadOptions,
+  indexable = LEGAL_PAGES_INDEXABLE,
+) {
+  return pageHead(options, indexable)
+}
+
+export function publicPageHead(options: PublicPageHeadOptions) {
+  return pageHead(options, true)
+}
+
+function pageHead(
+  {
+    description,
+    imageAlt = 'Micropreneur Starter, a fork-and-go SaaS foundation',
+    path,
+    publishedTime,
+    title,
+    type = 'website',
+  }: PublicPageHeadOptions,
+  indexable: boolean,
+) {
   const pageTitle = title === SITE_NAME ? title : `${title} · ${SITE_NAME}`
   const url = absoluteSiteUrl(path)
   const image = absoluteSiteUrl('/og/starter.png')
@@ -67,7 +85,10 @@ export function publicPageHead({
     meta: [
       { title: pageTitle },
       { content: description, name: 'description' },
-      { content: 'index, follow', name: 'robots' },
+      {
+        content: indexable ? 'index, follow' : 'noindex, nofollow, noarchive',
+        name: 'robots',
+      },
       { content: pageTitle, property: 'og:title' },
       { content: description, property: 'og:description' },
       { content: type, property: 'og:type' },
@@ -86,6 +107,14 @@ export function publicPageHead({
       { content: imageAlt, name: 'twitter:image:alt' },
     ],
   }
+}
+
+export function getStaticSitemapEntries(
+  includeLegalTemplates = LEGAL_PAGES_INDEXABLE,
+): ReadonlyArray<SitemapEntry> {
+  return includeLegalTemplates
+    ? [...INDEXABLE_SITEMAP_ENTRIES, ...LEGAL_TEMPLATE_SITEMAP_ENTRIES]
+    : INDEXABLE_SITEMAP_ENTRIES
 }
 
 export function privatePageHead(title: string) {
@@ -110,6 +139,23 @@ export function normalizeSiteOrigin(value: string): string {
   } catch {
     return DEFAULT_SITE_ORIGIN
   }
+}
+
+export function resolveLegalPagesIndexable(value: string | undefined): boolean {
+  return value?.trim().toLowerCase() === 'true'
+}
+
+export function getSiteOriginConfigurationError(
+  requestUrl: string,
+  configuredOrigin = SITE_ORIGIN,
+): string | null {
+  const request = new URL(requestUrl)
+  if (isLocalHostname(request.hostname)) return null
+
+  const origin = normalizeSiteOrigin(configuredOrigin)
+  if (origin !== DEFAULT_SITE_ORIGIN || request.origin === DEFAULT_SITE_ORIGIN) return null
+
+  return `This deployment is serving ${request.origin} while VITE_PUBLIC_SITE_URL still points to ${DEFAULT_SITE_ORIGIN}. Set VITE_PUBLIC_SITE_URL to this fork's final HTTPS origin and rebuild.`
 }
 
 export function renderSitemap(entries: ReadonlyArray<SitemapEntry>, origin = SITE_ORIGIN): string {
@@ -146,4 +192,8 @@ function escapeXml(value: string): string {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&apos;')
+}
+
+function isLocalHostname(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]'
 }

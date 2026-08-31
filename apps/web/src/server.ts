@@ -5,6 +5,7 @@ import { getAuth } from './lib/auth.server'
 import { enforceAuthRateLimit } from './lib/auth-rate-limit.server'
 import { handleReadinessRequest } from './lib/readiness.server'
 import { isRealtimeEnabled, resolveRealtimeRoomName } from './lib/realtime-security'
+import { getSiteOriginConfigurationError } from './lib/seo'
 
 export { RealtimeRoom } from './durable-objects/realtime-room'
 
@@ -14,6 +15,12 @@ export default {
     if (rateLimitResponse) return rateLimitResponse
     const readinessResponse = await handleReadinessRequest(request, env)
     if (readinessResponse) return readinessResponse
+
+    const siteOriginError = getSiteOriginConfigurationError(request.url)
+    if (siteOriginError) {
+      console.error(`[seo] ${siteOriginError}`)
+      return new Response(siteOriginError, { status: 500 })
+    }
 
     const url = new URL(request.url)
     if (url.pathname.startsWith('/api/realtime/')) {
