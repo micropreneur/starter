@@ -34,6 +34,7 @@ describe('file upload service', () => {
       uploadUrl: 'https://upload.example/signed',
     })
     expect(storage.port.createUploadUrl).toHaveBeenCalledWith({
+      contentLength: 1024,
       contentType: 'image/png',
       expiresInSeconds: 300,
       key: 'staging/avatars/user%2F%2E%2E%2Fada/upload_123.png',
@@ -60,7 +61,7 @@ describe('file upload service', () => {
     const key = createStagedFileKey('logo', 'workspace-a', 'image/png', 'upload-a')
     storage.objects.set(key, {
       contentType: 'image/jpeg',
-      contents: 'not-a-png',
+      contents: new Uint8Array([0]),
       httpEtag: '"etag"',
       size: 100,
     })
@@ -69,6 +70,25 @@ describe('file upload service', () => {
       service.completeUpload('workspace-a', { key, kind: 'logo' }),
     ).rejects.toMatchObject({ reason: 'content_type_mismatch' })
     expect(storage.port.delete).toHaveBeenCalledWith(key)
+    expect(storage.objects.has(key)).toBe(false)
+  })
+
+  it('rejects spoofed image metadata when the stored bytes do not match', async () => {
+    const storage = storageFixture()
+    const service = new FileUploadService(storage.port)
+    const key = createStagedFileKey('avatar', 'user-a', 'image/png', 'upload-spoofed')
+    const contents = new TextEncoder().encode('not actually a png')
+    storage.objects.set(key, {
+      contentType: 'image/png',
+      contents,
+      httpEtag: '"etag"',
+      size: contents.byteLength,
+    })
+
+    await expect(service.completeUpload('user-a', { key, kind: 'avatar' })).rejects.toMatchObject({
+      reason: 'file_signature_mismatch',
+    })
+    expect(storage.port.put).not.toHaveBeenCalled()
     expect(storage.objects.has(key)).toBe(false)
   })
 
@@ -87,7 +107,7 @@ describe('file upload service', () => {
     const key = createStagedFileKey('logo', 'workspace-a', 'image/webp', 'upload-b')
     storage.objects.set(key, {
       contentType: 'image/webp',
-      contents: 'oversized',
+      contents: new Uint8Array([0]),
       httpEtag: '"etag"',
       size: 5 * 1024 * 1024 + 1,
     })
@@ -101,26 +121,47 @@ describe('file upload service', () => {
     const storage = storageFixture()
     const service = new FileUploadService(storage.port, undefined, () => 'final-c')
     const key = createStagedFileKey('avatar', 'user-a', 'image/png', 'upload-c')
+    const contents = validImageBytes('image/png', 'valid-image')
     storage.objects.set(key, {
       contentType: 'image/png',
-      contents: 'valid-image',
+      contents,
       httpEtag: '"etag"',
-      size: 11,
+      size: contents.byteLength,
     })
 
     const completed = await service.completeUpload('user-a', { key, kind: 'avatar' })
     expect(completed).toMatchObject({
       contentType: 'image/png',
       key: 'avatars/user-a/final-c.png',
-      size: 11,
+      size: contents.byteLength,
     })
     expect(storage.objects.has(key)).toBe(false)
     await expect(service.getFile('user-a', 'avatar', completed.key)).resolves.toMatchObject({
-      size: 11,
+      size: contents.byteLength,
     })
     await service.deleteFile('user-a', 'avatar', completed.key)
     expect(storage.objects.has(completed.key)).toBe(false)
   })
+
+  it.each(['image/jpeg', 'image/png', 'image/webp'] as const)(
+    'accepts a stored %s only when its magic bytes match',
+    async (contentType) => {
+      const storage = storageFixture()
+      const service = new FileUploadService(storage.port, undefined, () => 'final-signature')
+      const key = createStagedFileKey('avatar', 'user-a', contentType, 'upload-signature')
+      const contents = validImageBytes(contentType, 'payload')
+      storage.objects.set(key, {
+        contentType,
+        contents,
+        httpEtag: '"etag"',
+        size: contents.byteLength,
+      })
+
+      await expect(
+        service.completeUpload('user-a', { key, kind: 'avatar' }),
+      ).resolves.toMatchObject({ contentType, size: contents.byteLength })
+    },
+  )
 
   it.each(['avatar', 'logo'] as const)(
     'keeps the finalized %s immutable when the signed staging URL is reused',
@@ -136,13 +177,14 @@ describe('file upload service', () => {
       const grant = await service.requestUpload(ownerId, {
         contentType: 'image/png',
         kind,
-        size: 15,
+        size: validImageBytes('image/png', 'validated-image').byteLength,
       })
+      const validatedBytes = validImageBytes('image/png', 'validated-image')
       storage.objects.set(grant.key, {
         contentType: 'image/png',
-        contents: 'validated-image',
+        contents: validatedBytes,
         httpEtag: '"staged"',
-        size: 15,
+        size: validatedBytes.byteLength,
       })
 
       const completed = await service.completeUpload(ownerId, { key: grant.key, kind })
@@ -151,13 +193,13 @@ describe('file upload service', () => {
 
       storage.objects.set(grant.key, {
         contentType: 'image/png',
-        contents: 'replacement-after-completion',
+        contents: validImageBytes('image/png', 'replacement-after-completion'),
         httpEtag: '"reused-url"',
-        size: 28,
+        size: validImageBytes('image/png', 'replacement-after-completion').byteLength,
       })
       const served = await service.getFile(ownerId, kind, completed.key)
       expect(served).not.toBeNull()
-      expect(await new Response(served?.body).text()).toBe('validated-image')
+      expect(new Uint8Array(await new Response(served?.body).arrayBuffer())).toEqual(validatedBytes)
     },
   )
 
@@ -174,9 +216,9 @@ describe('file upload service', () => {
     for (const key of [...ownedKeys, otherOwnerKey]) {
       storage.objects.set(key, {
         contentType: 'image/png',
-        contents: 'image',
+        contents: validImageBytes('image/png'),
         httpEtag: '"etag"',
-        size: 5,
+        size: validImageBytes('image/png').byteLength,
       })
     }
 
@@ -201,7 +243,7 @@ describe('file upload service', () => {
 })
 
 function storageFixture() {
-  const objects = new Map<string, StoredFileMetadata & { contents: string }>()
+  const objects = new Map<string, StoredFileMetadata & { contents: Uint8Array }>()
   const port: FileStoragePort = {
     createUploadUrl: vi.fn(async () => 'https://upload.example/signed'),
     delete: vi.fn(async (keyOrKeys) => {
@@ -213,7 +255,7 @@ function storageFixture() {
       const { contents, ...metadata } = object
       return {
         ...metadata,
-        body: new Blob([contents]).stream(),
+        body: new Blob([Uint8Array.from(contents).buffer]).stream(),
         writeHttpMetadata() {},
       } satisfies StoredFile
     }),
@@ -229,16 +271,30 @@ function storageFixture() {
       }
     }),
     put: vi.fn(async (key, value) => {
-      const contents = await new Response(value.body).text()
+      const contents = new Uint8Array(await new Response(value.body).arrayBuffer())
       const object = {
         contentType: value.contentType,
         contents,
         httpEtag: '"finalized"',
-        size: new TextEncoder().encode(contents).byteLength,
+        size: contents.byteLength,
       }
       objects.set(key, object)
       return object
     }),
   }
   return { objects, port }
+}
+
+function validImageBytes(contentType: 'image/jpeg' | 'image/png' | 'image/webp', payload = '') {
+  const signature =
+    contentType === 'image/jpeg'
+      ? [0xff, 0xd8, 0xff]
+      : contentType === 'image/png'
+        ? [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+        : [0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50]
+  const payloadBytes = new TextEncoder().encode(payload)
+  const bytes = new Uint8Array(signature.length + payloadBytes.byteLength)
+  bytes.set(signature)
+  bytes.set(payloadBytes, signature.length)
+  return bytes
 }

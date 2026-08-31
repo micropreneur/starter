@@ -35,6 +35,7 @@ export const fileUploadPolicies = {
 export type FileUploadValidationReason =
   | 'content_type_mismatch'
   | 'empty_file'
+  | 'file_signature_mismatch'
   | 'file_too_large'
   | 'invalid_input'
   | 'object_missing'
@@ -78,6 +79,7 @@ export class FileUploadService {
       this.createId(),
     )
     const uploadUrl = await this.storage.createUploadUrl({
+      contentLength: parsed.data.size,
       contentType: parsed.data.contentType,
       expiresInSeconds: uploadExpirySeconds,
       key,
@@ -103,21 +105,19 @@ export class FileUploadService {
       throw new FileUploadValidationError('object_missing', 'The uploaded file was not found.')
     }
 
+    let contentType: FileContentType
+    let finalizationBody: ReadableStream<Uint8Array>
     try {
-      validateStoredFile(parsed.data.kind, parsed.data.key, object)
+      contentType = validateStoredFile(parsed.data.kind, parsed.data.key, object)
+      finalizationBody = await validateImageSignature(parsed.data.kind, contentType, object.body)
     } catch (error) {
       await this.storage.delete(parsed.data.key)
       throw error
     }
 
-    const contentType = contentTypeFromKey(parsed.data.key)
-    if (!contentType) {
-      await this.storage.delete(parsed.data.key)
-      throw new FileUploadValidationError('invalid_input', 'Invalid staged file key.')
-    }
     const finalKey = createOwnedFileKey(parsed.data.kind, ownerId, contentType, this.createId())
     const finalized = await this.storage.put(finalKey, {
-      body: object.body,
+      body: finalizationBody,
       contentType,
     })
     try {
@@ -276,7 +276,11 @@ export function fileKeyFromAssetUrl(value: string | null | undefined, kind: File
   return parsed.searchParams.get('key')
 }
 
-function validateStoredFile(kind: FileKind, key: string, object: StoredFileMetadata) {
+function validateStoredFile(
+  kind: FileKind,
+  key: string,
+  object: StoredFileMetadata,
+): FileContentType {
   const policy = fileUploadPolicies[kind]
   if (object.size <= 0) {
     throw new FileUploadValidationError('empty_file', `The ${policy.label} cannot be empty.`)
@@ -294,6 +298,68 @@ function validateStoredFile(kind: FileKind, key: string, object: StoredFileMetad
       `The stored ${policy.label} does not match its approved image type.`,
     )
   }
+  return expectedContentType
+}
+
+async function validateImageSignature(
+  kind: FileKind,
+  contentType: FileContentType,
+  body: ReadableStream<Uint8Array>,
+): Promise<ReadableStream<Uint8Array>> {
+  const signatureLength = requiredSignatureLength(contentType)
+  const [inspectionBody, finalizationBody] = body.tee()
+  const reader = inspectionBody.getReader()
+  const prefix = new Uint8Array(signatureLength)
+  let offset = 0
+
+  try {
+    while (offset < signatureLength) {
+      const chunk = await reader.read()
+      if (chunk.done) break
+      const bytesToCopy = Math.min(chunk.value.byteLength, signatureLength - offset)
+      prefix.set(chunk.value.subarray(0, bytesToCopy), offset)
+      offset += bytesToCopy
+    }
+  } catch (error) {
+    await Promise.allSettled([reader.cancel(), finalizationBody.cancel()])
+    throw error
+  }
+
+  if (!hasExpectedImageSignature(contentType, prefix.subarray(0, offset))) {
+    await Promise.allSettled([reader.cancel(), finalizationBody.cancel()])
+    throw new FileUploadValidationError(
+      'file_signature_mismatch',
+      `The stored ${fileUploadPolicies[kind].label} does not contain valid ${contentType} image bytes.`,
+    )
+  }
+
+  // Do not await this cancellation: tee cancellation settles only after the branch being
+  // finalized finishes. Attaching a rejection handler still prevents an unhandled promise.
+  void reader.cancel().catch(() => undefined)
+  return finalizationBody
+}
+
+function requiredSignatureLength(contentType: FileContentType): number {
+  if (contentType === 'image/jpeg') return 3
+  if (contentType === 'image/png') return 8
+  return 12
+}
+
+function hasExpectedImageSignature(contentType: FileContentType, bytes: Uint8Array): boolean {
+  if (contentType === 'image/jpeg') {
+    return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff
+  }
+  if (contentType === 'image/png') {
+    return matchesBytes(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
+  }
+  return (
+    matchesBytes(bytes, [0x52, 0x49, 0x46, 0x46]) &&
+    matchesBytes(bytes.subarray(8), [0x57, 0x45, 0x42, 0x50])
+  )
+}
+
+function matchesBytes(actual: Uint8Array, expected: readonly number[]): boolean {
+  return expected.every((value, index) => actual[index] === value)
 }
 
 function contentTypeFromKey(key: string): FileContentType | null {

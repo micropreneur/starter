@@ -45,7 +45,7 @@ describe('R2 file storage composition', () => {
     ).rejects.toThrow('AUTH_RATE_LIMITER is required')
   })
 
-  it('signs a five-minute PUT grant with Content-Type and an encoded owner key', async () => {
+  it('signs a five-minute PUT grant with the exact byte length and an encoded owner key', async () => {
     const env = {
       ...envFixture(),
       AUTH_RATE_LIMITER: { limit: vi.fn() } as unknown as RateLimit,
@@ -64,7 +64,7 @@ describe('R2 file storage composition', () => {
     expect(url.origin).toBe('https://0123456789abcdef0123456789abcdef.r2.cloudflarestorage.com')
     expect(url.pathname).toContain('/starter-files/staging/avatars/user%252Fa/')
     expect(url.searchParams.get('X-Amz-Expires')).toBe('300')
-    expect(url.searchParams.get('X-Amz-SignedHeaders')).toBe('content-type;host')
+    expect(url.searchParams.get('X-Amz-SignedHeaders')).toBe('content-length;content-type;host')
     expect(grant.headers).toEqual({ 'content-type': 'image/webp' })
   })
 })

@@ -27,7 +27,7 @@ export interface StoredFileMetadata {
 }
 
 export interface StoredFile extends StoredFileMetadata {
-  body: ReadableStream
+  body: ReadableStream<Uint8Array>
   writeHttpMetadata(headers: Headers): void
 }
 
@@ -48,6 +48,7 @@ export interface StoredFileList {
 
 export interface FileStoragePort {
   createUploadUrl(input: {
+    contentLength: number
     contentType: FileContentType
     expiresInSeconds: number
     key: string
@@ -57,6 +58,6 @@ export interface FileStoragePort {
   list(input: { cursor?: string; prefix: string }): Promise<StoredFileList>
   put(
     key: string,
-    value: { body: ReadableStream; contentType: FileContentType },
+    value: { body: ReadableStream<Uint8Array>; contentType: FileContentType },
   ): Promise<StoredFileMetadata>
 }

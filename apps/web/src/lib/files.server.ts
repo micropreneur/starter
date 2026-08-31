@@ -48,7 +48,7 @@ export function resolveR2SigningConfig(env: WebEnv): R2SigningConfig | null {
 
 function createR2Storage(env: WebEnv): FileStoragePort {
   return {
-    async createUploadUrl({ contentType, expiresInSeconds, key }) {
+    async createUploadUrl({ contentLength, contentType, expiresInSeconds, key }) {
       const config = resolveR2SigningConfig(env)
       if (!config) throw new FileUploadsNotConfiguredError()
       const client = new AwsClient({
@@ -64,7 +64,10 @@ function createR2Storage(env: WebEnv): FileStoragePort {
       url.searchParams.set('X-Amz-Expires', String(expiresInSeconds))
       const signed = await client.sign(
         new Request(url, {
-          headers: { 'content-type': contentType },
+          headers: {
+            'content-length': String(contentLength),
+            'content-type': contentType,
+          },
           method: 'PUT',
         }),
         { aws: { allHeaders: true, signQuery: true } },
