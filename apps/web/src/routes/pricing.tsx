@@ -9,7 +9,7 @@ const included = [
   'TanStack Start app for Cloudflare Workers',
   'D1 schema and one personal workspace',
   'Provider-neutral authentication port',
-  'One-plan billing and entitlement seams',
+  'Complete one-plan billing engine, off by default',
   'Source-owned Elements registry',
   'Docs, agent instructions, and focused checks',
 ] as const

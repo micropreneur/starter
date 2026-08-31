@@ -23,7 +23,7 @@ const questions = [
   },
   {
     answer:
-      'A single-user paid SaaS is the intended example. The repository includes one personal workspace, authentication, one-plan billing seams, entitlements, email, and a removable Operations Registry domain.',
+      'A single-user paid SaaS is the intended example. The repository includes one personal workspace, authentication, a complete one-plan billing engine that stays off by default, entitlements, email, and a removable Operations Registry domain.',
     question: 'What product shape does the free repository support?',
   },
   {
