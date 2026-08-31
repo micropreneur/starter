@@ -51,6 +51,22 @@ pnpm --dir apps/web exec wrangler r2 bucket cors list my-product-files
 The example permits only `PUT`, allows only the signed `Content-Type` request header, and exposes
 `ETag`. CORS limits which browser origins may use a grant; it does not replace authentication.
 
+## Expire abandoned staging uploads
+
+The committed `apps/web/r2-lifecycle.example.json` expires only the `staging/` prefix after one day.
+Inspect existing rules before applying it because `lifecycle set` replaces the bucket's complete
+lifecycle configuration. Test the change on a non-production bucket, then inspect the result:
+
+```bash
+pnpm --dir apps/web exec wrangler r2 bucket lifecycle list my-product-files
+pnpm --dir apps/web exec wrangler r2 bucket lifecycle set my-product-files \
+  --file r2-lifecycle.example.json
+pnpm --dir apps/web exec wrangler r2 bucket lifecycle list my-product-files
+```
+
+R2 typically removes expired objects within 24 hours after their expiration time. Bucket lock rules
+take precedence, so verify that no lock retains the `staging/` prefix longer than intended.
+
 ## Configure signing
 
 Create an R2 API token with object read/write access scoped to this bucket. Set the account ID in
@@ -66,6 +82,14 @@ commit them or print them in test output, and pair them with the non-production 
 described above. The Worker uses `aws4fetch` and Web Crypto to sign a five-minute, single-key `PUT`
 whose `Content-Type` must match the upload request.
 
+Browsers manage `Content-Length` and do not reliably allow application code to set that forbidden
+request header, so Starter does not include it in the signature. The client-provided size is only a
+fast validation hint: completion checks the actual R2 object size before finalization. The committed
+`AUTH_RATE_LIMITER` binding limits signed grants to 10 per minute per authenticated user, and the
+staging lifecycle rule bounds abandoned objects. Replace its example `namespace_id` with a unique
+positive integer for the Cloudflare account before deployment. R2 signing fails closed with an
+actionable configuration error if that binding is absent.
+
 ## Upload lifecycle
 
 1. An authenticated route resolves the user or active personal workspace; the client never submits
@@ -79,11 +103,14 @@ whose `Content-Type` must match the upload request.
    previous owned object.
 6. Authenticated image routes stream only final keys and reject staging or cross-owner keys as not
    found.
+7. Confirmed account deletion removes final and staged avatar and personal-workspace logo
+   collections before the auth/database cascade. Merely requesting the deletion email leaves files
+   and account data untouched; cleanup failure aborts deletion.
 
 Treat each presigned URL as a bearer token until `expiresAt`. A signed URL can recreate or overwrite
 its staging key until expiry, but it can never address the finalized key being served. Request a new
-grant after expiry. Consider an R2 lifecycle rule that removes abandoned `staging/` objects in forks
-with material upload volume.
+grant after expiry. Keep the committed staging lifecycle rule, or an equally short replacement, in
+every environment where signed grants are enabled.
 
 ## Verify the boundary
 
@@ -91,9 +118,12 @@ Run the focused policy tests and regenerate binding types after changing Wrangle
 
 ```bash
 pnpm --filter @micropreneur/files test
-pnpm --filter web test -- files.server.test.ts
+pnpm --filter @micropreneur/auth test
+pnpm --filter web test -- account-files.server.test.ts files-rate-limit.server.test.ts files.server.test.ts r2-policy.test.ts
 pnpm --filter web cf-typegen
 ```
 
 Before a release, upload and replace both image kinds, remove them, try an unsupported type and an
 oversized image, then confirm a second account receives `404` for the first account's object key.
+Request account deletion and confirm both images remain before email confirmation; after confirming,
+verify both owner collections and the account rows are gone.

@@ -28,6 +28,16 @@
       "bucket_name": "micropreneur-starter-files"
     }
   ],
+  "ratelimits": [
+    {
+      "name": "AUTH_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 10,
+        "period": 60
+      }
+    }
+  ],
   "durable_objects": {
     "bindings": [
       {

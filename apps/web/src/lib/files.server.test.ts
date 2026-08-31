@@ -27,9 +27,28 @@ describe('R2 file storage composition', () => {
     )
   })
 
+  it('cannot issue an R2 grant without the upload-grant rate limiter', async () => {
+    const service = createFileUploadService({
+      ...envFixture(),
+      R2_ACCESS_KEY_ID: 'test-access-key',
+      R2_ACCOUNT_ID: '0123456789abcdef0123456789abcdef',
+      R2_BUCKET_NAME: 'starter-files',
+      R2_SECRET_ACCESS_KEY: 'test-secret-key',
+    })
+
+    await expect(
+      service.requestUpload('user-a', {
+        contentType: 'image/png',
+        kind: 'avatar',
+        size: 100,
+      }),
+    ).rejects.toThrow('AUTH_RATE_LIMITER is required')
+  })
+
   it('signs a five-minute PUT grant with Content-Type and an encoded owner key', async () => {
     const env = {
       ...envFixture(),
+      AUTH_RATE_LIMITER: { limit: vi.fn() } as unknown as RateLimit,
       R2_ACCESS_KEY_ID: 'test-access-key',
       R2_ACCOUNT_ID: '0123456789abcdef0123456789abcdef',
       R2_BUCKET_NAME: 'starter-files',

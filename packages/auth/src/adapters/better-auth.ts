@@ -21,6 +21,7 @@ export interface BetterAuthAdapterOptions {
   email?: EmailPort
   googleClientId?: string
   googleClientSecret?: string
+  beforeUserDelete?: (user: AuthUser) => Promise<void>
   onUserCreated?: (user: AuthUser) => Promise<void>
   requireEmailVerification?: boolean
 }
@@ -105,6 +106,11 @@ export function createBetterAuthAdapter(options: BetterAuthAdapterOptions): Auth
         enabled: true,
       },
       deleteUser: {
+        beforeDelete: options.beforeUserDelete
+          ? async (user) => {
+              await options.beforeUserDelete?.(toAuthUser(user))
+            }
+          : undefined,
         enabled: true,
         sendDeleteAccountVerification: options.email
           ? async ({ user, url }) => {

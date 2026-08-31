@@ -10,6 +10,7 @@ import {
   resolveFileOwner,
 } from '../../../lib/files.handlers'
 import { createFileUploadService, FileUploadsNotConfiguredError } from '../../../lib/files.server'
+import { enforceFileUploadGrantRateLimit } from '../../../lib/files-rate-limit.server'
 import { requireSameOrigin } from '../../../lib/request-security'
 
 export const Route = createFileRoute('/api/files/upload-url')({
@@ -18,6 +19,9 @@ export const Route = createFileRoute('/api/files/upload-url')({
       POST: async ({ request }) => {
         requireSameOrigin(request)
         const user = await requireFileUser(request)
+        const env = cloudflareEnv as unknown as WebEnv
+        const rateLimitResponse = await enforceFileUploadGrantRateLimit(request, env, user.id)
+        if (rateLimitResponse) return rateLimitResponse
         const parsed = fileUploadRequestSchema.safeParse(await readJsonBody(request))
         if (!parsed.success) {
           return Response.json(
@@ -27,9 +31,7 @@ export const Route = createFileRoute('/api/files/upload-url')({
         }
         const owner = await resolveFileOwner(request, parsed.data.kind, user)
         try {
-          const grant = await createFileUploadService(
-            cloudflareEnv as unknown as WebEnv,
-          ).requestUpload(owner.id, parsed.data)
+          const grant = await createFileUploadService(env).requestUpload(owner.id, parsed.data)
           return Response.json(grant, { headers: { 'cache-control': 'no-store' } })
         } catch (error) {
           if (error instanceof FileUploadsNotConfiguredError) {

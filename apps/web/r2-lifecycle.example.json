@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "id": "expire-abandoned-staging-uploads",
+      "enabled": true,
+      "conditions": {
+        "prefix": "staging/"
+      },
+      "deleteObjectsTransition": {
+        "condition": {
+          "type": "Age",
+          "maxAge": 86400
+        }
+      }
+    }
+  ]
+}

@@ -11,6 +11,7 @@ export interface CreateAuthOptions {
   betterAuthSecret?: string
   googleClientId?: string
   googleClientSecret?: string
+  beforeUserDelete?: (user: AuthUser) => Promise<void>
   onUserCreated?: (user: AuthUser) => Promise<void>
   email?: EmailPort
   defer?: (task: Promise<unknown>) => void
@@ -40,6 +41,7 @@ export function createAuth(provider: AuthProvider, options: CreateAuthOptions = 
       return createBetterAuthAdapter({
         allowLocalDevelopmentSecret: options.allowLocalDevelopmentSecret,
         baseUrl: options.betterAuthBaseUrl,
+        beforeUserDelete: options.beforeUserDelete,
         database: options.database,
         defer: options.defer,
         email: options.email,

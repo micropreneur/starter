@@ -38,6 +38,11 @@ export function resolveR2SigningConfig(env: WebEnv): R2SigningConfig | null {
       'R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, and R2_BUCKET_NAME must be configured together.',
     )
   }
+  if (!env.AUTH_RATE_LIMITER) {
+    throw new Error(
+      'AUTH_RATE_LIMITER is required when R2 signing is configured. Restore the rate-limit binding in apps/web/wrangler.jsonc before issuing upload grants.',
+    )
+  }
   return { accessKeyId, accountId, bucketName, secretAccessKey }
 }
 
@@ -80,6 +85,14 @@ function createR2Storage(env: WebEnv): FileStoragePort {
         writeHttpMetadata(headers) {
           object.writeHttpMetadata(headers)
         },
+      }
+    },
+    async list({ cursor, prefix }) {
+      const page = await env.FILES.list({ cursor, limit: 1000, prefix })
+      return {
+        cursor: page.truncated ? page.cursor : undefined,
+        keys: page.objects.map((object) => object.key),
+        truncated: page.truncated,
       }
     },
     async put(key, value) {

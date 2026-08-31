@@ -1,6 +1,7 @@
 import type {
   FileContentType,
   FileKind,
+  FileOwner,
   FileStoragePort,
   FileUploadCompletion,
   FileUploadGrant,
@@ -144,6 +145,33 @@ export class FileUploadService {
     requireOwnedFileKey(kind, ownerId, key)
     await this.storage.delete(key)
   }
+
+  async deleteOwnerFiles(owners: readonly FileOwner[]): Promise<void> {
+    const keys = new Set<string>()
+    for (const owner of owners) {
+      for (const prefix of ownedFilePrefixes(owner.kind, owner.ownerId)) {
+        let cursor: string | undefined
+        do {
+          const page = await this.storage.list({ cursor, prefix })
+          for (const key of page.keys) {
+            if (!key.startsWith(prefix)) {
+              throw new Error('File storage returned an object outside the requested owner prefix.')
+            }
+            keys.add(key)
+          }
+          if (page.truncated && !page.cursor) {
+            throw new Error('File storage returned a truncated page without a cursor.')
+          }
+          cursor = page.truncated ? page.cursor : undefined
+        } while (cursor)
+      }
+    }
+
+    const values = [...keys]
+    for (let index = 0; index < values.length; index += 1000) {
+      await this.storage.delete(values.slice(index, index + 1000))
+    }
+  }
 }
 
 export function createOwnedFileKey(
@@ -174,7 +202,7 @@ function createFileKey(
   if (!/^[a-zA-Z0-9_-]{1,64}$/.test(safeUploadId)) {
     throw new FileUploadValidationError('invalid_input', 'Invalid upload identifier.')
   }
-  const ownerSegment = encodeURIComponent(ownerId).replaceAll('.', '%2E')
+  const ownerSegment = ownerKeySegment(ownerId)
   if (!ownerSegment) {
     throw new FileUploadValidationError('invalid_input', 'A file owner is required.')
   }
@@ -182,9 +210,10 @@ function createFileKey(
 }
 
 export function isOwnedFileKey(kind: FileKind, ownerId: string, key: string): boolean {
-  const ownerSegment = encodeURIComponent(ownerId).replaceAll('.', '%2E')
-  const prefix = `${fileUploadPolicies[kind].prefix}/${ownerSegment}/`
-  if (!ownerSegment || !key.startsWith(prefix)) return false
+  const ownerSegment = ownerKeySegment(ownerId)
+  if (!ownerSegment) return false
+  const prefix = ownedFilePrefix(kind, ownerId)
+  if (!key.startsWith(prefix)) return false
   return /^[a-zA-Z0-9_-]{1,64}\.(jpg|png|webp)$/.test(key.slice(prefix.length))
 }
 
@@ -198,9 +227,10 @@ export function requireOwnedFileKey(kind: FileKind, ownerId: string, key: string
 }
 
 export function isOwnedStagedFileKey(kind: FileKind, ownerId: string, key: string): boolean {
-  const ownerSegment = encodeURIComponent(ownerId).replaceAll('.', '%2E')
-  const prefix = `staging/${fileUploadPolicies[kind].prefix}/${ownerSegment}/`
-  if (!ownerSegment || !key.startsWith(prefix)) return false
+  const ownerSegment = ownerKeySegment(ownerId)
+  if (!ownerSegment) return false
+  const prefix = ownedStagedFilePrefix(kind, ownerId)
+  if (!key.startsWith(prefix)) return false
   return /^[a-zA-Z0-9_-]{1,64}\.(jpg|png|webp)$/.test(key.slice(prefix.length))
 }
 
@@ -211,6 +241,22 @@ export function requireOwnedStagedFileKey(kind: FileKind, ownerId: string, key: 
       'The staged file does not belong to the authenticated owner.',
     )
   }
+}
+
+export function ownedFilePrefix(kind: FileKind, ownerId: string): string {
+  const ownerSegment = ownerKeySegment(ownerId)
+  if (!ownerSegment) {
+    throw new FileUploadValidationError('invalid_input', 'A file owner is required.')
+  }
+  return `${fileUploadPolicies[kind].prefix}/${ownerSegment}/`
+}
+
+export function ownedStagedFilePrefix(kind: FileKind, ownerId: string): string {
+  return `staging/${ownedFilePrefix(kind, ownerId)}`
+}
+
+export function ownedFilePrefixes(kind: FileKind, ownerId: string): [string, string] {
+  return [ownedFilePrefix(kind, ownerId), ownedStagedFilePrefix(kind, ownerId)]
 }
 
 export function fileAssetUrl(kind: FileKind, key: string): string {
@@ -255,6 +301,10 @@ function contentTypeFromKey(key: string): FileContentType | null {
   if (key.endsWith('.png')) return 'image/png'
   if (key.endsWith('.webp')) return 'image/webp'
   return null
+}
+
+function ownerKeySegment(ownerId: string): string {
+  return encodeURIComponent(ownerId).replaceAll('.', '%2E')
 }
 
 function formatBytes(value: number) {

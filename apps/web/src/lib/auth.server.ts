@@ -9,6 +9,7 @@ import {
 import { bootstrapPersonalWorkspace } from '@micropreneur/workspaces'
 
 import type { WebEnv } from '../env'
+import { createAccountFileDeletionHook } from './account-files.server'
 import { isLocalAuthEnvironment, resolveBetterAuthBaseUrl } from './auth-environment'
 
 let cachedAuth: AuthPort | undefined
@@ -35,6 +36,7 @@ export function getAuth(): AuthPort {
     allowLocalDevelopmentSecret: local,
     betterAuthBaseUrl: baseUrl,
     betterAuthSecret: env.BETTER_AUTH_SECRET,
+    beforeUserDelete: createAccountFileDeletionHook(env),
     database: env.DB,
     defer: (task) => waitUntil(task),
     email,

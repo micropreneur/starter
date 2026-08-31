@@ -171,7 +171,9 @@
         "presigned urls",
         "avatar",
         "logo",
-        "cors"
+        "cors",
+        "lifecycle",
+        "rate limit"
       ],
       "path": "/cloudflare/r2-file-uploads",
       "rawPath": "/cloudflare/r2-file-uploads.md",

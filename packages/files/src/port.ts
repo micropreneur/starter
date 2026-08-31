@@ -35,14 +35,26 @@ export interface FinalizedFile extends StoredFileMetadata {
   key: string
 }
 
+export interface FileOwner {
+  kind: FileKind
+  ownerId: string
+}
+
+export interface StoredFileList {
+  cursor?: string
+  keys: string[]
+  truncated: boolean
+}
+
 export interface FileStoragePort {
   createUploadUrl(input: {
     contentType: FileContentType
     expiresInSeconds: number
     key: string
   }): Promise<string>
-  delete(key: string): Promise<void>
+  delete(key: string | string[]): Promise<void>
   get(key: string): Promise<StoredFile | null>
+  list(input: { cursor?: string; prefix: string }): Promise<StoredFileList>
   put(
     key: string,
     value: { body: ReadableStream; contentType: FileContentType },

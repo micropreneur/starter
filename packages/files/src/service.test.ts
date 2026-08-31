@@ -161,6 +161,35 @@ describe('file upload service', () => {
     },
   )
 
+  it('deletes final and staged avatar and logo collections without crossing owners', async () => {
+    const storage = storageFixture()
+    const service = new FileUploadService(storage.port)
+    const ownedKeys = [
+      createOwnedFileKey('avatar', 'user-a', 'image/png', 'avatar-final'),
+      createStagedFileKey('avatar', 'user-a', 'image/png', 'avatar-stage'),
+      createOwnedFileKey('logo', 'personal:user-a', 'image/png', 'logo-final'),
+      createStagedFileKey('logo', 'personal:user-a', 'image/png', 'logo-stage'),
+    ]
+    const otherOwnerKey = createOwnedFileKey('avatar', 'user-b', 'image/png', 'avatar-final')
+    for (const key of [...ownedKeys, otherOwnerKey]) {
+      storage.objects.set(key, {
+        contentType: 'image/png',
+        contents: 'image',
+        httpEtag: '"etag"',
+        size: 5,
+      })
+    }
+
+    await service.deleteOwnerFiles([
+      { kind: 'avatar', ownerId: 'user-a' },
+      { kind: 'logo', ownerId: 'personal:user-a' },
+    ])
+
+    expect(ownedKeys.every((key) => !storage.objects.has(key))).toBe(true)
+    expect(storage.objects.has(otherOwnerKey)).toBe(true)
+    expect(storage.port.delete).toHaveBeenCalledWith(ownedKeys)
+  })
+
   it('round-trips only same-origin Starter asset references', () => {
     const key = createOwnedFileKey('logo', 'workspace-a', 'image/png', 'upload-d')
     const assetUrl = fileAssetUrl('logo', key)
@@ -175,8 +204,8 @@ function storageFixture() {
   const objects = new Map<string, StoredFileMetadata & { contents: string }>()
   const port: FileStoragePort = {
     createUploadUrl: vi.fn(async () => 'https://upload.example/signed'),
-    delete: vi.fn(async (key) => {
-      objects.delete(key)
+    delete: vi.fn(async (keyOrKeys) => {
+      for (const key of Array.isArray(keyOrKeys) ? keyOrKeys : [keyOrKeys]) objects.delete(key)
     }),
     get: vi.fn(async (key) => {
       const object = objects.get(key)
@@ -187,6 +216,17 @@ function storageFixture() {
         body: new Blob([contents]).stream(),
         writeHttpMetadata() {},
       } satisfies StoredFile
+    }),
+    list: vi.fn(async ({ cursor, prefix }) => {
+      const matching = [...objects.keys()].filter((key) => key.startsWith(prefix)).sort()
+      const offset = Number(cursor ?? 0)
+      const keys = matching.slice(offset, offset + 1)
+      const nextOffset = offset + keys.length
+      return {
+        cursor: nextOffset < matching.length ? String(nextOffset) : undefined,
+        keys,
+        truncated: nextOffset < matching.length,
+      }
     }),
     put: vi.fn(async (key, value) => {
       const contents = await new Response(value.body).text()

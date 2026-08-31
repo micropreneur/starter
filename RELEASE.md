@@ -23,6 +23,8 @@ When R2 signing is configured, upload, replace, and remove an avatar and workspa
 unsupported or oversized images fail, stored metadata is validated before the reference changes,
 and a second account receives `404` for the first account's object key. Without signing credentials,
 confirm settings show uploads as disabled while the rest of the local loop remains functional.
+Request account deletion and verify both images remain until email confirmation, then confirm the
+avatar and personal-workspace logo collections are removed with the account.
 
 Build and serve the free registry, then install one item into a disposable Base UI project:
 
