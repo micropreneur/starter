@@ -29,6 +29,7 @@ export const siteConfig: SiteConfiguration = sourceSiteConfig
 assertSiteConfiguration(siteConfig)
 
 export const siteLinks = {
+  billingActivation: `${siteConfig.docsUrl.replace(/\/$/u, '')}/integrations/stripe`,
   docs: siteConfig.docsUrl,
   elements: `${siteConfig.repositoryUrl}/tree/main/packages/elements`,
   issues: `${siteConfig.repositoryUrl}/issues`,
@@ -36,6 +37,7 @@ export const siteLinks = {
   quickstart: `${siteConfig.repositoryUrl}#quickstart`,
   repository: siteConfig.repositoryUrl,
   social: siteConfig.socialUrl,
+  starterPro: siteConfig.attribution.url,
   support: `mailto:${siteConfig.supportEmail}`,
 } as const
 

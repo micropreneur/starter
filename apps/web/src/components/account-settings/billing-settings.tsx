@@ -12,6 +12,7 @@ import {
 import { CreditCard } from 'lucide-react'
 import { useState } from 'react'
 
+import { siteLinks } from '../../config/site'
 import { type BillingOverview, FormFeedback, postJson, SettingsSection } from './shared'
 
 export function BillingSettings({
@@ -92,7 +93,7 @@ function BillingCard({ billing }: { billing: BillingOverview }) {
           <div className="flex flex-wrap gap-2">
             <a
               className={buttonVariants({ variant: 'outline' })}
-              href="https://docs.micropreneur.dev/integrations/stripe"
+              href={siteLinks.billingActivation}
               rel="noreferrer"
               target="_blank"
             >
@@ -100,7 +101,7 @@ function BillingCard({ billing }: { billing: BillingOverview }) {
             </a>
             <a
               className={buttonVariants({ variant: 'outline' })}
-              href="https://www.micropreneur.dev"
+              href={siteLinks.starterPro}
               rel="noreferrer"
               target="_blank"
             >
