@@ -2,13 +2,13 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { LegalDocument, LegalSection, LegalTemplateNotice } from '../components/legal-document'
 import { MarketingPageHero, MarketingPageShell } from '../components/marketing-page-shell'
+import { siteConfig } from '../config/site'
 import { legalTemplatePageHead } from '../lib/seo'
 
 export const Route = createFileRoute('/terms')({
   head: () =>
     legalTemplatePageHead({
-      description:
-        'A clearly labeled, customizable terms of service template for products forked from Micropreneur Starter. Replace it and obtain legal review before launch.',
+      description: `A clearly labeled, customizable terms of service template for products forked from ${siteConfig.name}. Replace it and obtain legal review before launch.`,
       path: '/terms',
       title: 'Terms of service template',
     }),

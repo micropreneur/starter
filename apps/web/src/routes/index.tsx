@@ -31,6 +31,7 @@ import type { ReactNode } from 'react'
 import { ScrollStory } from '../components/scroll-story'
 import { SiteFooter } from '../components/site-footer'
 import { StackShowcase } from '../components/stack-showcase'
+import { siteConfig, siteLinks } from '../config/site'
 import { getCurrentUser } from '../lib/auth.functions'
 import { getBlogPostSummaries } from '../lib/blog-metadata'
 import { getBlogCategoryIcon } from '../lib/blog-presentation'
@@ -42,7 +43,7 @@ export const Route = createFileRoute('/')({
       description:
         'A fork-and-go SaaS foundation on Cloudflare with strict TypeScript, swappable auth, source-owned UI, and agent-readable workflows.',
       path: '/',
-      title: 'Micropreneur Starter',
+      title: siteConfig.name,
     }),
   loader: () => getCurrentUser(),
   component: Home,
@@ -96,7 +97,7 @@ function Home() {
             Keep your freedom<span className="text-accent">.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg">
-            Micropreneur Starter is a fork-and-go Cloudflare foundation for paid, single-user SaaS—
+            {siteConfig.name} is a fork-and-go Cloudflare foundation for paid, single-user SaaS—
             source-owned, agent-readable, and ready to customize. Its complete one-plan Stripe
             engine stays off until you choose to activate it.
           </p>
@@ -110,7 +111,7 @@ function Home() {
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <a
               className={buttonVariants({ size: 'lg' })}
-              href="https://github.com/micropreneur/starter"
+              href={siteLinks.repository}
               rel="noreferrer"
               target="_blank"
             >
@@ -245,7 +246,7 @@ $ pnpm turbo typecheck lint build test
           <div className="mt-10 flex justify-center">
             <a
               className={buttonVariants({ variant: 'outline' })}
-              href="https://github.com/micropreneur/starter/tree/main/packages/elements"
+              href={siteLinks.elements}
               rel="noreferrer"
               target="_blank"
             >
@@ -335,7 +336,7 @@ $ pnpm turbo typecheck lint build test
               {user ? (
                 <a
                   className={buttonVariants({ size: 'lg', variant: 'outline' })}
-                  href="https://github.com/micropreneur/starter#quickstart"
+                  href={siteLinks.quickstart}
                   rel="noreferrer"
                   target="_blank"
                 >

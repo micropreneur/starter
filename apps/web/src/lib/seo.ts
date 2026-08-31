@@ -1,5 +1,7 @@
-export const SITE_NAME = 'Micropreneur Starter'
-export const DEFAULT_SITE_ORIGIN = 'https://starter.micropreneur.dev'
+import { type SiteConfiguration, siteConfig } from '../config/site'
+
+export const SITE_NAME = siteConfig.name
+export const DEFAULT_SITE_ORIGIN = siteConfig.defaultOrigin
 
 const configuredSiteOrigin = import.meta.env.VITE_PUBLIC_SITE_URL?.trim()
 const configuredLegalPagesIndexable = import.meta.env.VITE_PUBLIC_LEGAL_PAGES_INDEXABLE?.trim()
@@ -68,7 +70,7 @@ export function publicPageHead(options: PublicPageHeadOptions) {
 function pageHead(
   {
     description,
-    imageAlt = 'Micropreneur Starter, a fork-and-go SaaS foundation',
+    imageAlt = siteConfig.socialImage.alt,
     path,
     publishedTime,
     title,
@@ -78,7 +80,7 @@ function pageHead(
 ) {
   const pageTitle = title === SITE_NAME ? title : `${title} · ${SITE_NAME}`
   const url = absoluteSiteUrl(path)
-  const image = absoluteSiteUrl('/og/starter.png')
+  const image = absoluteSiteUrl(siteConfig.socialImage.path)
 
   return {
     links: [{ href: url, rel: 'canonical' }],
@@ -145,17 +147,47 @@ export function resolveLegalPagesIndexable(value: string | undefined): boolean {
   return value?.trim().toLowerCase() === 'true'
 }
 
-export function getSiteOriginConfigurationError(
+export function getIndexableSiteConfigurationError(
   requestUrl: string,
   configuredOrigin = SITE_ORIGIN,
+  identity: SiteConfiguration = siteConfig,
+  legalPagesIndexable = LEGAL_PAGES_INDEXABLE,
 ): string | null {
   const request = new URL(requestUrl)
-  if (isLocalHostname(request.hostname)) return null
+  if (
+    isLocalHostname(request.hostname) ||
+    !isIndexablePublicPath(request.pathname, legalPagesIndexable)
+  ) {
+    return null
+  }
 
   const origin = normalizeSiteOrigin(configuredOrigin)
-  if (origin !== DEFAULT_SITE_ORIGIN || request.origin === DEFAULT_SITE_ORIGIN) return null
+  if (origin === DEFAULT_SITE_ORIGIN && request.origin !== DEFAULT_SITE_ORIGIN) {
+    return `This deployment is serving ${request.origin} while VITE_PUBLIC_SITE_URL still points to ${DEFAULT_SITE_ORIGIN}. Set VITE_PUBLIC_SITE_URL to this fork's final HTTPS origin and rebuild. Authentication, API, and application routes remain available while public indexing is blocked.`
+  }
 
-  return `This deployment is serving ${request.origin} while VITE_PUBLIC_SITE_URL still points to ${DEFAULT_SITE_ORIGIN}. Set VITE_PUBLIC_SITE_URL to this fork's final HTTPS origin and rebuild.`
+  if (request.origin === DEFAULT_SITE_ORIGIN) return null
+
+  const unchangedFields = getUnchangedUpstreamIdentityFields(identity)
+  if (unchangedFields.length === 0) return null
+
+  return `This fork is still using upstream identity values in site.config.mjs: ${unchangedFields.join(', ')}. Customize them and rebuild before indexing public pages.`
+}
+
+export function isIndexablePublicPath(
+  pathname: string,
+  legalPagesIndexable = LEGAL_PAGES_INDEXABLE,
+): boolean {
+  const normalizedPath = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname
+
+  if (normalizedPath === '/sitemap.xml' || normalizedPath === '/robots.txt') return true
+  if (normalizedPath === '/blog' || normalizedPath.startsWith('/blog/')) return true
+  if ((INDEXABLE_PUBLIC_PAGE_PATHS as ReadonlyArray<string>).includes(normalizedPath)) return true
+
+  return (
+    legalPagesIndexable &&
+    (LEGAL_TEMPLATE_PAGE_PATHS as ReadonlyArray<string>).includes(normalizedPath)
+  )
 }
 
 export function renderSitemap(entries: ReadonlyArray<SitemapEntry>, origin = SITE_ORIGIN): string {
@@ -196,4 +228,35 @@ function escapeXml(value: string): string {
 
 function isLocalHostname(hostname: string): boolean {
   return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]'
+}
+
+function getUnchangedUpstreamIdentityFields(identity: SiteConfiguration): Array<string> {
+  const upstreamIdentity = {
+    brandName: 'Micropreneur',
+    description:
+      'The public, fork-and-go foundation for building a smaller business and owning a bigger life.',
+    docsUrl: 'https://docs.micropreneur.dev',
+    name: 'Micropreneur Starter',
+    repositoryUrl: 'https://github.com/micropreneur/starter',
+    socialImageAlt: 'Micropreneur Starter, a fork-and-go SaaS foundation',
+    socialUrl: 'https://www.x.com/micropreneurial',
+    supportEmail: 'dan@micropreneur.dev',
+  } as const
+
+  const configuredIdentity = {
+    brandName: identity.brandName,
+    description: identity.description,
+    docsUrl: identity.docsUrl,
+    name: identity.name,
+    repositoryUrl: identity.repositoryUrl,
+    socialImageAlt: identity.socialImage.alt,
+    socialUrl: identity.socialUrl,
+    supportEmail: identity.supportEmail,
+  } as const
+
+  return Object.entries(upstreamIdentity)
+    .filter(
+      ([field, value]) => configuredIdentity[field as keyof typeof configuredIdentity] === value,
+    )
+    .map(([field]) => field)
 }

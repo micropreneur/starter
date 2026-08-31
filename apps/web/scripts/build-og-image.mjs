@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url'
 import { openSync } from 'fontkit'
 import sharp from 'sharp'
 
+import { siteConfig } from '../site.config.mjs'
+
 const WIDTH = 1200
 const HEIGHT = 630
 const committedDirectory = fileURLToPath(new URL('../public/og/', import.meta.url))
@@ -17,12 +19,7 @@ const fonts = {
   serif: openFont('@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2'),
 }
 
-const copy = {
-  eyebrow: 'OPEN SOURCE · MIT',
-  stack: ['TANSTACK START', 'CLOUDFLARE', 'STRICT TYPESCRIPT'],
-  tagline: 'Fork the foundation. Build the product.',
-  title: 'Micropreneur Starter',
-}
+const copy = { ...siteConfig.socialImage, title: siteConfig.name }
 
 if (process.argv.includes('--verify')) {
   await verifyCommittedImage()
@@ -137,8 +134,8 @@ function renderSvg() {
   ].join('\n')
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-labelledby="title description">
-  <title id="title">Micropreneur Starter</title>
-  <desc id="description">A source-owned social preview for the fork-and-go SaaS foundation.</desc>
+  <title id="title">${escapeXml(copy.title)}</title>
+  <desc id="description">${escapeXml(copy.description)}</desc>
   <rect width="1200" height="630" fill="#ffffff"/>
   <g stroke="#ddd4c7" fill="none">
     <path d="M0 72.5h1200M0 557.5h1200"/>
@@ -194,4 +191,13 @@ function format(value) {
 
 function sha256(value) {
   return createHash('sha256').update(value).digest('hex')
+}
+
+function escapeXml(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;')
 }

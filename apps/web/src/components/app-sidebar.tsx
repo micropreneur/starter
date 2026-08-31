@@ -14,6 +14,7 @@ import { useRouterState } from '@tanstack/react-router'
 import { BookOpen, CircleHelp, LayoutDashboard, Settings2, TableProperties } from 'lucide-react'
 import type { ComponentProps } from 'react'
 
+import { siteLinks } from '../config/site'
 import { NavMain } from './nav-main'
 import { NavSecondary } from './nav-secondary'
 import { NavUser } from './nav-user'
@@ -43,12 +44,12 @@ const navigation = [
 const secondaryNavigation = [
   {
     title: 'Documentation',
-    url: 'https://docs.micropreneur.dev',
+    url: siteLinks.docs,
     icon: BookOpen,
   },
   {
     title: 'Report an issue',
-    url: 'https://github.com/micropreneur/starter/issues',
+    url: siteLinks.issues,
     icon: CircleHelp,
   },
 ]

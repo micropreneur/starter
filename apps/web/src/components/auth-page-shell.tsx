@@ -2,6 +2,8 @@ import { IndexLabel } from '@micropreneur/elements'
 import { Check } from 'lucide-react'
 import type { ReactNode } from 'react'
 
+import { siteConfig } from '../config/site'
+
 export function AuthPageShell({
   children,
   description,
@@ -33,7 +35,7 @@ export function AuthPageShell({
             src="/favicon.png"
             width="32"
           />
-          Micropreneur Starter
+          {siteConfig.name}
         </a>
         <div className="max-w-lg py-16">
           <IndexLabel>Activation, not administration</IndexLabel>

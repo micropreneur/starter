@@ -8,13 +8,14 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 
 import { MarketingPageHero, MarketingPageShell } from '../components/marketing-page-shell'
+import { siteConfig, siteLinks } from '../config/site'
 import { publicPageHead } from '../lib/seo'
 
 const questions = [
   {
     answer:
       'Yes. The public repository uses the MIT license. You may use it for commercial products, change it, and distribute your fork under the license terms.',
-    question: 'Is Micropreneur Starter free for commercial use?',
+    question: `Is ${siteConfig.name} free for commercial use?`,
   },
   {
     answer:
@@ -56,8 +57,7 @@ const questions = [
 export const Route = createFileRoute('/faq')({
   head: () =>
     publicPageHead({
-      description:
-        'Answers about the Micropreneur Starter license, hosting model, product scope, auth seam, local requirements, and customizable legal templates.',
+      description: `Answers about the ${siteConfig.name} license, hosting model, product scope, auth seam, local requirements, and customizable legal templates.`,
       path: '/faq',
       title: 'FAQ',
     }),
@@ -114,7 +114,7 @@ function FaqPage() {
           </div>
           <a
             className={buttonVariants({ size: 'lg' })}
-            href="https://github.com/micropreneur/starter#quickstart"
+            href={siteLinks.quickstart}
             rel="noreferrer"
             target="_blank"
           >

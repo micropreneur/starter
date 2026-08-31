@@ -22,6 +22,8 @@ import {
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { siteConfig } from '../config/site'
+
 const AUTOPLAY_DELAY_MS = 10_000
 
 type StackSeam = {
@@ -281,14 +283,16 @@ function StackPreview({ seam }: { seam: StackSeam }) {
       <Card className="[--card-spacing:--spacing(3)]">
         <CardHeader className="grid-cols-[1fr_auto] items-center border-b pb-3">
           <div>
-            <CardTitle className="font-mono text-xs font-medium">micropreneur/starter</CardTitle>
+            <CardTitle className="font-mono text-xs font-medium">
+              {new URL(siteConfig.repositoryUrl).pathname.replace(/^\//u, '')}
+            </CardTitle>
             <CardDescription className="font-mono text-xs">apps/web · /app</CardDescription>
           </div>
           <Badge variant="outline">Live shell</Badge>
         </CardHeader>
         <CardContent className="-mb-(--card-spacing) overflow-hidden px-0">
           <img
-            alt="Micropreneur Starter dashboard with reusable sidebar, metrics, and empty states"
+            alt={`${siteConfig.name} dashboard with reusable sidebar, metrics, and empty states`}
             className="block h-auto w-full"
             height={820}
             loading="eager"

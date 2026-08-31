@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
+import { siteConfig } from '../config/site'
 import {
   absoluteSiteUrl,
   DEFAULT_SITE_ORIGIN,
-  getSiteOriginConfigurationError,
+  getIndexableSiteConfigurationError,
   getStaticSitemapEntries,
   INDEXABLE_PUBLIC_PAGE_PATHS,
+  isIndexablePublicPath,
   legalTemplatePageHead,
   normalizeSiteOrigin,
   PRIVATE_PAGE_PATHS,
@@ -133,15 +135,69 @@ describe('site URL normalization', () => {
     expect(normalizeSiteOrigin('not a URL')).toBe(DEFAULT_SITE_ORIGIN)
   })
 
-  it('requires an explicit canonical origin for non-local forks', () => {
-    expect(getSiteOriginConfigurationError('https://starter.micropreneur.dev/pricing')).toBeNull()
-    expect(getSiteOriginConfigurationError('http://localhost:3000/pricing')).toBeNull()
+  it('requires an explicit canonical origin only for indexable public routes', () => {
     expect(
-      getSiteOriginConfigurationError('https://product.example/pricing', 'https://product.example'),
+      getIndexableSiteConfigurationError('https://starter.micropreneur.dev/pricing'),
     ).toBeNull()
-    expect(getSiteOriginConfigurationError('https://product.example/pricing')).toContain(
+    expect(getIndexableSiteConfigurationError('http://localhost:3000/pricing')).toBeNull()
+    expect(getIndexableSiteConfigurationError('https://product.example/pricing')).toContain(
       'VITE_PUBLIC_SITE_URL',
     )
+
+    for (const path of ['/api/auth/session', '/app', '/sign-in', '/forgot-password']) {
+      expect(getIndexableSiteConfigurationError(`https://product.example${path}`)).toBeNull()
+    }
+  })
+
+  it('blocks upstream identity defaults on a custom public origin', () => {
+    expect(
+      getIndexableSiteConfigurationError(
+        'https://product.example/pricing',
+        'https://product.example',
+      ),
+    ).toContain('site.config.mjs')
+
+    expect(
+      getIndexableSiteConfigurationError(
+        'https://product.example/pricing',
+        'https://product.example',
+        {
+          ...siteConfig,
+          brandName: 'Example',
+          description: 'A focused product for example customers.',
+          docsUrl: 'https://docs.example.com',
+          name: 'Example Product',
+          repositoryUrl: 'https://github.com/example/product',
+          socialImage: {
+            ...siteConfig.socialImage,
+            alt: 'Example Product dashboard',
+          },
+          socialUrl: 'https://social.example.com/product',
+          supportEmail: 'support@example.com',
+        },
+      ),
+    ).toBeNull()
+  })
+
+  it('scopes the canonical guard to routes that can be indexed', () => {
+    expect(isIndexablePublicPath('/')).toBe(true)
+    expect(isIndexablePublicPath('/blog/a-post')).toBe(true)
+    expect(isIndexablePublicPath('/sitemap.xml')).toBe(true)
+    expect(isIndexablePublicPath('/privacy')).toBe(false)
+    expect(isIndexablePublicPath('/privacy', true)).toBe(true)
+    expect(isIndexablePublicPath('/api/billing/checkout')).toBe(false)
+    expect(isIndexablePublicPath('/application')).toBe(false)
+    expect(isIndexablePublicPath('/app')).toBe(false)
+    expect(isIndexablePublicPath('/sign-in')).toBe(false)
+    expect(getIndexableSiteConfigurationError('https://product.example/privacy')).toBeNull()
+    expect(
+      getIndexableSiteConfigurationError(
+        'https://product.example/privacy',
+        DEFAULT_SITE_ORIGIN,
+        siteConfig,
+        true,
+      ),
+    ).toContain('VITE_PUBLIC_SITE_URL')
   })
 
   it('activates legal indexing only for an explicit true value', () => {

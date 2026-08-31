@@ -85,18 +85,19 @@ otherwise untrusted MDX through either compiler.
 ## Fork this to start a project
 
 1. Use GitHub's **Use this template** or fork the repository.
-2. Rename the Worker in `apps/web/wrangler.jsonc` and update package metadata.
-3. Set the build-time `VITE_PUBLIC_SITE_URL` to the fork's final HTTPS origin. Public requests on another origin return a configuration error while the upstream default remains, preventing incorrect canonical and social URLs.
-4. Replace every placeholder and claim in `/legal`, `/privacy`, and `/terms`. Keep `VITE_PUBLIC_LEGAL_PAGES_INDEXABLE=false` until the fork's legal pages are ready; then set it to `true` to allow indexing and add them to `sitemap.xml`.
-5. Create a D1 database, replace the placeholder database ID, and apply migrations.
-6. Copy `apps/web/.dev.vars.example` to `apps/web/.dev.vars`; set a real Better Auth secret for any deployed environment (`wrangler secret put BETTER_AUTH_SECRET`).
-7. Optionally register Google's callback at `http://localhost:3000/api/auth/callback/google`, or leave both OAuth values empty and keep credential auth.
-8. Customize the activation questions in `packages/workspaces`; keep organization creation, invitations, and team roles out of Free Starter.
-9. Optionally configure the private R2 bucket, exact-origin CORS, and scoped signing credentials described in the [R2 file-upload guide](./apps/docs/src/content/cloudflare/r2-file-uploads.mdx). The default local loop keeps uploads disabled without them.
-10. Optionally configure Resend. Local capture remains the fastest verification/recovery loop.
-11. If you activate billing yourself, create one recurring Stripe test price, configure all three Stripe values, and forward signed test events to `/api/billing/webhook`.
-12. Rename or remove `packages/operations`, then add your domain code in its own package instead of coupling it to adapters.
-13. Keep application imports pointed at ports and registry-facing components (`@micropreneur/elements`).
+2. Customize the public product identity, repository, documentation, support contact, and social-image copy in [`apps/web/site.config.mjs`](./apps/web/site.config.mjs). Then run `pnpm --filter web og:build` and commit the regenerated assets.
+3. Rename the Worker in `apps/web/wrangler.jsonc` and update package metadata.
+4. Set the build-time `VITE_PUBLIC_SITE_URL` to the fork's final HTTPS origin. Indexable marketing, blog, sitemap, and robots requests return a configuration error while the upstream origin or identity remains; authentication, API, and application routes stay available.
+5. Replace every placeholder and claim in `/legal`, `/privacy`, and `/terms`. Keep `VITE_PUBLIC_LEGAL_PAGES_INDEXABLE=false` until the fork's legal pages are ready; then set it to `true` to allow indexing and add them to `sitemap.xml`.
+6. Create a D1 database, replace the placeholder database ID, and apply migrations.
+7. Copy `apps/web/.dev.vars.example` to `apps/web/.dev.vars`; set a real Better Auth secret for any deployed environment (`wrangler secret put BETTER_AUTH_SECRET`).
+8. Optionally register Google's callback at `http://localhost:3000/api/auth/callback/google`, or leave both OAuth values empty and keep credential auth.
+9. Customize the activation questions in `packages/workspaces`; keep organization creation, invitations, and team roles out of Free Starter.
+10. Optionally configure the private R2 bucket, exact-origin CORS, and scoped signing credentials described in the [R2 file-upload guide](./apps/docs/src/content/cloudflare/r2-file-uploads.mdx). The default local loop keeps uploads disabled without them.
+11. Optionally configure Resend. Local capture remains the fastest verification/recovery loop.
+12. If you activate billing yourself, create one recurring Stripe test price, configure all three Stripe values, and forward signed test events to `/api/billing/webhook`.
+13. Rename or remove `packages/operations`, then add your domain code in its own package instead of coupling it to adapters.
+14. Keep application imports pointed at ports and registry-facing components (`@micropreneur/elements`).
 
 The exact Free/Pro contract is in [ROADMAP.md](./ROADMAP.md). `starter-pro`, `elements-pro`, multi-tenant/team systems, advanced billing, premium registry gating, and project-generation CLIs are intentionally outside this repository.
 

@@ -1,21 +1,18 @@
 import { Link } from '@tanstack/react-router'
 import { Globe2, Mail } from 'lucide-react'
 
+import { siteConfig, siteLinks } from '../config/site'
+
 const socialLinks = [
   {
-    href: 'https://www.x.com/micropreneurial',
+    href: siteLinks.social,
     icon: () => <span className="text-xl">𝕏</span>,
-    label: 'Micropreneur on X',
+    label: `${siteConfig.brandName} on X`,
   },
   {
-    href: 'https://www.micropreneur.dev',
-    icon: Globe2,
-    label: 'Micropreneur website',
-  },
-  {
-    href: 'mailto:dan@micropreneur.dev',
+    href: siteLinks.support,
     icon: Mail,
-    label: 'Email Micropreneur',
+    label: `Email ${siteConfig.brandName}`,
   },
 ] as const
 
@@ -32,12 +29,9 @@ export function SiteFooter() {
             src="/favicon.png"
             width="28"
           />
-          Micropreneur Starter
+          {siteConfig.name}
         </Link>
-        <p className="mt-3 max-w-sm text-xs text-muted-foreground">
-          The public, fork-and-go foundation for building a smaller business and owning a bigger
-          life.
-        </p>
+        <p className="mt-3 max-w-sm text-xs text-muted-foreground">{siteConfig.description}</p>
       </div>
 
       <div className="flex flex-col gap-4 sm:items-end">
@@ -68,7 +62,7 @@ export function SiteFooter() {
           </Link>
           <a
             className="transition-colors hover:text-foreground"
-            href="https://docs.micropreneur.dev"
+            href={siteLinks.docs}
             rel="noreferrer"
             target="_blank"
           >
@@ -76,7 +70,7 @@ export function SiteFooter() {
           </a>
           <a
             className="transition-colors hover:text-foreground"
-            href="https://github.com/micropreneur/starter"
+            href={siteLinks.repository}
             rel="noreferrer"
             target="_blank"
           >
@@ -84,7 +78,7 @@ export function SiteFooter() {
           </a>
           <a
             className="transition-colors hover:text-foreground"
-            href="https://github.com/micropreneur/starter/blob/main/LICENSE"
+            href={siteLinks.license}
             rel="noreferrer"
             target="_blank"
           >
@@ -92,26 +86,37 @@ export function SiteFooter() {
           </a>
         </nav>
 
-        <ul className="flex items-center gap-2">
-          {socialLinks.map(({ href, icon: Icon, label }) => {
-            const external = !href.startsWith('mailto:')
+        <div className="flex flex-wrap items-center gap-3 sm:justify-end">
+          <a
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            href={siteConfig.attribution.url}
+            rel="noreferrer"
+            target="_blank"
+          >
+            <Globe2 className="size-3.5" />
+            {siteConfig.attribution.label}
+          </a>
+          <ul className="flex items-center gap-2">
+            {socialLinks.map(({ href, icon: Icon, label }) => {
+              const external = !href.startsWith('mailto:')
 
-            return (
-              <li key={label}>
-                <a
-                  aria-label={label}
-                  className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-[color,background-color,border-color] hover:bg-muted/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  href={href}
-                  rel={external ? 'noreferrer' : undefined}
-                  target={external ? '_blank' : undefined}
-                  title={label}
-                >
-                  <Icon className="size-4" />
-                </a>
-              </li>
-            )
-          })}
-        </ul>
+              return (
+                <li key={label}>
+                  <a
+                    aria-label={label}
+                    className="flex size-8 items-center justify-center rounded-md text-muted-foreground transition-[color,background-color,border-color] hover:bg-muted/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    href={href}
+                    rel={external ? 'noreferrer' : undefined}
+                    target={external ? '_blank' : undefined}
+                    title={label}
+                  >
+                    <Icon className="size-4" />
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       </div>
     </footer>
   )

@@ -3,6 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, Check, GitFork, Minus } from 'lucide-react'
 
 import { MarketingPageHero, MarketingPageShell } from '../components/marketing-page-shell'
+import { siteConfig, siteLinks } from '../config/site'
 import { publicPageHead } from '../lib/seo'
 
 const included = [
@@ -26,8 +27,7 @@ const outsideFreeStarter = [
 export const Route = createFileRoute('/pricing')({
   head: () =>
     publicPageHead({
-      description:
-        'Micropreneur Starter costs $0 under the MIT license. See what the public single-user SaaS foundation includes and where its scope ends.',
+      description: `${siteConfig.name} costs $0 under the MIT license. See what the public single-user SaaS foundation includes and where its scope ends.`,
       path: '/pricing',
       title: 'Pricing',
     }),
@@ -48,7 +48,7 @@ function PricingPage() {
       >
         <a
           className={buttonVariants({ size: 'lg' })}
-          href="https://github.com/micropreneur/starter"
+          href={siteLinks.repository}
           rel="noreferrer"
           target="_blank"
         >
@@ -134,7 +134,7 @@ function PricingPage() {
           </div>
           <a
             className={buttonVariants({ size: 'lg' })}
-            href="https://github.com/micropreneur/starter#quickstart"
+            href={siteLinks.quickstart}
             rel="noreferrer"
             target="_blank"
           >
