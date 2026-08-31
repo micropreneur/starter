@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "declaration": false,
     "paths": {
@@ -9,6 +10,7 @@
     "types": ["@cloudflare/workers-types", "vite/client"]
   },
   "include": [
+    "config/**/*.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "vite.config.ts",

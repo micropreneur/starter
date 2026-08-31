@@ -167,6 +167,9 @@ importers:
       '@cloudflare/workers-types':
         specifier: ^5.20260809.1
         version: 5.20260809.1
+      '@mdx-js/mdx':
+        specifier: ^3.1.1
+        version: 3.1.1
       '@mdx-js/rollup':
         specifier: ^3.1.1
         version: 3.1.1(rollup@4.62.2)

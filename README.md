@@ -70,6 +70,18 @@ Starter Pro saves the setup work. It does not fill a missing implementation or a
 to this repository. With Stripe off, local development still runs without a Stripe account and
 paid actions stay unavailable.
 
+## Write blog posts and documentation
+
+- Add a blog post in [`apps/web/src/content/blog`](./apps/web/src/content/blog/README.md). Its
+  lowercase kebab-case filename becomes the `/blog/{slug}` URL, and the newest posts appear on the
+  homepage without a second content list to update.
+- Add a documentation guide in [`apps/docs/src/content`](./apps/docs/src/content). Follow the
+  [MDX authoring guide](./apps/docs/src/content/getting-started/writing-documentation.mdx) for
+  metadata, navigation, reusable components, and generated agent artifacts.
+
+Both surfaces compile trusted repository-owned MDX at build time. Do not send user-authored or
+otherwise untrusted MDX through either compiler.
+
 ## Fork this to start a project
 
 1. Use GitHub's **Use this template** or fork the repository.

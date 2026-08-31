@@ -32,6 +32,8 @@ import { ScrollStory } from '../components/scroll-story'
 import { SiteFooter } from '../components/site-footer'
 import { StackShowcase } from '../components/stack-showcase'
 import { getCurrentUser } from '../lib/auth.functions'
+import { getBlogPostSummaries } from '../lib/blog-metadata'
+import { getBlogCategoryIcon } from '../lib/blog-presentation'
 
 export const Route = createFileRoute('/')({
   loader: () => getCurrentUser(),
@@ -71,41 +73,9 @@ const foundationFeatures = [
   },
 ] satisfies Array<{ icon: LucideIcon; title: string; description: string }>
 
-const starterBlogPosts = [
-  {
-    category: 'Architecture',
-    description:
-      'Keep provider SDKs at the edge of the system so every fork can change identity platforms without rewriting application code.',
-    icon: ShieldCheck,
-    slug: 'why-authentication-starts-with-a-port',
-    title: 'Why authentication starts with a port',
-  },
-  {
-    category: 'Developer experience',
-    description:
-      'Short, deterministic feedback loops are part of the product—especially when humans and coding agents share the same repository.',
-    icon: Bot,
-    slug: 'the-local-loop-is-part-of-the-starter',
-    title: 'The local loop is part of the starter',
-  },
-  {
-    category: 'Interface',
-    description:
-      'A source-delivered registry gives each product a common vocabulary without turning its interface into a locked dependency.',
-    icon: PackageOpen,
-    slug: 'own-the-components-not-another-package',
-    title: 'Own the components, not another package',
-  },
-] as const satisfies ReadonlyArray<{
-  category: string
-  description: string
-  icon: LucideIcon
-  slug: string
-  title: string
-}>
-
 function Home() {
   const user = Route.useLoaderData()
+  const starterBlogPosts = getBlogPostSummaries().slice(0, 3)
 
   return (
     <main className="overflow-x-clip">
@@ -293,35 +263,39 @@ $ pnpm turbo typecheck lint build test
           </div>
 
           <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {starterBlogPosts.map((post) => (
-              <Link
-                className="group rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                key={post.title}
-                params={{ slug: post.slug }}
-                to="/blog/$slug"
-              >
-                <Card className="h-full pb-0 transition-colors group-hover:bg-muted/30">
-                  <CardHeader>
-                    <span className="flex size-10 items-center justify-center rounded-lg border bg-muted/50">
-                      <post.icon className="size-4 text-accent" />
-                    </span>
-                    <CardDescription className="mt-4 font-mono text-xs uppercase tracking-wider">
-                      {post.category}
-                    </CardDescription>
-                    <CardTitle className="text-xl leading-snug">{post.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{post.description}</p>
-                  </CardContent>
-                  <CardFooter className="mt-auto">
-                    <span className="inline-flex items-center gap-2 text-sm font-medium">
-                      Read the note
-                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </CardFooter>
-                </Card>
-              </Link>
-            ))}
+            {starterBlogPosts.map((post) => {
+              const Icon = getBlogCategoryIcon(post.category)
+
+              return (
+                <Link
+                  className="group rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  key={post.slug}
+                  params={{ slug: post.slug }}
+                  to="/blog/$slug"
+                >
+                  <Card className="h-full pb-0 transition-colors group-hover:bg-muted/30">
+                    <CardHeader>
+                      <span className="flex size-10 items-center justify-center rounded-lg border bg-muted/50">
+                        <Icon className="size-4 text-accent" />
+                      </span>
+                      <CardDescription className="mt-4 font-mono text-xs uppercase tracking-wider">
+                        {post.category}
+                      </CardDescription>
+                      <CardTitle className="text-xl leading-snug">{post.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{post.description}</p>
+                    </CardContent>
+                    <CardFooter className="mt-auto">
+                      <span className="inline-flex items-center gap-2 text-sm font-medium">
+                        Read the note
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </CardFooter>
+                  </Card>
+                </Link>
+              )
+            })}
           </div>
         </section>
 
