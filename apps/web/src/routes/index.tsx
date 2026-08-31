@@ -34,8 +34,16 @@ import { StackShowcase } from '../components/stack-showcase'
 import { getCurrentUser } from '../lib/auth.functions'
 import { getBlogPostSummaries } from '../lib/blog-metadata'
 import { getBlogCategoryIcon } from '../lib/blog-presentation'
+import { publicPageHead } from '../lib/seo'
 
 export const Route = createFileRoute('/')({
+  head: () =>
+    publicPageHead({
+      description:
+        'A fork-and-go SaaS foundation on Cloudflare with strict TypeScript, swappable auth, source-owned UI, and agent-readable workflows.',
+      path: '/',
+      title: 'Micropreneur Starter',
+    }),
   loader: () => getCurrentUser(),
   component: Home,
 })

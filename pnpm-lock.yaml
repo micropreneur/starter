@@ -200,6 +200,9 @@ importers:
       remark-gfm:
         specifier: ^4.0.1
         version: 4.0.1
+      sharp:
+        specifier: ^0.35.2
+        version: 0.35.2
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3

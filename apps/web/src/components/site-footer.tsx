@@ -51,6 +51,21 @@ export function SiteFooter() {
           <Link className="transition-colors hover:text-foreground" to="/blog">
             Blog
           </Link>
+          <Link className="transition-colors hover:text-foreground" to="/pricing">
+            Pricing
+          </Link>
+          <Link className="transition-colors hover:text-foreground" to="/faq">
+            FAQ
+          </Link>
+          <Link className="transition-colors hover:text-foreground" to="/legal">
+            Legal
+          </Link>
+          <Link className="transition-colors hover:text-foreground" to="/privacy">
+            Privacy
+          </Link>
+          <Link className="transition-colors hover:text-foreground" to="/terms">
+            Terms
+          </Link>
           <a
             className="transition-colors hover:text-foreground"
             href="https://docs.micropreneur.dev"

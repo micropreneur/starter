@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { AuthPortDiagram } from '../components/auth-port-diagram'
 import { blogMdxComponents } from '../components/blog-content'
 import { formatBlogDate, getBlogPost, getBlogPosts } from '../lib/blog'
+import { publicPageHead } from '../lib/seo'
 
 export const Route = createFileRoute('/blog/$slug')({
   loader: ({ params }) => {
@@ -20,17 +21,16 @@ export const Route = createFileRoute('/blog/$slug')({
       title: post.title,
     }
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.title} · Micropreneur Starter` },
-          { name: 'description', content: loaderData.description },
-          { property: 'og:title', content: loaderData.title },
-          { property: 'og:description', content: loaderData.description },
-          { property: 'og:type', content: 'article' },
-        ]
-      : [],
-  }),
+  head: ({ loaderData, params }) =>
+    loaderData
+      ? publicPageHead({
+          description: loaderData.description,
+          path: `/blog/${params.slug}`,
+          publishedTime: loaderData.date,
+          title: loaderData.title,
+          type: 'article',
+        })
+      : {},
   notFoundComponent: BlogPostNotFound,
   component: BlogPostPage,
 })

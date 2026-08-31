@@ -2,8 +2,10 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { PasswordResetRequestForm } from '../components/auth-forms'
 import { AuthPageShell } from '../components/auth-page-shell'
 import { getAuthCapabilities } from '../lib/auth.functions'
+import { privatePageHead } from '../lib/seo'
 
 export const Route = createFileRoute('/forgot-password')({
+  head: () => privatePageHead('Reset password'),
   loader: () => getAuthCapabilities(),
   component: ForgotPasswordPage,
 })

@@ -23,29 +23,6 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { content: 'width=device-width, initial-scale=1', name: 'viewport' },
-      { title: 'Micropreneur Starter' },
-      {
-        content:
-          'A fork-and-go SaaS base for building a smaller business. TanStack Start, Cloudflare, D1, hexagonal auth, and free elements—ready for your first domain.',
-        name: 'description',
-      },
-      { property: 'og:title', content: 'Micropreneur Starter' },
-      {
-        property: 'og:description',
-        content:
-          'Build a smaller business. Own a bigger life. A fork-and-go SaaS foundation on Cloudflare with clean seams and agent-readable workflows.',
-      },
-      { property: 'og:type', content: 'website' },
-      { name: 'twitter:card', content: 'summary' },
-      {
-        name: 'twitter:title',
-        content: 'Micropreneur Starter',
-      },
-      {
-        name: 'twitter:description',
-        content:
-          'A fork-and-go SaaS base for building a smaller business—clean seams, local auth, free elements.',
-      },
     ],
   }),
   shellComponent: RootDocument,
@@ -150,6 +127,18 @@ function SiteHeader() {
               >
                 AI-native
               </a>
+              <Link
+                className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                to="/pricing"
+              >
+                Pricing
+              </Link>
+              <Link
+                className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                to="/faq"
+              >
+                FAQ
+              </Link>
               <Link
                 className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 to="/blog"

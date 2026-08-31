@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Micropreneur Starter</title>
+  <desc id="description">A source-owned social preview for the fork-and-go SaaS foundation.</desc>
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <g stroke="#ddd4c7" fill="none">
+    <path d="M0 72.5h1200M0 557.5h1200"/>
+    <path d="M72.5 0v630M1127.5 0v630"/>
+    <path opacity=".5" d="M72 170h1056M72 460h1056"/>
+  </g>
+  <rect x="72" y="72" width="1056" height="486" rx="24" fill="#fcfbf8" stroke="#ddd4c7"/>
+  <circle cx="104" cy="104" r="7" fill="#d15a24"/>
+  <text x="128" y="111" fill="#262b32" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="3">OPEN SOURCE · MIT</text>
+  <text x="104" y="284" fill="#262b32" font-family="Georgia, 'Times New Roman', serif" font-size="78" letter-spacing="-2">Micropreneur Starter</text>
+  <text x="104" y="360" fill="#5f6670" font-family="ui-sans-serif, system-ui, sans-serif" font-size="34">Fork the foundation. Build the product.</text>
+  <g transform="translate(104 430)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" fill="#5f6670">
+    <text x="0" y="0">TANSTACK START</text>
+    <circle cx="206" cy="-6" r="4" fill="#d15a24"/>
+    <text x="230" y="0">CLOUDFLARE</text>
+    <circle cx="385" cy="-6" r="4" fill="#d15a24"/>
+    <text x="409" y="0">STRICT TYPESCRIPT</text>
+  </g>
+  <text x="1096" y="526" text-anchor="end" fill="#d15a24" font-family="Georgia, 'Times New Roman', serif" font-size="48">.</text>
+</svg>

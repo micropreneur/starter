@@ -4,18 +4,16 @@ import { ArrowRight } from 'lucide-react'
 import { AuthPortDiagram } from '../components/auth-port-diagram'
 import { type BlogPost, formatBlogDate, getBlogPosts } from '../lib/blog'
 import { getBlogCategoryIcon } from '../lib/blog-presentation'
+import { publicPageHead } from '../lib/seo'
 
 export const Route = createFileRoute('/blog/')({
-  head: () => ({
-    meta: [
-      { title: 'Blog · Micropreneur Starter' },
-      {
-        name: 'description',
-        content:
-          'Architecture decisions, local workflows, and source-owned interface patterns from Micropreneur Starter.',
-      },
-    ],
-  }),
+  head: () =>
+    publicPageHead({
+      description:
+        'Architecture decisions, local workflows, and source-owned interface patterns from Micropreneur Starter.',
+      path: '/blog',
+      title: 'Blog',
+    }),
   component: BlogIndex,
 })
 

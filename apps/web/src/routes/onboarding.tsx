@@ -3,9 +3,11 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import { type FormEvent, useState } from 'react'
 import { WorkspaceOnboardingFields } from '../components/auth-forms'
 import { AuthPageShell } from '../components/auth-page-shell'
+import { privatePageHead } from '../lib/seo'
 import { completeWorkspaceOnboarding, getAppContext } from '../lib/workspace.functions'
 
 export const Route = createFileRoute('/onboarding')({
+  head: () => privatePageHead('Workspace setup'),
   beforeLoad: async () => {
     const context = await getAppContext()
     if (!context) throw redirect({ to: '/sign-in' })
