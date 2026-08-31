@@ -2,6 +2,7 @@ import { isOpenSubscription } from '@micropreneur/billing'
 import {
   Badge,
   Button,
+  buttonVariants,
   Card,
   CardContent,
   CardDescription,
@@ -261,6 +262,55 @@ function BillingCard({ billing }: { billing: Awaited<ReturnType<typeof getBillin
     window.location.assign(body.url)
   }
 
+  if (!billing.configured) {
+    return (
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="size-4" />
+            Billing
+          </CardTitle>
+          <CardDescription>
+            Free Starter leaves Stripe off until the fork owner supplies all three values.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          <div className="flex items-start justify-between gap-3 rounded-md border p-2.5">
+            <div>
+              <p className="text-sm font-medium">Stripe not activated</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Checkout, the customer portal, signed webhooks, and entitlements are included.
+              </p>
+            </div>
+            <StatusBadge status="neutral">off by default</StatusBadge>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Add your own Stripe sandbox values, or use Starter Pro when you want billing already
+            wired into the product template.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <a
+              className={buttonVariants({ variant: 'outline' })}
+              href="https://docs.micropreneur.dev/integrations/stripe"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Activation guide
+            </a>
+            <a
+              className={buttonVariants({ variant: 'outline' })}
+              href="https://www.micropreneur.dev"
+              rel="noreferrer"
+              target="_blank"
+            >
+              See Starter Pro
+            </a>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card size="sm">
       <CardHeader>
@@ -268,7 +318,9 @@ function BillingCard({ billing }: { billing: Awaited<ReturnType<typeof getBillin
           <CreditCard className="size-4" />
           Billing
         </CardTitle>
-        <CardDescription>One monthly Stripe plan with app-owned entitlements.</CardDescription>
+        <CardDescription>
+          Stripe Checkout, the customer portal, signed webhooks, and app-owned entitlements.
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3">
         <div className="flex items-center justify-between gap-3 rounded-md border p-2.5">
@@ -284,18 +336,13 @@ function BillingCard({ billing }: { billing: Awaited<ReturnType<typeof getBillin
         </div>
         {error ? <FieldError>{error}</FieldError> : null}
         <Button
-          disabled={!billing.configured || pending}
+          disabled={pending}
           onClick={() => void openBilling()}
           type="button"
           variant={manageable ? 'outline' : 'default'}
         >
           {pending ? 'Opening…' : manageable ? 'Manage billing' : 'Upgrade to paid'}
         </Button>
-        {!billing.configured ? (
-          <p className="text-xs text-muted-foreground">
-            Add the three Stripe environment variables to enable local sandbox billing.
-          </p>
-        ) : null}
       </CardContent>
     </Card>
   )

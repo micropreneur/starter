@@ -27,7 +27,8 @@ EMAIL_PROVIDER=local
 RESEND_API_KEY=
 EMAIL_FROM=Micropreneur Starter <hello@example.com>
 
-# Optional Stripe test-mode billing. Configure all three together, then forward
+# Stripe is intentionally off in Free Starter. To activate the complete billing
+# engine in a fork, configure all three test-mode values together, then forward
 # sandbox events to http://localhost:3000/api/billing/webhook.
 STRIPE_SECRET_KEY=
 STRIPE_PRICE_ID=
