@@ -1,47 +1,41 @@
 import type { MDXContent } from 'mdx/types.js'
 
-export type BlogPostMeta = {
-  author: string
-  category: 'Architecture' | 'Developer experience' | 'Interface'
-  date: string
-  description: string
-  featured?: boolean
-  readTime: string
-  sections: ReadonlyArray<{
-    id: string
-    title: string
-  }>
-  title: string
-}
+import { getBlogPostSummaries } from './blog-metadata'
+import type { BlogPostMeta } from './blog-schema'
 
-type BlogModule = {
-  default: MDXContent
-  meta: BlogPostMeta
-}
+export type { BlogPostMeta } from './blog-schema'
 
 export type BlogPost = BlogPostMeta & {
   Content: MDXContent
   slug: string
 }
 
-const modules = import.meta.glob<BlogModule>('../content/blog/*.mdx', {
+const contentModules = import.meta.glob<MDXContent>('../content/blog/*.mdx', {
   eager: true,
+  import: 'default',
 })
 
-const posts = Object.entries(modules)
-  .map(
-    ([path, module]): BlogPost => ({
-      ...module.meta,
-      Content: module.default,
-      slug:
-        path
-          .split('/')
-          .at(-1)
-          ?.replace(/\.mdx$/, '') ?? '',
-    }),
-  )
-  .filter((post) => post.slug.length > 0)
-  .sort((first, second) => second.date.localeCompare(first.date))
+const contentBySlug = new Map(
+  Object.entries(contentModules).map(([path, Content]) => [
+    path
+      .split('/')
+      .at(-1)
+      ?.replace(/\.mdx$/, '') ?? '',
+    Content,
+  ]),
+)
+
+const posts = getBlogPostSummaries().map((summary): BlogPost => {
+  const Content = contentBySlug.get(summary.slug)
+  if (!Content) {
+    throw new Error(`Missing compiled MDX content for blog post "${summary.slug}".`)
+  }
+
+  return {
+    ...summary,
+    Content,
+  }
+})
 
 export function getBlogPosts(): ReadonlyArray<BlogPost> {
   return posts

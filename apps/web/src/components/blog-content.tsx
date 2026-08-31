@@ -1,6 +1,8 @@
 import type { MDXComponents } from 'mdx/types.js'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
+import { contentHeadingId } from '../lib/content-heading'
+
 export const blogMdxComponents: MDXComponents = {
   a: BlogLink,
   blockquote: ({ children }) => (
@@ -46,21 +48,11 @@ function BlogLink({ children, href, ...props }: ComponentPropsWithoutRef<'a'>) {
 }
 
 function BlogHeading({ children, level }: { children: ReactNode; level: 2 | 3 }) {
-  const id = headingId(children)
+  const id = typeof children === 'string' ? contentHeadingId(children) : undefined
 
   if (level === 2) {
     return <h2 id={id}>{children}</h2>
   }
 
   return <h3 id={id}>{children}</h3>
-}
-
-function headingId(children: ReactNode): string | undefined {
-  if (typeof children !== 'string') return undefined
-
-  return children
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
 }
