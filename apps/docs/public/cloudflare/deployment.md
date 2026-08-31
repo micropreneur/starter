@@ -66,6 +66,27 @@ Add provider secrets only for integrations you actually enable. Never place real
 Set `BETTER_AUTH_URL` to the final HTTPS origin. Google OAuth callback configuration must use the
 same origin.
 
+## Configure public pages
+
+Customize `apps/web/site.config.mjs` first. It is the single source for the product name, brand,
+repository, documentation, support contact, footer links, and deterministic social-image copy. Run
+`pnpm --filter web og:build` after changing it and commit both generated social assets.
+
+Set `VITE_PUBLIC_SITE_URL` in the web app's build environment to the fork's final HTTPS origin. It
+controls canonical links, Open Graph URLs, `sitemap.xml`, and `robots.txt`. Indexable marketing,
+blog, sitemap, and robots requests return a configuration error while the upstream origin or core
+identity remains, so a fork cannot silently advertise the wrong site. Authentication, API, and
+application routes remain available if this SEO configuration is incomplete.
+
+The `/legal`, `/privacy`, and `/terms` routes are starter templates, not finished policies. Replace
+every bracketed placeholder and make each claim match the deployed product. Keep
+`VITE_PUBLIC_LEGAL_PAGES_INDEXABLE=false` while that work is incomplete. After the fork owner has
+approved the final pages, set the build-time value to `true`; the pages then allow indexing and
+appear in `sitemap.xml`.
+
+These are Vite build-time values, not Worker runtime secrets. Set them before `pnpm --filter web
+build` or `pnpm --filter web cf:deploy`.
+
 ## Migrate and deploy
 
 Inspect generated migrations, apply them to the configured remote database, then deploy:

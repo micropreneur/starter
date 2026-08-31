@@ -15,9 +15,11 @@ import { createFileRoute, Outlet, redirect, useRouterState } from '@tanstack/rea
 import { AppSidebar } from '../components/app-sidebar'
 import { ThemeToggle } from '../components/theme-toggle'
 import { APP_NOTICE_HEIGHT, APP_NOTICE_VISIBLE, APP_SHELL_HEIGHT } from '../lib/deployment-mode'
+import { privatePageHead } from '../lib/seo'
 import { getAppContext } from '../lib/workspace.functions'
 
 export const Route = createFileRoute('/app')({
+  head: () => privatePageHead('App'),
   beforeLoad: async () => {
     const context = await getAppContext()
     if (!context) throw redirect({ to: '/sign-in' })

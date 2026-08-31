@@ -8,6 +8,7 @@ import { ArrowUpRight, GitFork } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { ThemeToggle } from '../components/theme-toggle'
+import { siteConfig, siteLinks } from '../config/site'
 import { APP_NOTICE_HEIGHT, SANDBOX_MODE } from '../lib/deployment-mode'
 import { isStandaloneAuthPath } from '../lib/site-layout'
 
@@ -23,29 +24,6 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { content: 'width=device-width, initial-scale=1', name: 'viewport' },
-      { title: 'Micropreneur Starter' },
-      {
-        content:
-          'A fork-and-go SaaS base for building a smaller business. TanStack Start, Cloudflare, D1, hexagonal auth, and free elements—ready for your first domain.',
-        name: 'description',
-      },
-      { property: 'og:title', content: 'Micropreneur Starter' },
-      {
-        property: 'og:description',
-        content:
-          'Build a smaller business. Own a bigger life. A fork-and-go SaaS foundation on Cloudflare with clean seams and agent-readable workflows.',
-      },
-      { property: 'og:type', content: 'website' },
-      { name: 'twitter:card', content: 'summary' },
-      {
-        name: 'twitter:title',
-        content: 'Micropreneur Starter',
-      },
-      {
-        name: 'twitter:description',
-        content:
-          'A fork-and-go SaaS base for building a smaller business—clean seams, local auth, free elements.',
-      },
     ],
   }),
   shellComponent: RootDocument,
@@ -101,7 +79,7 @@ function SiteHeader() {
         <div className="dark border-b border-border/70 bg-background px-4 py-2 text-foreground">
           <a
             className="mx-auto flex max-w-7xl items-center justify-center gap-2 text-center text-xs text-muted-foreground transition-colors hover:text-foreground"
-            href="https://github.com/micropreneur/starter"
+            href={siteLinks.repository}
             rel="noreferrer"
             target="_blank"
           >
@@ -121,13 +99,13 @@ function SiteHeader() {
           >
             <Link className="group flex items-center gap-2.5" to="/">
               <span className="text-xl font-semibold tracking-[-0.035em] text-foreground">
-                Micropreneur
+                {siteConfig.brandName}
               </span>
               <Badge
                 className="hidden bg-muted/60 text-[0.625rem] tracking-[0.14em] text-muted-foreground sm:inline-flex"
                 variant="outline"
               >
-                STARTER
+                {siteConfig.badge.toUpperCase()}
               </Badge>
             </Link>
 
@@ -152,13 +130,25 @@ function SiteHeader() {
               </a>
               <Link
                 className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                to="/pricing"
+              >
+                Pricing
+              </Link>
+              <Link
+                className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                to="/faq"
+              >
+                FAQ
+              </Link>
+              <Link
+                className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 to="/blog"
               >
                 Blog
               </Link>
               <a
                 className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                href="https://docs.micropreneur.dev"
+                href={siteLinks.docs}
                 rel="noreferrer"
                 target="_blank"
               >
@@ -168,9 +158,9 @@ function SiteHeader() {
 
             <div className="flex items-center gap-1 sm:gap-2">
               <a
-                aria-label="View Micropreneur Starter on GitHub"
+                aria-label={`View ${siteConfig.name} on GitHub`}
                 className={buttonVariants({ size: 'icon', variant: 'ghost' })}
-                href="https://github.com/micropreneur/starter"
+                href={siteLinks.repository}
                 rel="noreferrer"
                 target="_blank"
               >

@@ -4,8 +4,10 @@ import { type FormEvent, useState } from 'react'
 import { z } from 'zod'
 
 import { AuthPageShell } from '../components/auth-page-shell'
+import { privatePageHead } from '../lib/seo'
 
 export const Route = createFileRoute('/reset-password')({
+  head: () => privatePageHead('Choose a new password'),
   validateSearch: z.object({ token: z.string().optional() }),
   component: ResetPasswordPage,
 })

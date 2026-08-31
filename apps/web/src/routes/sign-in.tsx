@@ -4,8 +4,10 @@ import { SignInForm } from '../components/auth-forms'
 import { AuthPageShell } from '../components/auth-page-shell'
 import { getAuthCapabilities, getCurrentUser } from '../lib/auth.functions'
 import { safeAuthCallbackPath } from '../lib/auth-redirect'
+import { privatePageHead } from '../lib/seo'
 
 export const Route = createFileRoute('/sign-in')({
+  head: () => privatePageHead('Sign in'),
   validateSearch: z.object({ callbackUrl: z.string().optional() }),
   beforeLoad: async ({ search }) => {
     if (await getCurrentUser()) throw redirect({ href: safeAuthCallbackPath(search.callbackUrl) })
