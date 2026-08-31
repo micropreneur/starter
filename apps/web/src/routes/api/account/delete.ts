@@ -4,7 +4,8 @@ import { z } from 'zod'
 import { getAuth } from '../../../lib/auth.server'
 import { invalidInputResponse, readJsonBody } from '../../../lib/auth-input'
 import { getBilling } from '../../../lib/billing.server'
-import { requireSameOrigin } from '../../../lib/request-security'
+import { requireAuthenticatedMutation } from '../../../lib/protected-request.server'
+import { requireSameOriginUrl } from '../../../lib/request-security'
 
 const inputSchema = z.object({
   callbackUrl: z.string().url(),
@@ -15,12 +16,11 @@ export const Route = createFileRoute('/api/account/delete')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        requireSameOrigin(request)
-        const headers = new Headers(request.headers)
         const auth = getAuth()
-        const user = await auth.requireUser(headers)
+        const { headers, user } = await requireAuthenticatedMutation(request, auth)
         const parsed = inputSchema.safeParse(await readJsonBody(request))
         if (!parsed.success) return invalidInputResponse('a callback URL and optional password')
+        requireSameOriginUrl(parsed.data.callbackUrl, request)
         const accounts = await auth.listAccounts(headers)
         if (
           accounts.some((account) => account.provider === 'credential') &&

@@ -74,7 +74,7 @@ secret. Keep test and live prices, keys, and signing secrets in their matching S
 ## Verify paid access
 
 1. Create and verify a disposable Starter account.
-2. Open `/app/settings` and start Checkout.
+2. Open `/app/settings/billing` and start Checkout.
 3. Complete Checkout with a Stripe test card.
 4. Wait for the signed subscription webhook.
 5. Confirm the customer portal opens.

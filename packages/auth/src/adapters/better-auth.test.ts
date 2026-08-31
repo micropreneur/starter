@@ -165,9 +165,39 @@ describe('better auth adapter contract', () => {
     expect(signIn.status).toBe(200)
     const headers = cookieHeadersFrom(signIn)
     const user = await auth.requireUser(headers)
+    await expect(auth.listAccounts(headers)).resolves.toEqual([
+      expect.objectContaining({ provider: 'credential' }),
+    ])
+
+    const profileUpdate = await auth.updateUser({ name: 'Updated Lifecycle User' }, headers)
+    expect(profileUpdate.status).toBe(200)
+    await expect(auth.requireUser(headers)).resolves.toMatchObject({
+      name: 'Updated Lifecycle User',
+    })
+
+    const changedEmail = 'updated-lifecycle@example.com'
+    const emailChange = await auth.changeEmail(
+      {
+        callbackUrl: 'http://localhost:3000/app/settings/profile',
+        newEmail: changedEmail,
+      },
+      headers,
+    )
+    expect(emailChange.status).toBe(200)
+    const emailChangeMessage = deliveries.at(-1)
+    expect(emailChangeMessage).toMatchObject({ template: 'verify_email', to: changedEmail })
+    const emailConfirmation = await auth.handleRequest(
+      new Request(requiredUrl(emailChangeMessage), { headers }),
+    )
+    expect(emailConfirmation.status).toBeGreaterThanOrEqual(300)
+    expect(emailConfirmation.status).toBeLessThan(400)
+    expect(emailConfirmation.headers.get('location')).toBe(
+      'http://localhost:3000/app/settings/profile',
+    )
+    await expect(auth.requireUser(headers)).resolves.toMatchObject({ email: changedEmail })
 
     const resetRequest = await auth.requestPasswordReset(
-      { email: credentials.email, redirectTo: 'http://localhost:3000/reset-password' },
+      { email: changedEmail, redirectTo: 'http://localhost:3000/reset-password' },
       new Headers(),
     )
     expect(resetRequest.status).toBe(200)
@@ -186,7 +216,7 @@ describe('better auth adapter contract', () => {
     expect(expiredReset.status).toBeGreaterThanOrEqual(400)
 
     await auth.requestPasswordReset(
-      { email: credentials.email, redirectTo: 'http://localhost:3000/reset-password' },
+      { email: changedEmail, redirectTo: 'http://localhost:3000/reset-password' },
       new Headers(),
     )
     const freshResetUrl = new URL(requiredUrl(deliveries.at(-1)))
@@ -205,11 +235,27 @@ describe('better auth adapter contract', () => {
     expect(reused.status).toBeGreaterThanOrEqual(400)
 
     const refreshedSignIn = await auth.signIn(
-      { email: credentials.email, password: 'replacement-password' },
+      { email: changedEmail, password: 'replacement-password' },
       new Headers(),
     )
     expect(refreshedSignIn.status).toBe(200)
     const freshHeaders = cookieHeadersFrom(refreshedSignIn)
+
+    const changedPassword = await auth.changePassword(
+      { currentPassword: 'replacement-password', newPassword: 'final-password' },
+      freshHeaders,
+    )
+    expect(changedPassword.status).toBe(200)
+    expect(
+      (await auth.signIn({ email: changedEmail, password: 'replacement-password' }, new Headers()))
+        .status,
+    ).toBe(401)
+    const finalSignIn = await auth.signIn(
+      { email: changedEmail, password: 'final-password' },
+      new Headers(),
+    )
+    expect(finalSignIn.status).toBe(200)
+    const finalHeaders = cookieHeadersFrom(finalSignIn)
 
     await database
       .prepare(
@@ -247,13 +293,13 @@ describe('better auth adapter contract', () => {
       .run()
 
     const deleteResponse = await auth.deleteUser(
-      { callbackUrl: 'http://localhost:3000/', password: 'replacement-password' },
-      freshHeaders,
+      { callbackUrl: 'http://localhost:3000/', password: 'final-password' },
+      finalHeaders,
     )
     expect(deleteResponse.status).toBe(200)
     expect(deliveries.at(-1)?.template).toBe('delete_account')
     const deletion = await auth.handleRequest(
-      new Request(requiredUrl(deliveries.at(-1)), { headers: freshHeaders }),
+      new Request(requiredUrl(deliveries.at(-1)), { headers: finalHeaders }),
     )
     const deletionBody = await deletion.clone().text()
     expect(deletion.status, requiredUrl(deliveries.at(-1))).toBeGreaterThanOrEqual(300)

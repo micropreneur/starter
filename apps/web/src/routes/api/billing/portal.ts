@@ -2,17 +2,16 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { getAuth } from '../../../lib/auth.server'
 import { getBilling } from '../../../lib/billing.server'
-import { requireSameOrigin } from '../../../lib/request-security'
+import { requireAuthenticatedMutation } from '../../../lib/protected-request.server'
 
 export const Route = createFileRoute('/api/billing/portal')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        requireSameOrigin(request)
-        const user = await getAuth().requireUser(new Headers(request.headers))
+        const { user } = await requireAuthenticatedMutation(request, getAuth())
         const url = await getBilling().createPortal(
           user.id,
-          `${new URL(request.url).origin}/app/settings`,
+          `${new URL(request.url).origin}/app/settings/billing`,
         )
         return Response.json({ url })
       },

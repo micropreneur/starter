@@ -3,19 +3,18 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { getAuth } from '../../../lib/auth.server'
 import { getBilling } from '../../../lib/billing.server'
-import { requireSameOrigin } from '../../../lib/request-security'
+import { requireAuthenticatedMutation } from '../../../lib/protected-request.server'
 
 export const Route = createFileRoute('/api/billing/checkout')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        requireSameOrigin(request)
-        const user = await getAuth().requireUser(new Headers(request.headers))
+        const { user } = await requireAuthenticatedMutation(request, getAuth())
         const origin = new URL(request.url).origin
         try {
           const url = await getBilling().createCheckout({
-            cancelUrl: `${origin}/app/settings?billing=cancelled`,
-            successUrl: `${origin}/app/settings?billing=success`,
+            cancelUrl: `${origin}/app/settings/billing?billing=cancelled`,
+            successUrl: `${origin}/app/settings/billing?billing=success`,
             user,
           })
           return Response.json({ url })

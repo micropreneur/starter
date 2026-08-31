@@ -90,7 +90,7 @@ function RegistryPage() {
             Export CSV
           </a>
         ) : (
-          <Link className={buttonVariants({ variant: 'outline' })} to="/app/settings">
+          <Link className={buttonVariants({ variant: 'outline' })} to="/app/settings/billing">
             <Download />
             Unlock CSV export
           </Link>
