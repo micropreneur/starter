@@ -118,8 +118,9 @@ function Home() {
             Keep your freedom<span className="text-accent">.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg">
-            Micropreneur Starter is the fork-and-go foundation for micro SaaS products—Cloudflare
-            native, source-owned, and legible to both humans and coding agents.
+            Micropreneur Starter is a fork-and-go Cloudflare foundation for paid, single-user SaaS—
+            source-owned, agent-readable, and ready to customize. Its complete one-plan Stripe
+            engine stays off until you choose to activate it.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">

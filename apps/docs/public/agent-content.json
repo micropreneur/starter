@@ -122,7 +122,7 @@
       "type": "article"
     },
     {
-      "description": "Configure the one-plan Stripe sandbox, signed webhooks, customer portal, and registry export entitlement.",
+      "description": "Activate the complete one-plan Stripe engine or choose Starter Pro for a billing flow that is already wired.",
       "group": "Integrations",
       "id": "integrations/stripe",
       "keywords": [
@@ -131,7 +131,8 @@
         "checkout",
         "webhook",
         "subscription",
-        "entitlement"
+        "entitlement",
+        "starter pro"
       ],
       "path": "/integrations/stripe",
       "rawPath": "/integrations/stripe.md",

@@ -19,7 +19,7 @@
 - [Better Auth](/integrations/better-auth.md): Configure credential authentication and optional Google OAuth through the default AuthPort adapter.
 - [Descope](/integrations/descope.md): Understand the typed Descope adapter seam, its current limitations, and the work required to make it functional.
 - [Resend email](/integrations/resend.md): Switch from deterministic local email capture to verified Resend delivery on Cloudflare Workers.
-- [Stripe billing](/integrations/stripe.md): Configure the one-plan Stripe sandbox, signed webhooks, customer portal, and registry export entitlement.
+- [Stripe billing](/integrations/stripe.md): Activate the complete one-plan Stripe engine or choose Starter Pro for a billing flow that is already wired.
 
 ## Cloudflare
 

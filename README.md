@@ -2,7 +2,7 @@
 
 The fork-and-go, AI-native SaaS base for micropreneurs.
 
-`micropreneur/starter` is the public, MIT-licensed foundation we use to begin paid, single-user SaaS products without re-customizing someone else's boilerplate. It combines TanStack Start on Cloudflare Workers, D1 and Drizzle, hexagonal auth and email, one-plan Stripe billing, a Base UI shadcn registry, and agent-readable project guidance.
+`micropreneur/starter` is the public, MIT-licensed foundation we use to begin paid, single-user SaaS products without re-customizing someone else's boilerplate. It combines TanStack Start on Cloudflare Workers, D1 and Drizzle, hexagonal auth and email, a complete one-plan Stripe billing engine, a Base UI shadcn registry, and agent-readable project guidance.
 
 ## Quickstart
 
@@ -29,7 +29,7 @@ Create an account at `/sign-up`, answer the three personal workspace questions, 
 | `packages/elements` | Free `elements` source and shadcn registry |
 | `packages/auth` | Provider-neutral auth port with a Better Auth adapter and a typed Descope stub |
 | `packages/email` | Email port with Resend and local capture adapters |
-| `packages/billing` | One-plan Stripe service, webhook state, and entitlements |
+| `packages/billing` | Complete one-plan Stripe engine: Checkout, portal, signed webhooks, local state, and entitlements |
 | `packages/operations` | Removable personal-workspace Operations Registry example |
 | `packages/workspaces` | Single-member personal workspace and onboarding seam |
 | `packages/db` | D1 client, Drizzle schema, and migrations |
@@ -52,6 +52,23 @@ pnpm --filter @micropreneur/mcp dev
 See the package READMEs for auth, database, registry, and MCP details. Before publishing a fork,
 run the deterministic and provider-backed checks in [RELEASE.md](./RELEASE.md).
 
+## Stripe stays off until you choose to activate it
+
+Free Starter includes the working billing engine, but intentionally leaves every `STRIPE_*` value
+empty. The app therefore selects its disabled billing service and labels Stripe as not activated;
+it does not make a provider call or pretend the account is paid.
+
+Fork owners can take either path:
+
+- [Activate the included engine](https://docs.micropreneur.dev/integrations/stripe) with one Stripe
+  price, three environment values, and the signed webhook route.
+- [Choose Starter Pro](https://www.micropreneur.dev) when Checkout, the customer portal, webhook
+  handling, and workspace-scoped billing should arrive already wired into the product template.
+
+Starter Pro saves the setup work. It does not fill a missing implementation or add a license gate
+to this repository. With Stripe off, local development still runs without a Stripe account and
+paid actions stay unavailable.
+
 ## Fork this to start a project
 
 1. Use GitHub's **Use this template** or fork the repository.
@@ -61,7 +78,7 @@ run the deterministic and provider-backed checks in [RELEASE.md](./RELEASE.md).
 5. Optionally register Google's callback at `http://localhost:3000/api/auth/callback/google`, or leave both OAuth values empty and keep credential auth.
 6. Customize the activation questions in `packages/workspaces`; keep organization creation, invitations, and team roles out of Free Starter.
 7. Optionally configure Resend. Local capture remains the fastest verification/recovery loop.
-8. To prove paid access, create one recurring Stripe test price, configure all three Stripe values, and forward test events to `/api/billing/webhook`.
+8. If you activate billing yourself, create one recurring Stripe test price, configure all three Stripe values, and forward signed test events to `/api/billing/webhook`.
 9. Rename or remove `packages/operations`, then add your domain code in its own package instead of coupling it to adapters.
 10. Keep application imports pointed at ports and registry-facing components (`@micropreneur/elements`).
 
