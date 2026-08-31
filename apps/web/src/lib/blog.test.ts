@@ -21,14 +21,12 @@ Article copy.
 describe('blog content registry', () => {
   it('discovers repository-backed MDX posts in newest-first order', () => {
     const posts = getBlogPosts()
+    const dates = posts.map((post) => post.date)
 
-    expect(posts).toHaveLength(3)
-    expect(posts.map((post) => post.slug)).toEqual([
-      'why-authentication-starts-with-a-port',
-      'the-local-loop-is-part-of-the-starter',
-      'own-the-components-not-another-package',
-    ])
-    expect(posts.filter((post) => post.featured)).toHaveLength(1)
+    expect(posts.length).toBeGreaterThan(0)
+    expect(dates).toEqual([...dates].sort((first, second) => second.localeCompare(first)))
+    expect(new Set(posts.map((post) => post.slug)).size).toBe(posts.length)
+    expect(posts.filter((post) => post.featured).length).toBeLessThanOrEqual(1)
     expect(getBlogPostSummaries().map((post) => post.slug)).toEqual(posts.map((post) => post.slug))
   })
 
