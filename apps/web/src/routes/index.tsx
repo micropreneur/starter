@@ -32,7 +32,8 @@ import { ScrollStory } from '../components/scroll-story'
 import { SiteFooter } from '../components/site-footer'
 import { StackShowcase } from '../components/stack-showcase'
 import { getCurrentUser } from '../lib/auth.functions'
-import { type BlogPostSummary, getBlogPostSummaries } from '../lib/blog-metadata'
+import { getBlogPostSummaries } from '../lib/blog-metadata'
+import { getBlogCategoryIcon } from '../lib/blog-presentation'
 
 export const Route = createFileRoute('/')({
   loader: () => getCurrentUser(),
@@ -71,12 +72,6 @@ const foundationFeatures = [
     description: 'Typed seams and deterministic checks keep every iteration short and trustworthy.',
   },
 ] satisfies Array<{ icon: LucideIcon; title: string; description: string }>
-
-const blogCategoryIcons = {
-  Architecture: ShieldCheck,
-  'Developer experience': Bot,
-  Interface: PackageOpen,
-} satisfies Record<BlogPostSummary['category'], LucideIcon>
 
 function Home() {
   const user = Route.useLoaderData()
@@ -269,7 +264,7 @@ $ pnpm turbo typecheck lint build test
 
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {starterBlogPosts.map((post) => {
-              const Icon = blogCategoryIcons[post.category]
+              const Icon = getBlogCategoryIcon(post.category)
 
               return (
                 <Link

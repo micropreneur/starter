@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { getBlogPost, getBlogPosts } from './blog'
 import { validateBlogSources } from './blog-contract'
 import { getBlogPostSummaries } from './blog-metadata'
+import { getBlogCategoryIcon } from './blog-presentation'
 
 const validSource = `export const meta = {
   author: 'Example Author',
@@ -90,5 +91,19 @@ describe('blog content registry', () => {
     expect(() =>
       validateBlogSources([{ source, sourcePath: 'apps/web/src/content/blog/example-post.mdx' }]),
     ).toThrow('meta.date must be a valid YYYY-MM-DD date')
+  })
+
+  it('accepts fork-defined categories and formatted headings without another registry', () => {
+    const source = validSource
+      .replace("category: 'Architecture'", "category: 'Customer stories'")
+      .replace("id: 'first-section'", "id: 'first-formatted-section'")
+      .replace('## First section', '## First *formatted* section')
+
+    const [post] = validateBlogSources([
+      { source, sourcePath: 'apps/web/src/content/blog/customer-story.mdx' },
+    ])
+
+    expect(post?.category).toBe('Customer stories')
+    expect(getBlogCategoryIcon('Customer stories')).toBe(getBlogCategoryIcon('Another category'))
   })
 })

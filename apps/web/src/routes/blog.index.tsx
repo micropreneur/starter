@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight, Blocks, Bot, type LucideIcon, ShieldCheck } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 import { AuthPortDiagram } from '../components/auth-port-diagram'
 import { type BlogPost, formatBlogDate, getBlogPosts } from '../lib/blog'
+import { getBlogCategoryIcon } from '../lib/blog-presentation'
 
 export const Route = createFileRoute('/blog/')({
   head: () => ({
@@ -17,12 +18,6 @@ export const Route = createFileRoute('/blog/')({
   }),
   component: BlogIndex,
 })
-
-const categoryIcons: Record<BlogPost['category'], LucideIcon> = {
-  Architecture: ShieldCheck,
-  'Developer experience': Bot,
-  Interface: Blocks,
-}
 
 function BlogIndex() {
   const posts = getBlogPosts()
@@ -86,7 +81,7 @@ function BlogIndex() {
 }
 
 function BlogCard({ post }: { post: BlogPost }) {
-  const Icon = categoryIcons[post.category]
+  const Icon = getBlogCategoryIcon(post.category)
 
   return (
     <Link

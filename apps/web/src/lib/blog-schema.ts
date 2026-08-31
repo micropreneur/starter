@@ -1,10 +1,6 @@
-export const blogCategories = ['Architecture', 'Developer experience', 'Interface'] as const
-
-export type BlogCategory = (typeof blogCategories)[number]
-
 export type BlogPostMeta = {
   author: string
-  category: BlogCategory
+  category: string
   date: string
   description: string
   featured?: boolean

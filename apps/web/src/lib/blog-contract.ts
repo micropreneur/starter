@@ -1,6 +1,9 @@
-import ts from 'typescript'
+import { createProcessor, evaluateSync } from '@mdx-js/mdx'
+import { Fragment, jsx, jsxs } from 'react/jsx-runtime'
+import remarkGfm from 'remark-gfm'
+import { z } from 'zod'
 
-import { type BlogPostMeta, type BlogPostSummary, blogCategories } from './blog-schema.ts'
+import type { BlogPostMeta, BlogPostSummary } from './blog-schema.ts'
 import { contentHeadingId } from './content-heading.ts'
 
 export type BlogSource = {
@@ -8,17 +11,30 @@ export type BlogSource = {
   sourcePath: string
 }
 
-const allowedMetaFields = new Set([
-  'author',
-  'category',
-  'date',
-  'description',
-  'featured',
-  'readTime',
-  'sections',
-  'title',
-])
+type ContentNode = {
+  children?: readonly ContentNode[]
+  depth?: number
+  type: string
+  value?: string
+}
+
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const requiredText = z.string().trim().min(1, 'must be a non-empty string.')
+const blogMetaSchema = z.strictObject({
+  author: requiredText,
+  category: requiredText,
+  date: requiredText.refine(isIsoDate, 'must be a valid YYYY-MM-DD date.'),
+  description: requiredText,
+  featured: z.boolean().optional(),
+  readTime: requiredText,
+  sections: z.array(
+    z.strictObject({
+      id: requiredText,
+      title: requiredText,
+    }),
+  ),
+  title: requiredText,
+})
 
 export function validateBlogSources(
   sources: readonly BlogSource[],
@@ -41,37 +57,23 @@ export function validateBlogSources(
 }
 
 export function parseBlogMeta(source: string, sourcePath: string): BlogPostMeta {
-  const sourceFile = ts.createSourceFile(
-    sourcePath,
-    source,
-    ts.ScriptTarget.Latest,
-    true,
-    ts.ScriptKind.TSX,
-  )
   let metaValue: unknown
-  let metaStatement: ts.VariableStatement | undefined
 
-  for (const statement of sourceFile.statements) {
-    if (!ts.isVariableStatement(statement)) continue
-    const declaration = statement.declarationList.declarations.find(
-      (candidate) => ts.isIdentifier(candidate.name) && candidate.name.text === 'meta',
-    )
-    if (!declaration?.initializer) continue
-    const exported = statement.modifiers?.some(
-      (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
-    )
-    if (!exported) throw new Error(`${sourcePath} must export its meta object.`)
-
-    metaValue = readLiteral(declaration.initializer, sourcePath)
-    metaStatement = statement
-    break
+  try {
+    const module = evaluateSync(source, {
+      Fragment,
+      jsx,
+      jsxs,
+      remarkPlugins: [remarkGfm],
+    }) as { meta?: unknown }
+    metaValue = module.meta
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`${sourcePath} could not be parsed as MDX: ${message}`, { cause: error })
   }
 
-  if (!metaStatement) throw new Error(`${sourcePath} must export a literal meta object.`)
-
   const meta = assertBlogMeta(metaValue, sourcePath)
-  const body = `${source.slice(0, metaStatement.getFullStart())}${source.slice(metaStatement.end)}`
-  assertSectionsMatchHeadings(meta.sections, body, sourcePath)
+  assertSectionsMatchHeadings(meta.sections, source, sourcePath)
   return meta
 }
 
@@ -89,74 +91,41 @@ function assertBlogSlug(sourcePath: string): string {
 }
 
 function assertBlogMeta(value: unknown, sourcePath: string): BlogPostMeta {
-  if (!isRecord(value)) throw new Error(`${sourcePath} meta must be an object.`)
+  if (!isRecord(value)) throw new Error(`${sourcePath} must export a meta object.`)
 
-  const unknownFields = Object.keys(value).filter((field) => !allowedMetaFields.has(field))
-  if (unknownFields.length > 0) {
-    throw new Error(`${sourcePath} meta has unsupported fields: ${unknownFields.join(', ')}.`)
+  const result = blogMetaSchema.safeParse(value)
+  if (!result.success) throw blogMetaError(result.error.issues[0], sourcePath)
+
+  const { featured, ...meta } = result.data
+  return { ...meta, ...(featured === undefined ? {} : { featured }) }
+}
+
+function blogMetaError(issue: z.core.$ZodIssue | undefined, sourcePath: string): Error {
+  if (!issue) return new Error(`${sourcePath} meta is invalid.`)
+  if (issue.code === 'unrecognized_keys') {
+    return new Error(
+      `${sourcePath} meta has unsupported fields: ${issue.keys.map(String).join(', ')}.`,
+    )
   }
 
-  const author = requiredString(value.author, 'author', sourcePath)
-  const category = requiredString(value.category, 'category', sourcePath)
-  if (!isBlogCategory(category)) {
-    throw new Error(`${sourcePath} meta.category must be one of: ${blogCategories.join(', ')}.`)
-  }
-  const date = requiredString(value.date, 'date', sourcePath)
-  if (!isIsoDate(date)) {
-    throw new Error(`${sourcePath} meta.date must be a valid YYYY-MM-DD date.`)
-  }
-  const description = requiredString(value.description, 'description', sourcePath)
-  if (value.featured !== undefined && typeof value.featured !== 'boolean') {
-    throw new Error(`${sourcePath} meta.featured must be a boolean when provided.`)
-  }
-  const readTime = requiredString(value.readTime, 'readTime', sourcePath)
-  if (!Array.isArray(value.sections)) {
-    throw new Error(`${sourcePath} meta.sections must be an array.`)
-  }
-  const sections = value.sections.map((section, index) => {
-    if (!isRecord(section)) {
-      throw new Error(`${sourcePath} meta.sections[${index}] must be an object.`)
-    }
-
-    return {
-      id: requiredString(section.id, `sections[${index}].id`, sourcePath),
-      title: requiredString(section.title, `sections[${index}].title`, sourcePath),
-    }
-  })
-  const title = requiredString(value.title, 'title', sourcePath)
-
-  return {
-    author,
-    category,
-    date,
-    description,
-    ...(value.featured === undefined ? {} : { featured: value.featured }),
-    readTime,
-    sections,
-    title,
-  }
+  const field = issue.path.reduce<string>(
+    (path, part) =>
+      `${path}${typeof part === 'number' ? `[${part}]` : `${path ? '.' : ''}${String(part)}`}`,
+    '',
+  )
+  return new Error(`${sourcePath} meta.${field} ${issue.message}`)
 }
 
 function assertSectionsMatchHeadings(
   sections: BlogPostMeta['sections'],
-  body: string,
+  source: string,
   sourcePath: string,
 ): void {
-  const headings = secondLevelHeadings(body, sourcePath)
-  const headingIds = headings.map(contentHeadingId)
+  const headingIds = secondLevelHeadingIds(source, sourcePath)
   const sectionIds = sections.map((section) => section.id)
 
-  const duplicateHeadingId = headingIds.find((id, index) => headingIds.indexOf(id) !== index)
-  if (duplicateHeadingId) {
-    throw new Error(
-      `${sourcePath} has more than one level-two heading with id "${duplicateHeadingId}".`,
-    )
-  }
-
-  const duplicateSectionId = sectionIds.find((id, index) => sectionIds.indexOf(id) !== index)
-  if (duplicateSectionId) {
-    throw new Error(`${sourcePath} meta.sections contains duplicate id "${duplicateSectionId}".`)
-  }
+  assertNoDuplicateIds(headingIds, `${sourcePath} has more than one level-two heading`)
+  assertNoDuplicateIds(sectionIds, `${sourcePath} meta.sections contains duplicate id`)
 
   if (
     headingIds.length !== sectionIds.length ||
@@ -168,72 +137,41 @@ function assertSectionsMatchHeadings(
   }
 }
 
-function secondLevelHeadings(source: string, sourcePath: string): string[] {
-  const headings: string[] = []
-  let fence: { character: string; length: number } | undefined
+function secondLevelHeadingIds(source: string, sourcePath: string): string[] {
+  const tree = createProcessor({ remarkPlugins: [remarkGfm] }).parse(source) as ContentNode
+  const headings = collectNodes(tree, (node) => node.type === 'heading' && node.depth === 2)
 
-  for (const line of source.split(/\r?\n/)) {
-    const fenceMatch = line.match(/^\s*(`{3,}|~{3,})/)
-    if (fenceMatch?.[1]) {
-      const character = fenceMatch[1][0]
-      if (!fence) {
-        fence = { character: character ?? '', length: fenceMatch[1].length }
-      } else if (character === fence.character && fenceMatch[1].length >= fence.length) {
-        fence = undefined
-      }
-      continue
-    }
-    if (fence) continue
-
-    const heading = line.match(/^##(?!#)\s+(.+?)\s*#*\s*$/)?.[1]?.trim()
-    if (!heading) continue
-    if (/[*_`[\]<>]/.test(heading)) {
+  return headings.map((heading) => {
+    const title = plainText(heading)
+    const id = title ? contentHeadingId(title) : ''
+    if (!id) {
       throw new Error(
-        `${sourcePath} level-two headings must be plain text so their section ids stay stable: "${heading}".`,
+        `${sourcePath} has a level-two heading without stable text for its section id.`,
       )
     }
-    if (!contentHeadingId(heading)) {
-      throw new Error(`${sourcePath} level-two heading does not produce a usable section id.`)
-    }
-    headings.push(heading)
-  }
-
-  return headings
+    return id
+  })
 }
 
-function readLiteral(node: ts.Expression, sourcePath: string): unknown {
-  if (ts.isStringLiteralLike(node)) return node.text
-  if (node.kind === ts.SyntaxKind.TrueKeyword) return true
-  if (node.kind === ts.SyntaxKind.FalseKeyword) return false
-  if (ts.isArrayLiteralExpression(node)) {
-    return node.elements.map((element) => readLiteral(element, sourcePath))
-  }
-  if (ts.isObjectLiteralExpression(node)) {
-    return Object.fromEntries(
-      node.properties.map((property) => {
-        if (!ts.isPropertyAssignment(property)) {
-          throw new Error(`${sourcePath} meta may only contain literal property assignments.`)
-        }
-        const key = propertyName(property.name, sourcePath)
-        return [key, readLiteral(property.initializer, sourcePath)]
-      }),
-    )
-  }
-  throw new Error(`${sourcePath} meta contains a non-literal value.`)
+function collectNodes(
+  node: ContentNode,
+  matches: (candidate: ContentNode) => boolean,
+): ContentNode[] {
+  const found = matches(node) ? [node] : []
+  return [...found, ...(node.children ?? []).flatMap((child) => collectNodes(child, matches))]
 }
 
-function propertyName(name: ts.PropertyName, sourcePath: string): string {
-  if (ts.isIdentifier(name) || ts.isStringLiteralLike(name) || ts.isNumericLiteral(name)) {
-    return name.text
-  }
-  throw new Error(`${sourcePath} meta contains an unsupported property name.`)
+function plainText(node: ContentNode): string | undefined {
+  if (node.type === 'text' || node.type === 'inlineCode') return node.value
+  if (!node.children) return undefined
+
+  const parts = node.children.map(plainText)
+  return parts.every((part): part is string => part !== undefined) ? parts.join('') : undefined
 }
 
-function requiredString(value: unknown, field: string, sourcePath: string): string {
-  if (typeof value !== 'string' || value.trim().length === 0) {
-    throw new Error(`${sourcePath} meta.${field} must be a non-empty string.`)
-  }
-  return value
+function assertNoDuplicateIds(ids: readonly string[], message: string): void {
+  const duplicate = ids.find((id, index) => ids.indexOf(id) !== index)
+  if (duplicate) throw new Error(`${message} "${duplicate}".`)
 }
 
 function isIsoDate(value: string): boolean {
@@ -248,8 +186,4 @@ function formatIds(ids: readonly string[]): string {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
-}
-
-function isBlogCategory(value: string): value is BlogPostMeta['category'] {
-  return (blogCategories as readonly string[]).includes(value)
 }
