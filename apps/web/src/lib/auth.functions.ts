@@ -4,6 +4,7 @@ import { getRequestHeaders } from '@tanstack/react-start/server'
 
 import type { WebEnv } from '../env'
 import { getAuth } from './auth.server'
+import { fileUploadsConfigured } from './files.server'
 import { resolveTurnstileConfig } from './turnstile.server'
 
 export const getCurrentUser = createServerFn({ method: 'GET' }).handler(async () => {
@@ -23,5 +24,6 @@ export const getAccountOverview = createServerFn({ method: 'GET' }).handler(asyn
   const auth = getAuth()
   const user = await auth.requireUser(headers)
   const accounts = await auth.listAccounts(headers)
-  return { accounts, user }
+  const env = cloudflareEnv as unknown as WebEnv
+  return { accounts, fileUploadsConfigured: fileUploadsConfigured(env), user }
 })

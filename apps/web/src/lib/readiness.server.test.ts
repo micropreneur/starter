@@ -13,6 +13,7 @@ function configuredEnv(count = 4): WebEnv {
     } as unknown as D1Database,
     EMAIL_FROM: 'Starter <starter@example.com>',
     EMAIL_PROVIDER: 'resend',
+    FILES: {} as R2Bucket,
     REALTIME_ROOM: {} as WebEnv['REALTIME_ROOM'],
     RESEND_API_KEY: 'configured',
     STRIPE_SECRET_KEY: 'rk_test_configured',

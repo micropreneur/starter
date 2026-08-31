@@ -10,6 +10,7 @@ import {
   completePersonalWorkspaceOnboardingForEmail,
   personalWorkspaceId,
   requireActiveWorkspace,
+  updatePersonalWorkspaceAvatar,
   WorkspaceAccessError,
 } from './service'
 
@@ -110,6 +111,21 @@ describe('personal workspace onboarding', () => {
         name: 'Compiler Club v2',
       }),
     ).resolves.toMatchObject({ name: 'Compiler Club v2', primaryGoal: null, productType: null })
+  })
+
+  it('updates only the authenticated personal workspace avatar reference', async () => {
+    await updatePersonalWorkspaceAvatar(
+      database,
+      'workspace-user-a',
+      '/api/files/logo?key=workspace-logos%2Fworkspace-user-a%2Flogo.png',
+    )
+
+    await expect(requireActiveWorkspace(database, 'workspace-user-a')).resolves.toMatchObject({
+      avatarUrl: '/api/files/logo?key=workspace-logos%2Fworkspace-user-a%2Flogo.png',
+    })
+    await expect(requireActiveWorkspace(database, 'workspace-user-b')).resolves.toMatchObject({
+      avatarUrl: null,
+    })
   })
 
   it('fails closed for missing and inactive memberships', async () => {

@@ -7,7 +7,7 @@
 - [Documentation index](apps/docs/public/llms.txt)
 - [Complete documentation corpus](apps/docs/public/llms-full.txt)
 - [Structured content manifest](apps/docs/public/agent-content.json)
-- 15 public guides and 15 component references are generated from canonical source.
+- 16 public guides and 15 component references are generated from canonical source.
 
 ## Agent interfaces
 

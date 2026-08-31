@@ -7,6 +7,7 @@ Free Starter proves the shortest coherent path to a paid, single-user SaaS:
 - Credential auth plus optional Google OAuth through `AuthPort`.
 - Dedicated auth routes and one automatically provisioned personal workspace with activation onboarding.
 - Verification, recovery, profile, password, and confirmed deletion through `EmailPort`.
+- Optional owner-scoped R2 avatar and personal-workspace logo uploads with a secret-light disabled state.
 - A removable Operations Registry with personal-workspace CRUD, fixed workflow states, tags, filters, pagination, and authorization tests.
 - One monthly Stripe price through `BillingService`, local subscription state, idempotent webhooks, the customer portal, and an app-owned `registry.export` entitlement.
 - A secret-light local path: D1 and captured email work without provider credentials; billing is visibly disabled until all Stripe sandbox values exist.

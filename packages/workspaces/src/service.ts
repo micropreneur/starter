@@ -5,6 +5,7 @@ import {
   type WorkspaceOnboardingInput,
   type WorkspacePrimaryGoal,
   type WorkspaceProductType,
+  workspaceAvatarSchema,
   workspaceOnboardingSchema,
 } from './schema'
 
@@ -99,6 +100,25 @@ export async function completePersonalWorkspaceOnboarding(
       onboardingCompletedAt: new Date(),
       updatedAt: new Date(),
     })
+    .where(
+      and(eq(workspaces.id, workspace.id), eq(workspaces.createdByUserId, authenticatedUserId)),
+    )
+
+  return requireActiveWorkspace(database, authenticatedUserId)
+}
+
+/** Update the current personal workspace image from authenticated identity only. */
+export async function updatePersonalWorkspaceAvatar(
+  database: Database,
+  authenticatedUserId: string,
+  avatarUrl: string | null,
+): Promise<ActiveWorkspace> {
+  const parsed = workspaceAvatarSchema.parse(avatarUrl)
+  const workspace = await requireActiveWorkspace(database, authenticatedUserId)
+
+  await database
+    .update(workspaces)
+    .set({ avatarUrl: parsed, updatedAt: new Date() })
     .where(
       and(eq(workspaces.id, workspace.id), eq(workspaces.createdByUserId, authenticatedUserId)),
     )

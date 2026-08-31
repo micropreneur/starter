@@ -14,6 +14,8 @@ export const workspaceOnboardingSchema = z.object({
   name: z.string().trim().min(2).max(80),
 })
 
+export const workspaceAvatarSchema = z.string().max(2048).nullable()
+
 export type WorkspaceOnboardingInput = z.infer<typeof workspaceOnboardingSchema>
 export type WorkspacePrimaryGoal = (typeof workspacePrimaryGoals)[number]
 export type WorkspaceProductType = (typeof workspaceProductTypes)[number]

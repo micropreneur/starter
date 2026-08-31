@@ -76,9 +76,9 @@ export function AppSidebar({
               <img
                 alt=""
                 aria-hidden="true"
-                className="size-7 rounded-md ring-1 ring-border/40"
+                className="size-7 rounded-md object-cover ring-1 ring-border/40"
                 height="28"
-                src="/favicon.png"
+                src={workspace.avatarUrl ?? '/favicon.png'}
                 width="28"
               />
               <div className="grid flex-1 text-left text-sm leading-tight">

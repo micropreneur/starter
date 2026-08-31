@@ -11,11 +11,16 @@ export interface WebEnv {
   GOOGLE_CLIENT_SECRET?: string
   RESEND_API_KEY?: string
   REALTIME_ENABLED?: string
+  R2_ACCESS_KEY_ID?: string
+  R2_ACCOUNT_ID?: string
+  R2_BUCKET_NAME?: string
+  R2_SECRET_ACCESS_KEY?: string
   STRIPE_PRICE_ID?: string
   STRIPE_SECRET_KEY?: string
   STRIPE_WEBHOOK_SECRET?: string
   TURNSTILE_SECRET_KEY?: string
   TURNSTILE_SITE_KEY?: string
   DB: D1Database
+  FILES: R2Bucket
   REALTIME_ROOM: DurableObjectNamespace<RealtimeRoom>
 }

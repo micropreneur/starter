@@ -2,7 +2,7 @@
 
 The fork-and-go, AI-native SaaS base for micropreneurs.
 
-`micropreneur/starter` is the public, MIT-licensed foundation we use to begin paid, single-user SaaS products without re-customizing someone else's boilerplate. It combines TanStack Start on Cloudflare Workers, D1 and Drizzle, hexagonal auth and email, a complete one-plan Stripe billing engine, a Base UI shadcn registry, and agent-readable project guidance.
+`micropreneur/starter` is the public, MIT-licensed foundation we use to begin paid, single-user SaaS products without re-customizing someone else's boilerplate. It combines TanStack Start on Cloudflare Workers, D1 and Drizzle, optional owner-scoped R2 uploads, hexagonal auth and email, a complete one-plan Stripe billing engine that stays off by default, a Base UI shadcn registry, and agent-readable project guidance.
 
 ## Quickstart
 
@@ -30,6 +30,7 @@ Create an account at `/sign-up`, answer the three personal workspace questions, 
 | `packages/auth` | Provider-neutral auth port with a Better Auth adapter and a typed Descope stub |
 | `packages/email` | Email port with Resend and local capture adapters |
 | `packages/billing` | Complete one-plan Stripe engine: Checkout, portal, signed webhooks, local state, and entitlements |
+| `packages/files` | Owner-scoped upload policy and storage lifecycle |
 | `packages/operations` | Removable personal-workspace Operations Registry example |
 | `packages/workspaces` | Single-member personal workspace and onboarding seam |
 | `packages/db` | D1 client, Drizzle schema, and migrations |
@@ -77,10 +78,11 @@ paid actions stay unavailable.
 4. Copy `apps/web/.dev.vars.example` to `apps/web/.dev.vars`; set a real Better Auth secret for any deployed environment (`wrangler secret put BETTER_AUTH_SECRET`).
 5. Optionally register Google's callback at `http://localhost:3000/api/auth/callback/google`, or leave both OAuth values empty and keep credential auth.
 6. Customize the activation questions in `packages/workspaces`; keep organization creation, invitations, and team roles out of Free Starter.
-7. Optionally configure Resend. Local capture remains the fastest verification/recovery loop.
-8. If you activate billing yourself, create one recurring Stripe test price, configure all three Stripe values, and forward signed test events to `/api/billing/webhook`.
-9. Rename or remove `packages/operations`, then add your domain code in its own package instead of coupling it to adapters.
-10. Keep application imports pointed at ports and registry-facing components (`@micropreneur/elements`).
+7. Optionally configure the private R2 bucket, exact-origin CORS, and scoped signing credentials described in the [R2 file-upload guide](./apps/docs/src/content/cloudflare/r2-file-uploads.mdx). The default local loop keeps uploads disabled without them.
+8. Optionally configure Resend. Local capture remains the fastest verification/recovery loop.
+9. If you activate billing yourself, create one recurring Stripe test price, configure all three Stripe values, and forward signed test events to `/api/billing/webhook`.
+10. Rename or remove `packages/operations`, then add your domain code in its own package instead of coupling it to adapters.
+11. Keep application imports pointed at ports and registry-facing components (`@micropreneur/elements`).
 
 The exact Free/Pro contract is in [ROADMAP.md](./ROADMAP.md). `starter-pro`, `elements-pro`, multi-tenant/team systems, advanced billing, premium registry gating, and project-generation CLIs are intentionally outside this repository.
 
