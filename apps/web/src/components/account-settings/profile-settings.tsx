@@ -10,10 +10,12 @@ import {
   FieldLabel,
   Input,
 } from '@micropreneur/elements'
+import type { ActiveWorkspace } from '@micropreneur/workspaces'
 import { useRouter } from '@tanstack/react-router'
 import { Mail, UserRound } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 
+import { FileUploadSettings } from '../file-upload-settings'
 import {
   type AccountOverview,
   FormFeedback,
@@ -22,7 +24,13 @@ import {
   SettingsSection,
 } from './shared'
 
-export function ProfileSettings({ account }: { account: AccountOverview }) {
+export function ProfileSettings({
+  account,
+  workspace,
+}: {
+  account: AccountOverview
+  workspace: ActiveWorkspace
+}) {
   return (
     <SettingsSection
       description="Update the provider-neutral identity fields shown throughout the app."
@@ -31,6 +39,13 @@ export function ProfileSettings({ account }: { account: AccountOverview }) {
       <div className="grid gap-3 xl:grid-cols-2">
         <ProfileCard name={account.user.name} />
         <EmailCard email={account.user.email} />
+      </div>
+      <div className="mt-3">
+        <FileUploadSettings
+          enabled={account.fileUploadsConfigured}
+          user={account.user}
+          workspace={workspace}
+        />
       </div>
     </SettingsSection>
   )

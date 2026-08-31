@@ -160,6 +160,28 @@
       "type": "article"
     },
     {
+      "description": "Enable owner-scoped avatar and workspace-logo uploads with short-lived presigned R2 URLs.",
+      "group": "Cloudflare",
+      "id": "cloudflare/r2-file-uploads",
+      "keywords": [
+        "cloudflare",
+        "r2",
+        "files",
+        "uploads",
+        "presigned urls",
+        "avatar",
+        "logo",
+        "cors",
+        "lifecycle",
+        "rate limit"
+      ],
+      "path": "/cloudflare/r2-file-uploads",
+      "rawPath": "/cloudflare/r2-file-uploads.md",
+      "sourcePath": "apps/docs/src/content/cloudflare/r2-file-uploads.mdx",
+      "title": "R2 file uploads",
+      "type": "article"
+    },
+    {
       "description": "Browse the public registry and install source-owned components and themes with the shadcn CLI.",
       "group": "Elements",
       "id": "elements/installing-free",

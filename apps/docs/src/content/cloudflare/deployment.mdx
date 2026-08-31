@@ -46,6 +46,8 @@ docs or registry files. Preview and localhost hosts keep `/mcp` and `/r/*` on on
 | Workers | application entrypoint | TanStack Start server and assets |
 | D1 | `DB` | auth, workspaces, registry, and billing state |
 | Durable Objects | `REALTIME_ROOM` | authenticated realtime echo seam |
+| R2 | `FILES` | optional authenticated avatar and workspace-logo objects |
+| Rate Limiting | `AUTH_RATE_LIMITER` | authentication and upload-grant abuse controls |
 
 The Worker enables `nodejs_compat`, source maps, and observability. Realtime behavior remains off
 until `REALTIME_ENABLED=true`.

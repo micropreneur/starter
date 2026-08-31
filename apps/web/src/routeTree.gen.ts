@@ -36,6 +36,10 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiBillingCheckoutRouteImport } from './routes/api/billing/checkout'
 import { Route as ApiBillingPortalRouteImport } from './routes/api/billing/portal'
 import { Route as ApiBillingWebhookRouteImport } from './routes/api/billing/webhook'
+import { Route as ApiFilesAvatarRouteImport } from './routes/api/files/avatar'
+import { Route as ApiFilesCompleteRouteImport } from './routes/api/files/complete'
+import { Route as ApiFilesLogoRouteImport } from './routes/api/files/logo'
+import { Route as ApiFilesUploadUrlRouteImport } from './routes/api/files/upload-url'
 import { Route as ApiRegistryExportRouteImport } from './routes/api/registry/export'
 import { Route as AppRegistryIndexRouteImport } from './routes/app.registry.index'
 import { Route as AppRegistryRecordIdRouteImport } from './routes/app.registry.$recordId'
@@ -180,6 +184,26 @@ const ApiBillingWebhookRoute = ApiBillingWebhookRouteImport.update({
   path: '/api/billing/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiFilesAvatarRoute = ApiFilesAvatarRouteImport.update({
+  id: '/api/files/avatar',
+  path: '/api/files/avatar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFilesCompleteRoute = ApiFilesCompleteRouteImport.update({
+  id: '/api/files/complete',
+  path: '/api/files/complete',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFilesLogoRoute = ApiFilesLogoRouteImport.update({
+  id: '/api/files/logo',
+  path: '/api/files/logo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFilesUploadUrlRoute = ApiFilesUploadUrlRouteImport.update({
+  id: '/api/files/upload-url',
+  path: '/api/files/upload-url',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRegistryExportRoute = ApiRegistryExportRouteImport.update({
   id: '/api/registry/export',
   path: '/api/registry/export',
@@ -249,6 +273,10 @@ export interface FileRoutesByFullPath {
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/webhook': typeof ApiBillingWebhookRoute
+  '/api/files/avatar': typeof ApiFilesAvatarRoute
+  '/api/files/complete': typeof ApiFilesCompleteRoute
+  '/api/files/logo': typeof ApiFilesLogoRoute
+  '/api/files/upload-url': typeof ApiFilesUploadUrlRoute
   '/api/registry/export': typeof ApiRegistryExportRoute
   '/app/registry/$recordId': typeof AppRegistryRecordIdRoute
   '/app/settings/billing': typeof AppSettingsBillingRoute
@@ -283,6 +311,10 @@ export interface FileRoutesByTo {
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/webhook': typeof ApiBillingWebhookRoute
+  '/api/files/avatar': typeof ApiFilesAvatarRoute
+  '/api/files/complete': typeof ApiFilesCompleteRoute
+  '/api/files/logo': typeof ApiFilesLogoRoute
+  '/api/files/upload-url': typeof ApiFilesUploadUrlRoute
   '/api/registry/export': typeof ApiRegistryExportRoute
   '/app/registry/$recordId': typeof AppRegistryRecordIdRoute
   '/app/settings/billing': typeof AppSettingsBillingRoute
@@ -321,6 +353,10 @@ export interface FileRoutesById {
   '/api/billing/checkout': typeof ApiBillingCheckoutRoute
   '/api/billing/portal': typeof ApiBillingPortalRoute
   '/api/billing/webhook': typeof ApiBillingWebhookRoute
+  '/api/files/avatar': typeof ApiFilesAvatarRoute
+  '/api/files/complete': typeof ApiFilesCompleteRoute
+  '/api/files/logo': typeof ApiFilesLogoRoute
+  '/api/files/upload-url': typeof ApiFilesUploadUrlRoute
   '/api/registry/export': typeof ApiRegistryExportRoute
   '/app/registry/$recordId': typeof AppRegistryRecordIdRoute
   '/app/settings/billing': typeof AppSettingsBillingRoute
@@ -360,6 +396,10 @@ export interface FileRouteTypes {
     | '/api/billing/checkout'
     | '/api/billing/portal'
     | '/api/billing/webhook'
+    | '/api/files/avatar'
+    | '/api/files/complete'
+    | '/api/files/logo'
+    | '/api/files/upload-url'
     | '/api/registry/export'
     | '/app/registry/$recordId'
     | '/app/settings/billing'
@@ -394,6 +434,10 @@ export interface FileRouteTypes {
     | '/api/billing/checkout'
     | '/api/billing/portal'
     | '/api/billing/webhook'
+    | '/api/files/avatar'
+    | '/api/files/complete'
+    | '/api/files/logo'
+    | '/api/files/upload-url'
     | '/api/registry/export'
     | '/app/registry/$recordId'
     | '/app/settings/billing'
@@ -431,6 +475,10 @@ export interface FileRouteTypes {
     | '/api/billing/checkout'
     | '/api/billing/portal'
     | '/api/billing/webhook'
+    | '/api/files/avatar'
+    | '/api/files/complete'
+    | '/api/files/logo'
+    | '/api/files/upload-url'
     | '/api/registry/export'
     | '/app/registry/$recordId'
     | '/app/settings/billing'
@@ -465,6 +513,10 @@ export interface RootRouteChildren {
   ApiBillingCheckoutRoute: typeof ApiBillingCheckoutRoute
   ApiBillingPortalRoute: typeof ApiBillingPortalRoute
   ApiBillingWebhookRoute: typeof ApiBillingWebhookRoute
+  ApiFilesAvatarRoute: typeof ApiFilesAvatarRoute
+  ApiFilesCompleteRoute: typeof ApiFilesCompleteRoute
+  ApiFilesLogoRoute: typeof ApiFilesLogoRoute
+  ApiFilesUploadUrlRoute: typeof ApiFilesUploadUrlRoute
   ApiRegistryExportRoute: typeof ApiRegistryExportRoute
 }
 
@@ -659,6 +711,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBillingWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/files/avatar': {
+      id: '/api/files/avatar'
+      path: '/api/files/avatar'
+      fullPath: '/api/files/avatar'
+      preLoaderRoute: typeof ApiFilesAvatarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/files/complete': {
+      id: '/api/files/complete'
+      path: '/api/files/complete'
+      fullPath: '/api/files/complete'
+      preLoaderRoute: typeof ApiFilesCompleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/files/logo': {
+      id: '/api/files/logo'
+      path: '/api/files/logo'
+      fullPath: '/api/files/logo'
+      preLoaderRoute: typeof ApiFilesLogoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/files/upload-url': {
+      id: '/api/files/upload-url'
+      path: '/api/files/upload-url'
+      fullPath: '/api/files/upload-url'
+      preLoaderRoute: typeof ApiFilesUploadUrlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/registry/export': {
       id: '/api/registry/export'
       path: '/api/registry/export'
@@ -790,6 +870,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBillingCheckoutRoute: ApiBillingCheckoutRoute,
   ApiBillingPortalRoute: ApiBillingPortalRoute,
   ApiBillingWebhookRoute: ApiBillingWebhookRoute,
+  ApiFilesAvatarRoute: ApiFilesAvatarRoute,
+  ApiFilesCompleteRoute: ApiFilesCompleteRoute,
+  ApiFilesLogoRoute: ApiFilesLogoRoute,
+  ApiFilesUploadUrlRoute: ApiFilesUploadUrlRoute,
   ApiRegistryExportRoute: ApiRegistryExportRoute,
 }
 export const routeTree = rootRouteImport

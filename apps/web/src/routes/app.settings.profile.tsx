@@ -10,5 +10,6 @@ export const Route = createFileRoute('/app/settings/profile')({
 
 function ProfileSettingsPage() {
   const account = Route.useLoaderData()
-  return <ProfileSettings account={account} />
+  const { workspace } = Route.useRouteContext()
+  return <ProfileSettings account={account} workspace={workspace} />
 }

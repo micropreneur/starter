@@ -128,7 +128,14 @@ describe('better auth adapter contract', () => {
 
   it('verifies email, resets password once, and cascades user-owned data on deletion', async () => {
     const deliveries: EmailMessage[] = []
+    const deletedUserIds: string[] = []
+    const ownedFiles = new Set<string>()
     const auth = createBetterAuthAdapter({
+      beforeUserDelete: async (user) => {
+        deletedUserIds.push(user.id)
+        ownedFiles.delete(`avatar:${user.id}`)
+        ownedFiles.delete(`logo:personal:${user.id}`)
+      },
       database,
       email: createLocalEmailAdapter(({ message }) => deliveries.push(message)),
       requireEmailVerification: true,
@@ -195,6 +202,8 @@ describe('better auth adapter contract', () => {
       'http://localhost:3000/app/settings/profile',
     )
     await expect(auth.requireUser(headers)).resolves.toMatchObject({ email: changedEmail })
+    ownedFiles.add(`avatar:${user.id}`)
+    ownedFiles.add(`logo:personal:${user.id}`)
 
     const resetRequest = await auth.requestPasswordReset(
       { email: changedEmail, redirectTo: 'http://localhost:3000/reset-password' },
@@ -298,18 +307,65 @@ describe('better auth adapter contract', () => {
     )
     expect(deleteResponse.status).toBe(200)
     expect(deliveries.at(-1)?.template).toBe('delete_account')
+    expect(deletedUserIds).toEqual([])
+    expect(ownedFiles).toEqual(new Set([`avatar:${user.id}`, `logo:personal:${user.id}`]))
+    expect(
+      await database
+        .prepare('SELECT id FROM operation_records WHERE id = ?')
+        .bind('owned-record')
+        .first(),
+    ).not.toBeNull()
     const deletion = await auth.handleRequest(
       new Request(requiredUrl(deliveries.at(-1)), { headers: finalHeaders }),
     )
     const deletionBody = await deletion.clone().text()
     expect(deletion.status, requiredUrl(deliveries.at(-1))).toBeGreaterThanOrEqual(300)
     expect(deletion.status, deletionBody).toBeLessThan(400)
+    expect(deletedUserIds).toEqual([user.id])
+    expect(ownedFiles.size).toBe(0)
     expect(
       await database
         .prepare('SELECT id FROM operation_records WHERE id = ?')
         .bind('owned-record')
         .first(),
     ).toBeNull()
+  }, 15_000)
+
+  it('keeps the user when confirmed-deletion cleanup fails', async () => {
+    const deliveries: EmailMessage[] = []
+    const ownedFiles = new Set(['avatar', 'logo'])
+    const auth = createBetterAuthAdapter({
+      beforeUserDelete: async () => {
+        throw new Error('R2 cleanup failed')
+      },
+      database,
+      email: createLocalEmailAdapter(({ message }) => deliveries.push(message)),
+      secret: TEST_SECRET,
+    })
+    const credentials = {
+      email: 'failed-deletion@example.com',
+      name: 'Failed Deletion',
+      password: 'initial-password',
+    }
+    const signUp = await auth.signUp(credentials, new Headers())
+    const headers = cookieHeadersFrom(signUp)
+    const user = await auth.requireUser(headers)
+
+    const requested = await auth.deleteUser(
+      { callbackUrl: 'http://localhost:3000/', password: credentials.password },
+      headers,
+    )
+    expect(requested.status).toBe(200)
+    expect(ownedFiles).toEqual(new Set(['avatar', 'logo']))
+
+    const confirmed = await auth.handleRequest(
+      new Request(requiredUrl(deliveries.at(-1)), { headers }),
+    )
+    expect(confirmed.status).toBeGreaterThanOrEqual(500)
+    expect(ownedFiles).toEqual(new Set(['avatar', 'logo']))
+    expect(
+      await database.prepare('SELECT id FROM users WHERE id = ?').bind(user.id).first(),
+    ).not.toBeNull()
   }, 15_000)
 })
 

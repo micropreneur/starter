@@ -38,3 +38,10 @@ STRIPE_WEBHOOK_SECRET=
 # test keys for local verification; production keys should not allow localhost.
 TURNSTILE_SITE_KEY=
 TURNSTILE_SECRET_KEY=
+
+# Optional direct-to-R2 avatar and workspace-logo uploads. The local app stays
+# functional with these empty. Configure the bucket CORS policy before browser
+# uploads and use object read/write credentials scoped to this bucket only.
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=

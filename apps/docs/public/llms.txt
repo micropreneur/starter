@@ -24,6 +24,7 @@
 ## Cloudflare
 
 - [Deploy to Cloudflare](/cloudflare/deployment.md): Create the D1 database, configure Worker bindings and secrets, apply remote migrations, and deploy deliberately.
+- [R2 file uploads](/cloudflare/r2-file-uploads.md): Enable owner-scoped avatar and workspace-logo uploads with short-lived presigned R2 URLs.
 
 ## Elements
 
