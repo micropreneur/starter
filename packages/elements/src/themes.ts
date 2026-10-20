@@ -33,13 +33,24 @@ export const themeColorTokenNames = [
   'sidebar-ring',
 ] as const
 
+/**
+ * Micropreneur-only roles layered on top of the shadcn vocabulary. Each one has a
+ * documented default so components stay usable under a host theme that omits it:
+ * `mp-brand-highlight` falls back to `primary`.
+ */
+export const themeExtensionTokenNames = [
+  'mp-brand-highlight',
+  'mp-brand-highlight-foreground',
+] as const
+
 export type ThemeColorToken = (typeof themeColorTokenNames)[number]
+export type ThemeExtensionToken = (typeof themeExtensionTokenNames)[number]
 export type ThemeMode = 'dark' | 'light'
 export type ThemeSource = 'micropreneur' | 'tweakcn'
-export type ThemeDepth = 'flat' | 'lifted' | 'soft'
-export type TypographyPackName = 'editorial' | 'humanist' | 'system'
+export type ThemeDepth = 'flat' | 'lifted' | 'soft' | 'workbench'
+export type TypographyPackName = 'editorial' | 'humanist' | 'system' | 'workshop'
 
-export interface ThemeModeTokens extends Record<ThemeColorToken, string> {
+export interface ThemeModeTokens extends Record<ThemeColorToken | ThemeExtensionToken, string> {
   radius: string
   'shadow-card': string
   'shadow-overlay': string
@@ -117,22 +128,59 @@ export const typographyPacks = [
     mono: '"SFMono-Regular", Consolas, "Liberation Mono", monospace',
     dependencies: [],
   },
+  {
+    name: 'workshop',
+    label: 'Workshop',
+    description:
+      'Geist interface type, Instrument Serif display, and Geist Mono figures. Import the three @fontsource packages once in your global CSS.',
+    sans: '"Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
+    serif: '"Instrument Serif", "Iowan Old Style", Georgia, "Times New Roman", serif',
+    mono: '"Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+    dependencies: [
+      '@fontsource-variable/geist',
+      '@fontsource-variable/geist-mono',
+      '@fontsource/instrument-serif',
+    ],
+  },
 ] as const satisfies readonly TypographyPack[]
 
-export const themeDepths = ['flat', 'soft', 'lifted'] as const satisfies readonly ThemeDepth[]
+export const themeDepths = [
+  'flat',
+  'soft',
+  'lifted',
+  'workbench',
+] as const satisfies readonly ThemeDepth[]
 
-const depthRecipes: Record<ThemeDepth, Pick<ThemeModeTokens, 'shadow-card' | 'shadow-overlay'>> = {
-  flat: {
+type DepthTokens = Pick<ThemeModeTokens, 'shadow-card' | 'shadow-overlay'>
+
+/** Flat, soft, and lifted are mode-independent; workbench tunes its highlight per mode. */
+function sameInBothModes(tokens: DepthTokens): Record<ThemeMode, DepthTokens> {
+  return { light: tokens, dark: tokens }
+}
+
+const depthRecipes: Record<ThemeDepth, Record<ThemeMode, DepthTokens>> = {
+  flat: sameInBothModes({
     'shadow-card': 'inset 0 1px 0 color-mix(in srgb, currentColor 5%, transparent)',
     'shadow-overlay': '0 1px 2px rgb(0 0 0 / 0.08)',
-  },
-  soft: {
+  }),
+  soft: sameInBothModes({
     'shadow-card': '0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -16px rgb(0 0 0 / 0.2)',
     'shadow-overlay': '0 8px 32px -10px rgb(0 0 0 / 0.28)',
-  },
-  lifted: {
+  }),
+  lifted: sameInBothModes({
     'shadow-card': '0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px -18px rgb(0 0 0 / 0.35)',
     'shadow-overlay': '0 18px 48px -14px rgb(0 0 0 / 0.4)',
+  }),
+  workbench: {
+    light: {
+      'shadow-card': 'inset 0 1px 0 hsl(0 0% 100% / 0.5)',
+      'shadow-overlay':
+        '0 1px 2px hsl(220 18% 13% / 0.12), 0 8px 24px -8px hsl(220 18% 13% / 0.12)',
+    },
+    dark: {
+      'shadow-card': 'inset 0 1px 0 hsl(40 22% 92% / 0.06)',
+      'shadow-overlay': '0 1px 2px hsl(222 40% 3% / 0.5), 0 8px 24px -8px hsl(222 40% 3% / 0.5)',
+    },
   },
 }
 
@@ -141,6 +189,9 @@ interface ModeInput {
   accentForeground: string
   background: string
   border: string
+  /** Decorative brand mark color; defaults to `primary`. Never an action or status color. */
+  brandHighlight?: string
+  brandHighlightForeground?: string
   charts: readonly [string, string, string, string, string]
   depth?: ThemeDepth
   destructive?: string
@@ -163,8 +214,8 @@ interface ModeInput {
   surface: string
 }
 
-function createMode(input: ModeInput): ThemeModeTokens {
-  const shadows = depthRecipes[input.depth ?? 'flat']
+function createMode(mode: ThemeMode, input: ModeInput): ThemeModeTokens {
+  const shadows = depthRecipes[input.depth ?? 'flat'][mode]
   return {
     background: input.background,
     foreground: input.foreground,
@@ -198,6 +249,8 @@ function createMode(input: ModeInput): ThemeModeTokens {
     'sidebar-accent-foreground': input.sidebarAccentForeground ?? input.accentForeground,
     'sidebar-border': input.border,
     'sidebar-ring': input.primary,
+    'mp-brand-highlight': input.brandHighlight ?? input.primary,
+    'mp-brand-highlight-foreground': input.brandHighlightForeground ?? input.primaryForeground,
     radius: input.radius ?? '0.625rem',
     ...shadows,
   }
@@ -214,9 +267,9 @@ export const themeCatalog = [
     source: 'micropreneur',
     sourceUrl: 'https://github.com/micropreneur/starter',
     license: 'MIT',
-    typography: 'editorial',
-    swatches: ['#2563eb', '#e3722c', '#f8f6f1'],
-    light: createMode({
+    typography: 'workshop',
+    swatches: ['#2563eb', '#d96d2b', '#f8f6f1'],
+    light: createMode('light', {
       background: '#ffffff',
       foreground: '#1b1f27',
       surface: '#fdfcf9',
@@ -226,14 +279,18 @@ export const themeCatalog = [
       secondaryForeground: '#1b1f27',
       muted: '#eeeae3',
       mutedForeground: '#646975',
-      accent: '#d96d2b',
-      accentForeground: '#ffffff',
+      accent: '#eeeae3',
+      accentForeground: '#1b1f27',
       border: '#d9d4cb',
+      brandHighlight: '#d96d2b',
+      brandHighlightForeground: '#1b1f27',
       charts: ['#2563eb', '#d96d2b', '#64748b', '#8b5cf6', '#0f766e'],
       sidebar: '#faf8f4',
       sidebarAccent: '#eeeae3',
+      radius: '0.375rem',
+      depth: 'workbench',
     }),
-    dark: createMode({
+    dark: createMode('dark', {
       background: '#10131a',
       foreground: '#eeeae3',
       surface: '#171b24',
@@ -243,14 +300,18 @@ export const themeCatalog = [
       secondaryForeground: '#eeeae3',
       muted: '#232936',
       mutedForeground: '#9aa3b2',
-      accent: '#f28b45',
-      accentForeground: '#10131a',
+      accent: '#232936',
+      accentForeground: '#eeeae3',
+      brandHighlight: '#f28b45',
+      brandHighlightForeground: '#10131a',
       destructive: '#ef6461',
       destructiveForeground: '#10131a',
       border: '#303747',
       charts: ['#60a5fa', '#f28b45', '#a78bfa', '#2dd4bf', '#facc15'],
       sidebar: '#090b10',
       sidebarAccent: '#232936',
+      radius: '0.375rem',
+      depth: 'workbench',
     }),
   },
   {
@@ -263,7 +324,7 @@ export const themeCatalog = [
     license: 'Apache-2.0',
     typography: 'system',
     swatches: ['#3b82f6', '#f3f4f6', '#171717'],
-    light: createMode({
+    light: createMode('light', {
       background: '#ffffff',
       foreground: '#333333',
       surface: '#ffffff',
@@ -281,7 +342,7 @@ export const themeCatalog = [
       sidebar: '#f9fafb',
       sidebarAccent: '#e0f2fe',
     }),
-    dark: createMode({
+    dark: createMode('dark', {
       background: '#171717',
       foreground: '#e5e5e5',
       surface: '#262626',
@@ -310,7 +371,7 @@ export const themeCatalog = [
     license: 'Apache-2.0',
     typography: 'humanist',
     swatches: ['#f59e0b', '#fffbeb', '#171717'],
-    light: createMode({
+    light: createMode('light', {
       background: '#ffffff',
       foreground: '#262626',
       surface: '#ffffff',
@@ -326,11 +387,14 @@ export const themeCatalog = [
       charts: ['#f59e0b', '#d97706', '#b45309', '#92400e', '#78350f'],
       radius: '0.375rem',
       ring: '#b45309',
+      // Amber primary is too light for a mark on white; use the ring's deeper amber.
+      brandHighlight: '#b45309',
+      brandHighlightForeground: '#ffffff',
       sidebar: '#f9fafb',
       sidebarAccent: '#fffbeb',
       depth: 'soft',
     }),
-    dark: createMode({
+    dark: createMode('dark', {
       background: '#171717',
       foreground: '#e5e5e5',
       surface: '#262626',
@@ -360,7 +424,7 @@ export const themeCatalog = [
     license: 'Apache-2.0',
     typography: 'system',
     swatches: ['#6366f1', '#f8fafc', '#1e293b'],
-    light: createMode({
+    light: createMode('light', {
       background: '#f8fafc',
       foreground: '#1e293b',
       surface: '#ffffff',
@@ -379,7 +443,7 @@ export const themeCatalog = [
       sidebarAccent: '#e0e7ff',
       depth: 'soft',
     }),
-    dark: createMode({
+    dark: createMode('dark', {
       background: '#0f172a',
       foreground: '#e2e8f0',
       surface: '#1e293b',
@@ -409,7 +473,7 @@ export const themeCatalog = [
     license: 'Apache-2.0',
     typography: 'editorial',
     swatches: ['#644a40', '#ffdfb5', '#202020'],
-    light: createMode({
+    light: createMode('light', {
       background: '#f9f9f9',
       foreground: '#202020',
       surface: '#fcfcfc',
@@ -430,7 +494,7 @@ export const themeCatalog = [
       sidebarPrimaryForeground: '#fbfbfb',
       sidebarAccent: '#f7f7f7',
     }),
-    dark: createMode({
+    dark: createMode('dark', {
       background: '#111111',
       foreground: '#eeeeee',
       surface: '#191919',
@@ -462,7 +526,7 @@ export const themeCatalog = [
     license: 'Apache-2.0',
     typography: 'humanist',
     swatches: ['#22c55e', '#e0f2fe', '#0f172a'],
-    light: createMode({
+    light: createMode('light', {
       background: '#f0f8ff',
       foreground: '#374151',
       surface: '#ffffff',
@@ -481,7 +545,7 @@ export const themeCatalog = [
       sidebarAccent: '#d1fae5',
       depth: 'soft',
     }),
-    dark: createMode({
+    dark: createMode('dark', {
       background: '#0f172a',
       foreground: '#d1d5db',
       surface: '#1e293b',
@@ -626,6 +690,16 @@ export function applyBrandColor(tokens: ThemeModeTokens, brand: string): ThemeMo
   }
 }
 
+/** Sets the decorative brand mark color. It never changes action, focus, or status roles. */
+export function applyBrandHighlight(tokens: ThemeModeTokens, highlight: string): ThemeModeTokens {
+  if (!isHexColor(highlight)) throw new Error('Brand highlight must be a six-digit hex value.')
+  return {
+    ...tokens,
+    'mp-brand-highlight': highlight,
+    'mp-brand-highlight-foreground': readableForeground(highlight),
+  }
+}
+
 export function applyCanvasColor(tokens: ThemeModeTokens, canvas: string): ThemeModeTokens {
   if (!isHexColor(canvas)) throw new Error('Canvas color must be a six-digit hex value.')
   return { ...tokens, background: canvas, foreground: readableForeground(canvas) }
@@ -650,35 +724,62 @@ export function applyRadius(tokens: ThemeModeTokens, pixels: number): ThemeModeT
   return { ...tokens, radius: `${pixels / 16}rem` }
 }
 
-export function applyDepth(tokens: ThemeModeTokens, depth: ThemeDepth): ThemeModeTokens {
-  return { ...tokens, ...depthRecipes[depth] }
+function inferMode(tokens: Pick<ThemeModeTokens, 'background'>): ThemeMode {
+  return isHexColor(tokens.background) && relativeLuminance(tokens.background) <= 0.5
+    ? 'dark'
+    : 'light'
+}
+
+function matchesDepth(
+  tokens: Partial<Record<'shadow-card' | 'shadow-overlay', unknown>>,
+  depth: ThemeDepth,
+): boolean {
+  return Object.values(depthRecipes[depth]).some(
+    (recipe) =>
+      tokens['shadow-card'] === recipe['shadow-card'] &&
+      tokens['shadow-overlay'] === recipe['shadow-overlay'],
+  )
+}
+
+/** Applies a depth recipe. Mode-aware recipes infer the mode from `background` unless given. */
+export function applyDepth(
+  tokens: ThemeModeTokens,
+  depth: ThemeDepth,
+  mode: ThemeMode = inferMode(tokens),
+): ThemeModeTokens {
+  return { ...tokens, ...depthRecipes[depth][mode] }
 }
 
 export function getThemeDepth(tokens: ThemeModeTokens): ThemeDepth {
-  return (
-    themeDepths.find(
-      (depth) =>
-        tokens['shadow-card'] === depthRecipes[depth]['shadow-card'] &&
-        tokens['shadow-overlay'] === depthRecipes[depth]['shadow-overlay'],
-    ) ?? 'flat'
-  )
+  return themeDepths.find((depth) => matchesDepth(tokens, depth)) ?? 'flat'
+}
+
+/**
+ * Fills Micropreneur extension roles that older saved drafts or imported shadcn themes
+ * omit, using their documented defaults. Existing values are kept.
+ */
+export function withThemeExtensionDefaults<T extends Partial<ThemeModeTokens>>(
+  tokens: T,
+): T & Pick<ThemeModeTokens, ThemeExtensionToken> {
+  return {
+    ...tokens,
+    'mp-brand-highlight': tokens['mp-brand-highlight'] ?? tokens.primary ?? '',
+    'mp-brand-highlight-foreground':
+      tokens['mp-brand-highlight-foreground'] ?? tokens['primary-foreground'] ?? '',
+  }
 }
 
 export function isThemeModeTokens(value: unknown): value is ThemeModeTokens {
   if (value == null || typeof value !== 'object') return false
   const candidate = value as Record<string, unknown>
   return (
-    themeColorTokenNames.every(
+    [...themeColorTokenNames, ...themeExtensionTokenNames].every(
       (name) => typeof candidate[name] === 'string' && isHexColor(candidate[name]),
     ) &&
     typeof candidate.radius === 'string' &&
     /^(?:0|\d+(?:\.\d+)?)rem$/.test(candidate.radius) &&
     typeof candidate['shadow-card'] === 'string' &&
     typeof candidate['shadow-overlay'] === 'string' &&
-    themeDepths.some(
-      (depth) =>
-        candidate['shadow-card'] === depthRecipes[depth]['shadow-card'] &&
-        candidate['shadow-overlay'] === depthRecipes[depth]['shadow-overlay'],
-    )
+    themeDepths.some((depth) => matchesDepth(candidate, depth))
   )
 }

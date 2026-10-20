@@ -54,7 +54,18 @@ describe('theme editor state', () => {
     ).toBeUndefined()
   })
 
+  it('migrates drafts saved before the mp- extension roles existed', () => {
+    const draft = createThemeHistory(starter).present
+    const {
+      'mp-brand-highlight': _,
+      'mp-brand-highlight-foreground': __,
+      ...legacyLight
+    } = draft.light
+    const parsed = parseThemeDraft(JSON.stringify({ ...draft, light: legacyLight }))
+    expect(parsed?.light['mp-brand-highlight']).toBe(draft.light.primary)
+  })
+
   it('converts rem radius to the editor pixel scale', () => {
-    expect(radiusPixels(starter.light)).toBe(10)
+    expect(radiusPixels(starter.light)).toBe(6)
   })
 })

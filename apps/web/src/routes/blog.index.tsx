@@ -28,7 +28,8 @@ function BlogIndex() {
     <>
       <section className="px-6 pt-20 pb-10 sm:px-10 sm:pt-24 sm:pb-12 lg:px-16">
         <h1 className="max-w-[16ch] text-balance text-5xl leading-[0.98] font-semibold tracking-[-0.055em] sm:text-6xl lg:text-7xl">
-          Notes for building smaller, sharper software<span className="text-accent">.</span>
+          Notes for building smaller, sharper software
+          <span className="text-mp-brand-highlight">.</span>
         </h1>
         <p className="mt-6 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg">
           Architecture decisions, local workflows, and source-owned interface patterns from the
@@ -47,7 +48,7 @@ function BlogIndex() {
             <AuthPortDiagram />
           </div>
           <article className="flex min-h-72 flex-col p-6 sm:p-8 lg:p-10">
-            <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent">
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-mp-brand-highlight">
               {featuredPost.category}
             </p>
             <h2 className="mt-5 max-w-md text-3xl leading-tight font-semibold tracking-[-0.035em] sm:text-4xl">
@@ -89,7 +90,7 @@ function BlogCard({ post }: { post: BlogPost }) {
     >
       <div className="flex items-start justify-between gap-4">
         <span className="flex size-11 items-center justify-center rounded-xl border bg-muted/30">
-          <Icon className="size-5 text-accent" />
+          <Icon className="size-5 text-mp-brand-highlight" />
         </span>
         <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
           {post.category}

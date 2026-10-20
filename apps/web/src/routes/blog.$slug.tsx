@@ -56,7 +56,7 @@ function BlogPostPage() {
         </Link>
 
         <header className="mt-12 max-w-4xl">
-          <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent">
+          <p className="font-mono text-xs uppercase tracking-[0.16em] text-mp-brand-highlight">
             {meta.category}
           </p>
           <h1 className="mt-5 max-w-[15ch] text-balance text-5xl leading-[0.98] font-semibold tracking-[-0.055em] sm:text-6xl lg:text-7xl">
@@ -90,7 +90,7 @@ function BlogPostPage() {
                 {meta.sections.map((section) => (
                   <li key={section.id}>
                     <a
-                      className="text-muted-foreground transition-colors hover:text-accent"
+                      className="text-muted-foreground transition-colors hover:text-mp-brand-highlight"
                       href={`#${section.id}`}
                     >
                       {section.title}
@@ -102,7 +102,7 @@ function BlogPostPage() {
           </aside>
 
           <div className="min-w-0">
-            <div className="blog-prose prose prose-lg prose-neutral max-w-none dark:prose-invert prose-headings:scroll-mt-28 prose-headings:font-semibold prose-headings:tracking-[-0.03em] prose-a:font-medium prose-a:text-foreground prose-a:decoration-accent prose-a:decoration-2 prose-a:underline-offset-4 prose-blockquote:border-l-accent prose-code:rounded prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-th:font-medium prose-img:shadow-none">
+            <div className="blog-prose prose prose-lg prose-neutral max-w-none dark:prose-invert prose-headings:scroll-mt-28 prose-headings:font-semibold prose-headings:tracking-[-0.03em] prose-a:font-medium prose-a:text-foreground prose-a:decoration-mp-brand-highlight prose-a:decoration-2 prose-a:underline-offset-4 prose-blockquote:border-l-mp-brand-highlight prose-code:rounded prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-th:font-medium prose-img:shadow-none">
               <post.Content components={blogMdxComponents} />
             </div>
 
@@ -136,7 +136,7 @@ function BlogPostPage() {
 function BlogPostNotFound() {
   return (
     <section className="flex min-h-[65vh] flex-col items-center justify-center px-6 text-center">
-      <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent">404</p>
+      <p className="font-mono text-xs uppercase tracking-[0.16em] text-mp-brand-highlight">404</p>
       <h1 className="mt-5 text-4xl font-semibold tracking-[-0.04em]">That note is not here.</h1>
       <p className="mt-4 max-w-md text-muted-foreground">
         The post may have moved, or this fork has not published it yet.

@@ -6,7 +6,15 @@ These commands install source directly from the public Elements Free registry.
 
 ## starter
 
-**Starter** is Micropreneur's warm editorial default. License: MIT.
+**Starter** is Micropreneur's warm editorial default and the exact theme the Starter app ships: Geist interface type, Instrument Serif display, Geist Mono figures, a 6px radius, and flat workbench depth. License: MIT.
+
+Its type recipe uses three font packages. The CLI installs them; import them once in your global CSS:
+
+```css
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "@fontsource/instrument-serif";
+```
 
 ```bash
 pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/theme-starter.json
@@ -52,9 +60,22 @@ pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/theme-caffeine.js
 pnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/theme-ocean-breeze.json
 ```
 
+## Roles
+
+Every theme uses shadcn's semantic roles with their standard meanings. In particular, `accent` is the subtle interaction tint for focused menu items and hovered rows, never a second brand color.
+
+Elements adds one small Micropreneur extension:
+
+| Variable | Use | Default when your theme omits it |
+| --- | --- | --- |
+| `--mp-brand-highlight` | Decorative brand marks: the MarginNote rule, a signal dot, an underline. Never actions, focus, or status. | `--primary` |
+| `--mp-brand-highlight-foreground` | Text on a brand highlight fill. | `--primary-foreground` |
+
+The brand highlight is held to 3:1 against the canvas as a non-text mark. Do not use it for small text.
+
 ## Custom output
 
-The Theme Lab supports brand, canvas, surface, radius, depth, and typography changes. It automatically chooses a readable brand foreground, keeps light and dark edits independent, and provides undo, redo, reset, CSS copy, and JSON download.
+The Theme Lab supports brand, brand highlight, canvas, surface, radius, depth, and typography changes. It automatically chooses a readable brand foreground, keeps light and dark edits independent, and provides undo, redo, reset, CSS copy, and JSON download.
 
 Downloaded JSON is a `registry:theme` item compatible with the shadcn Registry CLI. Values are constrained to validated colors and known recipes; arbitrary CSS, HTML, and scripts are not accepted.
 

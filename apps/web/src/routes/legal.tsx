@@ -41,7 +41,7 @@ function LegalIndexPage() {
         eyebrow="Legal"
         title={
           <>
-            What must I replace before launch<span className="text-accent">?</span>
+            What must I replace before launch<span className="text-mp-brand-highlight">?</span>
           </>
         }
       />
@@ -53,7 +53,7 @@ function LegalIndexPage() {
           <Card className="[--card-spacing:--spacing(6)]">
             <CardHeader>
               <span className="flex size-11 items-center justify-center rounded-xl border bg-muted/30">
-                <ShieldCheck aria-hidden="true" className="size-5 text-accent" />
+                <ShieldCheck aria-hidden="true" className="size-5 text-mp-brand-highlight" />
               </span>
               <Badge className="mt-5" variant="outline">
                 Data practices
@@ -77,7 +77,7 @@ function LegalIndexPage() {
           <Card className="[--card-spacing:--spacing(6)]">
             <CardHeader>
               <span className="flex size-11 items-center justify-center rounded-xl border bg-muted/30">
-                <FileText aria-hidden="true" className="size-5 text-accent" />
+                <FileText aria-hidden="true" className="size-5 text-mp-brand-highlight" />
               </span>
               <Badge className="mt-5" variant="outline">
                 Product rules
@@ -101,7 +101,7 @@ function LegalIndexPage() {
       <section className="dark mx-3 mb-3 rounded-3xl bg-background px-6 py-16 text-foreground sm:mx-6 sm:px-10 lg:px-16">
         <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr]">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent">
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-mp-brand-highlight">
               Before publishing
             </p>
             <h2 className="mt-4 text-4xl leading-tight font-semibold tracking-[-0.04em]">
@@ -111,7 +111,10 @@ function LegalIndexPage() {
           <ul className="grid gap-4 sm:grid-cols-2">
             {launchChecklist.map((item) => (
               <li className="flex items-start gap-3 text-sm text-muted-foreground" key={item}>
-                <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" />
+                <Check
+                  aria-hidden="true"
+                  className="mt-0.5 size-4 shrink-0 text-mp-brand-highlight"
+                />
                 {item}
               </li>
             ))}

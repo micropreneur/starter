@@ -49,7 +49,7 @@ export function AuthPageShell({
               'Clean seams for organizations and teams in Starter Pro',
             ].map((item) => (
               <li className="flex items-start gap-2" key={item}>
-                <Check className="mt-0.5 size-4 shrink-0 text-accent" />
+                <Check className="mt-0.5 size-4 shrink-0 text-mp-brand-highlight" />
                 {item}
               </li>
             ))}

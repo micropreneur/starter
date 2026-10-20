@@ -1,5 +1,6 @@
 import {
   applyBrandColor,
+  applyBrandHighlight,
   applyCanvasColor,
   applyDepth,
   applyRadius,
@@ -295,6 +296,11 @@ export function ThemeLab({
                 value={tokens.primary}
               />
               <ColorControl
+                label="Highlight"
+                onChange={(value) => updateMode((current) => applyBrandHighlight(current, value))}
+                value={tokens['mp-brand-highlight']}
+              />
+              <ColorControl
                 label="Canvas"
                 onChange={(value) => updateMode((current) => applyCanvasColor(current, value))}
                 value={tokens.background}
@@ -345,7 +351,7 @@ export function ThemeLab({
                   id="theme-depth"
                   onChange={(event) =>
                     updateMode((current) =>
-                      applyDepth(current, event.currentTarget.value as ThemeDepth),
+                      applyDepth(current, event.currentTarget.value as ThemeDepth, colorMode),
                     )
                   }
                   value={getThemeDepth(tokens)}
@@ -367,7 +373,7 @@ export function ThemeLab({
                 Typography
               </h3>
               <p className="text-xs text-muted-foreground">
-                Local system stacks with no runtime font request.
+                Type recipes. A recipe that needs font packages lists them in its export.
               </p>
             </div>
             <Field>

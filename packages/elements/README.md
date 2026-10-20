@@ -44,17 +44,25 @@ pnpm dlx shadcn@latest add http://localhost:4173/r/theme-starter.json
 
 ## Themes
 
-The free registry ships six complete `registry:theme` items. Each includes light and dark semantic colors, charts, sidebar colors, radius, constrained depth tokens, and a local system typography recipe. The visual Theme Lab in `apps/docs` applies variables only to preview canvases, so choosing or editing a theme cannot restyle the documentation chrome.
+The free registry ships six complete `registry:theme` items. Each includes light and dark semantic colors, charts, sidebar colors, the `mp-brand-highlight` extension role, radius, constrained depth tokens, and a typography recipe. The Starter recipe lists its `@fontsource` packages as dependencies; the others are local system stacks. The visual Theme Lab in `apps/docs` applies variables only to preview canvases, so choosing or editing a theme cannot restyle the documentation chrome.
 
 Curated presets are installable from the local registry. Custom Theme Lab output is copied as CSS or downloaded as a shadcn-compatible JSON item; it is never uploaded or executed remotely.
 
 When adding a preset:
 
 1. Add complete runtime metadata and tokens to `src/themes.ts`.
-2. Add the matching `registry:theme` entry to `registry/free/themes/registry.json`.
+2. Add the matching `registry:theme` entry to `registry/free/themes/registry.json`; its `cssVars` must equal `toThemeRegistryItem(preset).cssVars`.
 3. Update `apps/docs/public/themes.md` and any third-party attribution.
 4. Run `pnpm --filter @micropreneur/elements registry:validate registry:build`.
 5. Install the exact built theme URL into a throwaway shadcn project and inspect the shared CSS update.
+
+`src/themes.ts` is the single source for the Starter app's theme. `packages/config/tailwind/theme-starter.css` is generated from the `starter` preset; after changing it, run:
+
+```bash
+pnpm --filter @micropreneur/elements themes:sync
+```
+
+`accent` keeps shadcn's meaning (the subtle interaction tint). Decorative brand marks use `mp-brand-highlight`, which falls back to `primary` under themes that omit it.
 
 Five normalized palettes are derived from the Apache-2.0-licensed TweakCN project. See `THIRD_PARTY_NOTICES.md` and `licenses/TWEAKCN-APACHE-2.0.txt`. No TweakCN code or remote script runs in Starter.
 

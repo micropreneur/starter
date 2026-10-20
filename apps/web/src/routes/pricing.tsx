@@ -42,7 +42,7 @@ function PricingPage() {
         eyebrow="Pricing"
         title={
           <>
-            What does Starter cost<span className="text-accent">?</span>
+            What does Starter cost<span className="text-mp-brand-highlight">?</span>
           </>
         }
       >
@@ -84,7 +84,10 @@ function PricingPage() {
             <ul className="mt-8 grid gap-4 sm:grid-cols-2">
               {included.map((item) => (
                 <li className="flex items-start gap-3 text-sm" key={item}>
-                  <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" />
+                  <Check
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 text-mp-brand-highlight"
+                  />
                   {item}
                 </li>
               ))}
@@ -96,7 +99,7 @@ function PricingPage() {
       <section className="px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
         <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr]">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent">
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-mp-brand-highlight">
               The boundary matters
             </p>
             <h2 className="mt-4 max-w-md text-4xl leading-tight font-semibold tracking-[-0.04em]">
@@ -123,7 +126,9 @@ function PricingPage() {
       <section className="dark mx-3 mb-3 rounded-3xl bg-background px-6 py-16 text-foreground sm:mx-6 sm:px-10 lg:px-16">
         <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.16em] text-accent">Your costs</p>
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-mp-brand-highlight">
+              Your costs
+            </p>
             <h2 className="mt-4 max-w-2xl text-4xl leading-tight font-semibold tracking-[-0.04em]">
               Bring the providers your product needs.
             </h2>

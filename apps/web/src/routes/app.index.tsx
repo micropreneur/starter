@@ -152,7 +152,7 @@ function DashboardPage() {
         </header>
         <div className="bg-grain flex min-h-40 flex-col items-center justify-center gap-2 px-5 py-8 text-center">
           <span className="flex size-8 items-center justify-center rounded-md border bg-background shadow-card">
-            <CircleCheck className="size-4 text-accent" />
+            <CircleCheck className="size-4 text-mp-brand-highlight" />
           </span>
           <div>
             <p className="text-sm font-medium">The workbench is ready</p>

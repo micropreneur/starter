@@ -92,9 +92,9 @@ function Home() {
         <section className="flex flex-col items-center px-6 pt-20 pb-16 text-center sm:pt-24 sm:pb-20">
           <StatusBadge>Public, MIT-licensed SaaS foundation</StatusBadge>
           <h1 className="mt-7 max-w-[15ch] text-balance text-5xl leading-[0.98] font-semibold tracking-[-0.055em] sm:text-6xl lg:text-7xl">
-            Build the product<span className="text-accent">.</span>
+            Build the product<span className="text-mp-brand-highlight">.</span>
             <br />
-            Keep your freedom<span className="text-accent">.</span>
+            Keep your freedom<span className="text-mp-brand-highlight">.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg">
             {siteConfig.name} is a fork-and-go Cloudflare foundation for paid, single-user SaaS—
@@ -149,7 +149,7 @@ function Home() {
                 className="border-r border-b border-border/70 p-6 sm:p-8"
                 key={feature.title}
               >
-                <feature.icon className="size-5 text-accent" />
+                <feature.icon className="size-5 text-mp-brand-highlight" />
                 <h3 className="mt-5 text-sm font-medium">{feature.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{feature.description}</p>
               </article>
@@ -164,7 +164,7 @@ function Home() {
           <div className="max-w-xl">
             <SectionEyebrow>Local feedback loop</SectionEyebrow>
             <h2 className="mt-5 text-balance text-4xl leading-tight font-semibold tracking-[-0.04em] sm:text-5xl">
-              One command from confidence<span className="text-accent">.</span>
+              One command from confidence<span className="text-mp-brand-highlight">.</span>
             </h2>
             <p className="mt-5 text-pretty text-muted-foreground">
               The repository teaches humans and coding agents how to work here, then gives both the
@@ -177,7 +177,7 @@ function Home() {
                 'AGENTS.md, symlinked skills, MCP, and llms.txt',
               ].map((item) => (
                 <li className="flex items-center gap-2" key={item}>
-                  <Check className="size-4 text-accent" />
+                  <Check className="size-4 text-mp-brand-highlight" />
                   {item}
                 </li>
               ))}
@@ -187,7 +187,7 @@ function Home() {
           <Card className="[--card-spacing:--spacing(5)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-mono text-sm">
-                <Braces className="size-4 text-accent" />
+                <Braces className="size-4 text-mp-brand-highlight" />
                 terminal
               </CardTitle>
               <CardDescription>
@@ -262,7 +262,7 @@ $ pnpm turbo typecheck lint build test
               <SectionEyebrow>Blog</SectionEyebrow>
               <h2 className="mt-5 max-w-2xl text-balance text-4xl leading-tight font-semibold tracking-[-0.04em] sm:text-5xl">
                 Notes for building smaller, sharper software
-                <span className="text-accent">.</span>
+                <span className="text-mp-brand-highlight">.</span>
               </h2>
             </div>
             <p className="max-w-xl text-pretty text-muted-foreground lg:justify-self-end">
@@ -285,7 +285,7 @@ $ pnpm turbo typecheck lint build test
                   <Card className="h-full pb-0 transition-colors group-hover:bg-muted/30">
                     <CardHeader>
                       <span className="flex size-10 items-center justify-center rounded-lg border bg-muted/50">
-                        <Icon className="size-4 text-accent" />
+                        <Icon className="size-4 text-mp-brand-highlight" />
                       </span>
                       <CardDescription className="mt-4 font-mono text-xs uppercase tracking-wider">
                         {post.category}
@@ -315,7 +315,7 @@ $ pnpm turbo typecheck lint build test
           <div className="max-w-2xl">
             <SectionEyebrow>Ready when the idea is</SectionEyebrow>
             <h2 className="mt-5 text-balance text-4xl leading-tight font-semibold tracking-[-0.04em] sm:text-5xl">
-              Fork it. Name it. Ship it<span className="text-accent">.</span>
+              Fork it. Name it. Ship it<span className="text-mp-brand-highlight">.</span>
             </h2>
             <p className="mt-5 max-w-xl text-pretty text-muted-foreground">
               Build a smaller business without rebuilding the same foundation. Start open source,
@@ -400,7 +400,7 @@ $ pnpm turbo typecheck lint build test
 function TechNote({ children, icon: Icon }: { children: ReactNode; icon: LucideIcon }) {
   return (
     <span className="inline-flex items-center gap-2">
-      <Icon className="size-4 text-accent" />
+      <Icon className="size-4 text-mp-brand-highlight" />
       {children}
     </span>
   )
@@ -443,7 +443,7 @@ function ElementCard({
     <Card>
       <CardHeader>
         <span className="flex size-10 items-center justify-center rounded-lg border bg-muted/50">
-          <Icon className="size-4 text-accent" />
+          <Icon className="size-4 text-mp-brand-highlight" />
         </span>
         <CardTitle className="mt-4">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
