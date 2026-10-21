@@ -11,7 +11,10 @@ export function MarginNote({ className, children, ...props }: ComponentProps<'p'
       data-slot="margin-note"
       {...props}
     >
-      <span aria-hidden className="inline-block h-px w-4 shrink-0 translate-y-[-0.2em] bg-accent" />
+      <span
+        aria-hidden
+        className="inline-block h-px w-4 shrink-0 translate-y-[-0.2em] bg-[var(--mp-brand-highlight,var(--primary))]"
+      />
       <span className="italic">{children}</span>
     </p>
   )

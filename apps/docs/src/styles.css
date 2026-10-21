@@ -66,10 +66,10 @@ body {
 }
 
 .docs-outline-indicator {
-  background: var(--accent);
+  background: var(--mp-brand-highlight);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
-    0 0 12px color-mix(in srgb, var(--accent) 38%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--mp-brand-highlight) 18%, transparent),
+    0 0 12px color-mix(in srgb, var(--mp-brand-highlight) 38%, transparent);
 }
 
 .docs-steps {

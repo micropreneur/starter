@@ -433,7 +433,7 @@
         "component",
         "registry:component"
       ],
-      "markdown": "# MarginNote\n\nOntology: **Properties**\n\nSmall editorial annotation with a burnt-orange marker rule. Use sparingly for asides and guidance next to content.\n\n```bash\npnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/margin-note.json\n```\n\nInstall from the public Elements Free registry; the CLI writes source into your project.\n",
+      "markdown": "# MarginNote\n\nOntology: **Properties**\n\nSmall editorial annotation with a marker rule in `--mp-brand-highlight` (burnt orange in the Starter theme). Use sparingly for asides and guidance next to content.\n\nThe rule falls back to `--primary` when your theme does not define `--mp-brand-highlight`, so it works under any shadcn theme.\n\n```bash\npnpm dlx shadcn@latest add https://elements.micropreneur.dev/r/margin-note.json\n```\n\nInstall from the public Elements Free registry; the CLI writes source into your project.\n",
       "path": "/elements/components/margin-note",
       "rawPath": "/components/margin-note.md",
       "sourcePath": "apps/docs/public/components/margin-note.md",

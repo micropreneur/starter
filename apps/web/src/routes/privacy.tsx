@@ -23,7 +23,8 @@ function PrivacyPage() {
         eyebrow="Privacy template"
         title={
           <>
-            How does this starter describe data use<span className="text-accent">?</span>
+            How does this starter describe data use
+            <span className="text-mp-brand-highlight">?</span>
           </>
         }
       />

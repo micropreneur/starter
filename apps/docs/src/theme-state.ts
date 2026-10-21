@@ -6,6 +6,7 @@ import {
   type ThemePreset,
   type TypographyPackName,
   typographyPacks,
+  withThemeExtensionDefaults,
 } from '@micropreneur/elements/themes'
 
 export interface ThemeDraft {
@@ -116,7 +117,13 @@ export function serializeThemeDraft(draft: ThemeDraft): string {
 export function parseThemeDraft(value: string | null): ThemeDraft | undefined {
   if (value == null) return undefined
   try {
-    const candidate = JSON.parse(value) as Partial<ThemeDraft>
+    const parsed = JSON.parse(value) as Partial<ThemeDraft>
+    // Drafts saved before the mp- extension roles existed gain their documented defaults.
+    const candidate = {
+      ...parsed,
+      light: isRecord(parsed.light) ? withThemeExtensionDefaults(parsed.light) : parsed.light,
+      dark: isRecord(parsed.dark) ? withThemeExtensionDefaults(parsed.dark) : parsed.dark,
+    }
     if (
       typeof candidate.basePresetName !== 'string' ||
       getThemePreset(candidate.basePresetName) == null ||
@@ -130,6 +137,10 @@ export function parseThemeDraft(value: string | null): ThemeDraft | undefined {
   } catch {
     return undefined
   }
+}
+
+function isRecord(value: unknown): value is Partial<ThemeModeTokens> {
+  return value != null && typeof value === 'object' && !Array.isArray(value)
 }
 
 export function radiusPixels(tokens: ThemeModeTokens): number {

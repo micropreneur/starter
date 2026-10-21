@@ -117,7 +117,7 @@ function Callout({
     <aside
       className={cn(
         'not-prose my-7 rounded-lg border bg-muted/25 px-4 py-3.5 text-sm leading-6',
-        type === 'warning' && 'border-accent/40 bg-accent/5',
+        type === 'warning' && 'border-mp-brand-highlight/40 bg-mp-brand-highlight/5',
       )}
     >
       <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-foreground">
@@ -164,11 +164,11 @@ function CodeGroup({ children }: { children: ReactNode }) {
   return (
     <Tabs className="not-prose my-7 gap-0" defaultValue={initialTab}>
       <div className="flex min-h-10 items-center border border-b-0 border-white/8 bg-[#11151a] px-2.5">
-        <span className="mr-2 size-1.5 rounded-full bg-accent" />
+        <span className="mr-2 size-1.5 rounded-full bg-mp-brand-highlight" />
         <TabsList className="h-auto gap-0 bg-transparent p-0" variant="line">
           {items.map((item) => (
             <TabsTrigger
-              className="h-9 rounded-none px-2.5 font-mono text-[0.6875rem] text-[#8b949e] data-active:text-[#e6edf3] after:bottom-0 after:bg-accent"
+              className="h-9 rounded-none px-2.5 font-mono text-[0.6875rem] text-[#8b949e] data-active:text-[#e6edf3] after:bottom-0 after:bg-mp-brand-highlight"
               key={item.props.label}
               value={item.props.label}
             >
@@ -227,7 +227,7 @@ export function ElementShowcase({
             <span className="text-sm font-semibold tracking-[-0.015em] text-card-foreground">
               {item.title}
             </span>
-            <span className="font-mono text-[0.625rem] uppercase tracking-[0.1em] text-accent">
+            <span className="font-mono text-[0.625rem] uppercase tracking-[0.1em] text-mp-brand-highlight">
               {item.ontology}
             </span>
             <span className="font-mono text-[0.625rem] text-muted-foreground">{item.kind}</span>
@@ -253,7 +253,7 @@ export function ElementShowcase({
 
       <div className="flex min-w-0 items-center gap-2 border-t bg-muted/25 p-2">
         <code className="min-w-0 flex-1 overflow-x-auto px-2 font-mono text-[0.6875rem] whitespace-nowrap text-muted-foreground">
-          <span aria-hidden className="mr-2 text-accent">
+          <span aria-hidden className="mr-2 text-mp-brand-highlight">
             $
           </span>
           {command}

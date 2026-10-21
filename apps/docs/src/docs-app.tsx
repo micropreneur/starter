@@ -369,7 +369,7 @@ function ElementNavigation({
 
         <div className="mt-5 border-y border-border/70 px-2 py-4">
           <div className="flex items-center gap-2">
-            <BlocksIcon aria-hidden className="size-4 text-accent" />
+            <BlocksIcon aria-hidden className="size-4 text-mp-brand-highlight" />
             <p className="text-sm font-semibold tracking-[-0.015em]">Elements Free</p>
           </div>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -378,8 +378,8 @@ function ElementNavigation({
           <DocsAnchor
             aria-current={element == null ? 'page' : undefined}
             className={cn(
-              'mt-3 inline-flex items-center gap-1 rounded-sm text-xs font-medium text-foreground outline-none hover:text-accent focus-visible:ring-3 focus-visible:ring-ring/40',
-              element == null && 'text-accent',
+              'mt-3 inline-flex items-center gap-1 rounded-sm text-xs font-medium text-foreground outline-none hover:text-mp-brand-highlight focus-visible:ring-3 focus-visible:ring-ring/40',
+              element == null && 'text-mp-brand-highlight',
             )}
             href="/elements/gallery"
             onClick={onNavigate}
@@ -553,7 +553,11 @@ function AgentPageMenu({ rawHref }: { rawHref: string }) {
         </div>
         <DropdownMenuContent align="end" className="w-60" sideOffset={8}>
           <DropdownMenuItem onClick={() => void copy('url', markdownUrl)}>
-            {copyStatus === 'url' ? <CheckIcon className="text-accent" /> : <CopyIcon />}
+            {copyStatus === 'url' ? (
+              <CheckIcon className="text-mp-brand-highlight" />
+            ) : (
+              <CopyIcon />
+            )}
             <span>
               {copyStatus === 'url'
                 ? 'Markdown URL copied'
@@ -579,7 +583,11 @@ function AgentPageMenu({ rawHref }: { rawHref: string }) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => void copy('mcp', mcpUrl)}>
-            {copyStatus === 'mcp' ? <CheckIcon className="text-accent" /> : <CopyIcon />}
+            {copyStatus === 'mcp' ? (
+              <CheckIcon className="text-mp-brand-highlight" />
+            ) : (
+              <CopyIcon />
+            )}
             <span>
               {copyStatus === 'mcp'
                 ? 'MCP Server URL copied'
@@ -608,12 +616,12 @@ function DocsArticle({ page, rawHref }: { page: DocPage; rawHref: string }) {
         <header className="border-b border-border/70 pb-8">
           <div className="flex items-start justify-between gap-4">
             <p className="flex min-w-0 items-center gap-2 font-mono text-[0.6875rem] text-muted-foreground">
-              <span className="size-1.5 shrink-0 rounded-full bg-accent" />
+              <span className="size-1.5 shrink-0 rounded-full bg-mp-brand-highlight" />
               <span className="truncate">{page.sourcePath}</span>
             </p>
             <AgentPageMenu rawHref={rawHref} />
           </div>
-          <p className="mt-8 text-sm font-medium text-accent">{page.group}</p>
+          <p className="mt-8 text-sm font-medium text-mp-brand-highlight">{page.group}</p>
           <h1 className="mt-2 text-balance text-4xl leading-[1.03] font-semibold tracking-[-0.045em] sm:text-5xl">
             {page.title}
           </h1>
@@ -622,7 +630,7 @@ function DocsArticle({ page, rawHref }: { page: DocPage; rawHref: string }) {
           </p>
         </header>
 
-        <div className="docs-prose prose prose-neutral mt-9 max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-[-0.025em] prose-a:font-medium prose-a:text-foreground prose-a:decoration-accent prose-a:decoration-2 prose-a:underline-offset-4 prose-blockquote:border-l-accent prose-code:rounded prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-th:font-medium">
+        <div className="docs-prose prose prose-neutral mt-9 max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-[-0.025em] prose-a:font-medium prose-a:text-foreground prose-a:decoration-mp-brand-highlight prose-a:decoration-2 prose-a:underline-offset-4 prose-blockquote:border-l-mp-brand-highlight prose-code:rounded prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-th:font-medium">
           <page.Content components={docsMdxComponents} />
         </div>
 
@@ -653,12 +661,14 @@ function ElementArticle({ element, rawHref }: { element: ElementMetadata; rawHre
         <header className="border-b border-border/70 pb-8">
           <div className="flex items-start justify-between gap-4">
             <p className="flex min-w-0 items-center gap-2 font-mono text-[0.6875rem] text-muted-foreground">
-              <span className="size-1.5 shrink-0 rounded-full bg-accent" />
+              <span className="size-1.5 shrink-0 rounded-full bg-mp-brand-highlight" />
               <span className="truncate">{sourcePath}</span>
             </p>
             <AgentPageMenu rawHref={rawHref} />
           </div>
-          <p className="mt-8 text-sm font-medium text-accent">Elements / {element.ontology}</p>
+          <p className="mt-8 text-sm font-medium text-mp-brand-highlight">
+            Elements / {element.ontology}
+          </p>
           <h1 className="mt-2 text-balance text-4xl leading-[1.03] font-semibold tracking-[-0.045em] sm:text-5xl">
             {element.title}
           </h1>
@@ -672,7 +682,7 @@ function ElementArticle({ element, rawHref }: { element: ElementMetadata; rawHre
           </div>
         </header>
 
-        <div className="docs-prose prose prose-neutral mt-9 max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-[-0.025em] prose-a:font-medium prose-a:text-foreground prose-a:decoration-accent prose-a:decoration-2 prose-a:underline-offset-4 prose-code:rounded prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-th:font-medium">
+        <div className="docs-prose prose prose-neutral mt-9 max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-[-0.025em] prose-a:font-medium prose-a:text-foreground prose-a:decoration-mp-brand-highlight prose-a:decoration-2 prose-a:underline-offset-4 prose-code:rounded prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-th:font-medium">
           <h2 id="preview">Preview</h2>
           <p>
             This is the real workspace implementation used to verify the public registry source
@@ -1058,7 +1068,7 @@ function SearchDialog({
                 }}
                 type="button"
               >
-                <span className="mt-1 size-1.5 shrink-0 rounded-full bg-accent" />
+                <span className="mt-1 size-1.5 shrink-0 rounded-full bg-mp-brand-highlight" />
                 <span className="min-w-0">
                   <span className="block text-sm font-medium">
                     {result.kind === 'guide' ? result.page.title : result.element.title}
@@ -1087,7 +1097,9 @@ function DocsNotFound() {
   return (
     <main className="flex min-h-[calc(100svh-3.75rem)] items-center justify-center border-r px-6 text-center">
       <div>
-        <p className="font-mono text-xs uppercase tracking-[0.14em] text-accent">404 · docs</p>
+        <p className="font-mono text-xs uppercase tracking-[0.14em] text-mp-brand-highlight">
+          404 · docs
+        </p>
         <h1 className="mt-4 text-3xl font-semibold tracking-[-0.035em]">
           That article is not here.
         </h1>

@@ -26,8 +26,8 @@ export function AuthPortDiagram({ compact = false }: { compact?: boolean }) {
         </div>
 
         <div className="grid gap-3">
-          <div className="rounded-xl border border-dashed border-accent p-4">
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+          <div className="rounded-xl border border-dashed border-mp-brand-highlight p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-mp-brand-highlight">
               AuthPort
             </p>
             <p className="mt-2 text-sm font-medium">The stable contract</p>

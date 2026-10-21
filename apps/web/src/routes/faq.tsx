@@ -72,7 +72,7 @@ function FaqPage() {
         eyebrow="FAQ"
         title={
           <>
-            What should I know before I fork<span className="text-accent">?</span>
+            What should I know before I fork<span className="text-mp-brand-highlight">?</span>
           </>
         }
       />

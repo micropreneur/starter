@@ -15,6 +15,7 @@
     "lint": "pnpm --dir ../.. exec biome check packages/elements",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.registry.json --noEmit",
     "test": "vitest run",
+    "themes:sync": "vitest run src/themes.test.ts --update",
     "registry:validate": "vitest run src/catalog.test.ts src/themes.test.ts",
     "registry:build": "pnpm registry:validate && shadcn build --output ./dist/r",
     "registry:serve": "python3 -m http.server 4173 --directory ./dist"

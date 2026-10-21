@@ -218,7 +218,7 @@ export function StackShowcase() {
               value={seam.id}
             >
               <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/50">
-                <seam.icon className="size-4 text-muted-foreground group-data-active/tab:text-accent" />
+                <seam.icon className="size-4 text-muted-foreground group-data-active/tab:text-mp-brand-highlight" />
               </span>
               <span className="min-w-0">
                 <span className="block text-sm font-medium text-foreground">{seam.label}</span>
@@ -230,7 +230,7 @@ export function StackShowcase() {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    'absolute inset-x-0 bottom-0 h-0.5 bg-accent',
+                    'absolute inset-x-0 bottom-0 h-0.5 bg-mp-brand-highlight',
                     autoplayPaused
                       ? 'opacity-40'
                       : 'origin-left motion-safe:animate-[stack-progress_10000ms_linear_forwards]',
@@ -253,14 +253,14 @@ export function StackShowcase() {
                 <Badge variant="outline">{seam.eyebrow}</Badge>
                 <h2 className="mt-5 text-balance text-4xl leading-tight font-semibold tracking-[-0.04em] sm:text-5xl">
                   {seam.title}
-                  <span className="text-accent">.</span>
+                  <span className="text-mp-brand-highlight">.</span>
                 </h2>
                 <p className="mt-5 text-pretty text-muted-foreground">{seam.description}</p>
                 <ul className="mt-7 grid gap-3 text-sm">
                   {seam.highlights.map((highlight) => (
                     <li className="flex items-center gap-2" key={highlight}>
                       <span className="flex size-5 items-center justify-center rounded-full border bg-muted/40">
-                        <GitBranch className="size-3 text-accent" />
+                        <GitBranch className="size-3 text-mp-brand-highlight" />
                       </span>
                       {highlight}
                     </li>
@@ -322,7 +322,7 @@ function StackPreview({ seam }: { seam: StackSeam }) {
         <div className="mt-4 grid grid-cols-2 gap-3">
           {seam.preview.stats.map((stat) => (
             <div className="rounded-lg border bg-background p-3" key={stat}>
-              <Code2 className="size-4 text-accent" />
+              <Code2 className="size-4 text-mp-brand-highlight" />
               <p className="mt-2 text-xs font-medium">{stat}</p>
             </div>
           ))}

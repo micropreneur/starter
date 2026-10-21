@@ -1,9 +1,9 @@
+@import "./theme-starter.css";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Instrument Serif", "Iowan Old Style", Georgia, "Times New Roman", serif;
-  --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: var(--font-serif);
   --font-heading: var(--font-display);
 }
 
@@ -23,6 +23,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -35,6 +36,17 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-signal: var(--sidebar-signal);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  /* Decorative brand marks only; never actions, focus, or status. Falls back to primary. */
+  --color-mp-brand-highlight: var(--mp-brand-highlight, var(--primary));
+  --color-mp-brand-highlight-foreground: var(
+    --mp-brand-highlight-foreground,
+    var(--primary-foreground)
+  );
   /* Compact workbench tiers: controls (4-5px), panels (6-8px), overlays (10px+). */
   --radius-sm: calc(var(--radius) * 0.67);
   --radius-md: calc(var(--radius) * 0.84);
@@ -45,81 +57,22 @@
   --radius-4xl: calc(var(--radius) * 3);
   /* Depth recipe: default surfaces stay flat (1px border + inset top highlight);
      real shadows are reserved for overlays (popovers, dialogs). */
-  --shadow-card: inset 0 1px 0 var(--surface-highlight);
-  --shadow-overlay:
-    0 1px 2px var(--overlay-shadow-color), 0 8px 24px -8px var(--overlay-shadow-color);
+  --shadow-card: var(--shadow-card);
+  --shadow-overlay: var(--shadow-overlay);
 }
 
 :root {
-  /* White inset workspace framed by a warm navigation canvas. */
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(220 18% 13%);
-  --card: hsl(40 25% 99%);
-  --card-foreground: hsl(220 18% 13%);
-  --popover: hsl(40 25% 99%);
-  --popover-foreground: hsl(220 18% 13%);
-  --primary: hsl(221 83% 53%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(36 22% 90%);
-  --secondary-foreground: hsl(220 18% 13%);
-  --muted: hsl(36 18% 92%);
-  --muted-foreground: hsl(220 8% 43%);
-  --accent: hsl(24 72% 52%);
-  --accent-foreground: hsl(0 0% 100%);
-  --destructive: hsl(2 66% 49%);
-  --border: hsl(35 15% 84%);
-  --input: hsl(35 15% 84%);
-  --ring: hsl(221 83% 53%);
-  --sidebar: hsl(40 33% 97%);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: hsl(36 18% 92%);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
-  --sidebar-signal: var(--accent);
-  --radius: 0.375rem;
+  /* Workbench layout and Micropreneur-only aliases. Theme colors, radius, and
+     shadows come from the generated theme-starter.css. */
+  --sidebar-signal: var(--mp-brand-highlight);
   --workbench-gutter: 1rem;
   --workbench-panel-padding: 0.75rem;
   --workbench-row-height: 2.25rem;
-  --surface-highlight: hsl(0 0% 100% / 0.5);
-  --overlay-shadow-color: hsl(220 18% 13% / 0.12);
-  --grain-line: hsl(220 18% 13% / 0.02);
+  --grain-line: color-mix(in srgb, var(--foreground) 2%, transparent);
 }
 
 .dark {
-  /* Dark inset workspace framed by a deeper navigation canvas. */
-  --background: hsl(222 24% 8%);
-  --foreground: hsl(40 22% 92%);
-  --card: hsl(222 22% 11%);
-  --card-foreground: hsl(40 22% 92%);
-  --popover: hsl(222 22% 11%);
-  --popover-foreground: hsl(40 22% 92%);
-  --primary: hsl(217 92% 66%);
-  --primary-foreground: hsl(222 30% 9%);
-  --secondary: hsl(222 15% 16%);
-  --secondary-foreground: hsl(40 22% 92%);
-  --muted: hsl(222 15% 16%);
-  --muted-foreground: hsl(218 10% 62%);
-  --accent: hsl(27 84% 61%);
-  --accent-foreground: hsl(222 30% 9%);
-  --destructive: hsl(2 74% 61%);
-  --border: hsl(220 14% 22%);
-  --input: hsl(220 14% 22%);
-  --ring: hsl(217 92% 66%);
-  --sidebar: hsl(222 28% 5%);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--muted);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
-  --sidebar-signal: var(--accent);
-  --surface-highlight: hsl(40 22% 92% / 0.06);
-  --overlay-shadow-color: hsl(222 40% 3% / 0.5);
-  --grain-line: hsl(40 22% 92% / 0.025);
+  --grain-line: color-mix(in srgb, var(--foreground) 2.5%, transparent);
 }
 
 /* Oversized editorial display title: 48-72px on desktop, tight tracking. */

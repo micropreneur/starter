@@ -23,7 +23,7 @@ function TermsPage() {
         eyebrow="Terms template"
         title={
           <>
-            What rules should govern your product<span className="text-accent">?</span>
+            What rules should govern your product<span className="text-mp-brand-highlight">?</span>
           </>
         }
       />

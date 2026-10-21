@@ -8,12 +8,16 @@
       "title": "Starter",
       "type": "registry:theme",
       "description": "The warm editorial default shipped with Micropreneur Starter.",
-      "dependencies": [],
+      "dependencies": [
+        "@fontsource-variable/geist",
+        "@fontsource-variable/geist-mono",
+        "@fontsource/instrument-serif"
+      ],
       "cssVars": {
         "theme": {
-          "font-sans": "ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
-          "font-serif": "\"Iowan Old Style\", \"Palatino Linotype\", Georgia, serif",
-          "font-mono": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+          "font-sans": "\"Geist Variable\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+          "font-serif": "\"Instrument Serif\", \"Iowan Old Style\", Georgia, \"Times New Roman\", serif",
+          "font-mono": "\"Geist Mono Variable\", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
         },
         "light": {
           "background": "#ffffff",
@@ -28,8 +32,8 @@
           "secondary-foreground": "#1b1f27",
           "muted": "#eeeae3",
           "muted-foreground": "#646975",
-          "accent": "#d96d2b",
-          "accent-foreground": "#ffffff",
+          "accent": "#eeeae3",
+          "accent-foreground": "#1b1f27",
           "destructive": "#dc2626",
           "destructive-foreground": "#ffffff",
           "border": "#d9d4cb",
@@ -45,12 +49,14 @@
           "sidebar-primary": "#2563eb",
           "sidebar-primary-foreground": "#ffffff",
           "sidebar-accent": "#eeeae3",
-          "sidebar-accent-foreground": "#ffffff",
+          "sidebar-accent-foreground": "#1b1f27",
           "sidebar-border": "#d9d4cb",
           "sidebar-ring": "#2563eb",
-          "radius": "0.625rem",
-          "shadow-card": "inset 0 1px 0 color-mix(in srgb, currentColor 5%, transparent)",
-          "shadow-overlay": "0 1px 2px rgb(0 0 0 / 0.08)"
+          "mp-brand-highlight": "#d96d2b",
+          "mp-brand-highlight-foreground": "#1b1f27",
+          "radius": "0.375rem",
+          "shadow-card": "inset 0 1px 0 hsl(0 0% 100% / 0.5)",
+          "shadow-overlay": "0 1px 2px hsl(220 18% 13% / 0.12), 0 8px 24px -8px hsl(220 18% 13% / 0.12)"
         },
         "dark": {
           "background": "#10131a",
@@ -65,8 +71,8 @@
           "secondary-foreground": "#eeeae3",
           "muted": "#232936",
           "muted-foreground": "#9aa3b2",
-          "accent": "#f28b45",
-          "accent-foreground": "#10131a",
+          "accent": "#232936",
+          "accent-foreground": "#eeeae3",
           "destructive": "#ef6461",
           "destructive-foreground": "#10131a",
           "border": "#303747",
@@ -82,12 +88,14 @@
           "sidebar-primary": "#60a5fa",
           "sidebar-primary-foreground": "#0f172a",
           "sidebar-accent": "#232936",
-          "sidebar-accent-foreground": "#10131a",
+          "sidebar-accent-foreground": "#eeeae3",
           "sidebar-border": "#303747",
           "sidebar-ring": "#60a5fa",
-          "radius": "0.625rem",
-          "shadow-card": "inset 0 1px 0 color-mix(in srgb, currentColor 5%, transparent)",
-          "shadow-overlay": "0 1px 2px rgb(0 0 0 / 0.08)"
+          "mp-brand-highlight": "#f28b45",
+          "mp-brand-highlight-foreground": "#10131a",
+          "radius": "0.375rem",
+          "shadow-card": "inset 0 1px 0 hsl(40 22% 92% / 0.06)",
+          "shadow-overlay": "0 1px 2px hsl(222 40% 3% / 0.5), 0 8px 24px -8px hsl(222 40% 3% / 0.5)"
         }
       },
       "meta": {
@@ -105,7 +113,6 @@
       "title": "Modern Minimal",
       "type": "registry:theme",
       "description": "A crisp blue interface with restrained radius and neutral surfaces.",
-      "dependencies": [],
       "cssVars": {
         "theme": {
           "font-sans": "system-ui, -apple-system, \"Segoe UI\", sans-serif",
@@ -145,6 +152,8 @@
           "sidebar-accent-foreground": "#1e3a8a",
           "sidebar-border": "#e5e7eb",
           "sidebar-ring": "#3b82f6",
+          "mp-brand-highlight": "#3b82f6",
+          "mp-brand-highlight-foreground": "#ffffff",
           "radius": "0.375rem",
           "shadow-card": "inset 0 1px 0 color-mix(in srgb, currentColor 5%, transparent)",
           "shadow-overlay": "0 1px 2px rgb(0 0 0 / 0.08)"
@@ -182,6 +191,8 @@
           "sidebar-accent-foreground": "#bfdbfe",
           "sidebar-border": "#404040",
           "sidebar-ring": "#3b82f6",
+          "mp-brand-highlight": "#3b82f6",
+          "mp-brand-highlight-foreground": "#ffffff",
           "radius": "0.375rem",
           "shadow-card": "inset 0 1px 0 color-mix(in srgb, currentColor 5%, transparent)",
           "shadow-overlay": "0 1px 2px rgb(0 0 0 / 0.08)"
@@ -195,14 +206,14 @@
         "docs": "/themes.md#modern-minimal"
       },
       "author": "micropreneur",
-      "categories": ["themes"]
+      "categories": ["themes"],
+      "dependencies": []
     },
     {
       "name": "theme-amber-minimal",
       "title": "Amber Minimal",
       "type": "registry:theme",
       "description": "Warm amber actions over a compact, quiet product canvas.",
-      "dependencies": [],
       "cssVars": {
         "theme": {
           "font-sans": "\"Avenir Next\", Avenir, \"Segoe UI\", sans-serif",
@@ -242,6 +253,8 @@
           "sidebar-accent-foreground": "#92400e",
           "sidebar-border": "#e5e7eb",
           "sidebar-ring": "#f59e0b",
+          "mp-brand-highlight": "#b45309",
+          "mp-brand-highlight-foreground": "#ffffff",
           "radius": "0.375rem",
           "shadow-card": "0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -16px rgb(0 0 0 / 0.2)",
           "shadow-overlay": "0 8px 32px -10px rgb(0 0 0 / 0.28)"
@@ -279,6 +292,8 @@
           "sidebar-accent-foreground": "#fde68a",
           "sidebar-border": "#404040",
           "sidebar-ring": "#f59e0b",
+          "mp-brand-highlight": "#f59e0b",
+          "mp-brand-highlight-foreground": "#000000",
           "radius": "0.375rem",
           "shadow-card": "0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -16px rgb(0 0 0 / 0.2)",
           "shadow-overlay": "0 8px 32px -10px rgb(0 0 0 / 0.28)"
@@ -292,14 +307,14 @@
         "docs": "/themes.md#amber-minimal"
       },
       "author": "micropreneur",
-      "categories": ["themes"]
+      "categories": ["themes"],
+      "dependencies": []
     },
     {
       "name": "theme-clean-slate",
       "title": "Clean Slate",
       "type": "registry:theme",
       "description": "Cool slate surfaces and an indigo signal color for dense applications.",
-      "dependencies": [],
       "cssVars": {
         "theme": {
           "font-sans": "system-ui, -apple-system, \"Segoe UI\", sans-serif",
@@ -339,6 +354,8 @@
           "sidebar-accent-foreground": "#374151",
           "sidebar-border": "#d1d5db",
           "sidebar-ring": "#6366f1",
+          "mp-brand-highlight": "#6366f1",
+          "mp-brand-highlight-foreground": "#ffffff",
           "radius": "0.5rem",
           "shadow-card": "0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -16px rgb(0 0 0 / 0.2)",
           "shadow-overlay": "0 8px 32px -10px rgb(0 0 0 / 0.28)"
@@ -376,6 +393,8 @@
           "sidebar-accent-foreground": "#d1d5db",
           "sidebar-border": "#4b5563",
           "sidebar-ring": "#818cf8",
+          "mp-brand-highlight": "#818cf8",
+          "mp-brand-highlight-foreground": "#0f172a",
           "radius": "0.5rem",
           "shadow-card": "0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -16px rgb(0 0 0 / 0.2)",
           "shadow-overlay": "0 8px 32px -10px rgb(0 0 0 / 0.28)"
@@ -389,14 +408,14 @@
         "docs": "/themes.md#clean-slate"
       },
       "author": "micropreneur",
-      "categories": ["themes"]
+      "categories": ["themes"],
+      "dependencies": []
     },
     {
       "name": "theme-caffeine",
       "title": "Caffeine",
       "type": "registry:theme",
       "description": "Coffee-toned neutrals with soft cream highlights and compact geometry.",
-      "dependencies": [],
       "cssVars": {
         "theme": {
           "font-sans": "ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
@@ -436,6 +455,8 @@
           "sidebar-accent-foreground": "#202020",
           "sidebar-border": "#d8d8d8",
           "sidebar-ring": "#644a40",
+          "mp-brand-highlight": "#644a40",
+          "mp-brand-highlight-foreground": "#ffffff",
           "radius": "0.5rem",
           "shadow-card": "inset 0 1px 0 color-mix(in srgb, currentColor 5%, transparent)",
           "shadow-overlay": "0 1px 2px rgb(0 0 0 / 0.08)"
@@ -473,6 +494,8 @@
           "sidebar-accent-foreground": "#eeeeee",
           "sidebar-border": "#484848",
           "sidebar-ring": "#ffe0c2",
+          "mp-brand-highlight": "#ffe0c2",
+          "mp-brand-highlight-foreground": "#081a1b",
           "radius": "0.5rem",
           "shadow-card": "inset 0 1px 0 color-mix(in srgb, currentColor 5%, transparent)",
           "shadow-overlay": "0 1px 2px rgb(0 0 0 / 0.08)"
@@ -486,14 +509,14 @@
         "docs": "/themes.md#caffeine"
       },
       "author": "micropreneur",
-      "categories": ["themes"]
+      "categories": ["themes"],
+      "dependencies": []
     },
     {
       "name": "theme-ocean-breeze",
       "title": "Ocean Breeze",
       "type": "registry:theme",
       "description": "Airy blue surfaces balanced by green actions and teal data colors.",
-      "dependencies": [],
       "cssVars": {
         "theme": {
           "font-sans": "\"Avenir Next\", Avenir, \"Segoe UI\", sans-serif",
@@ -533,6 +556,8 @@
           "sidebar-accent-foreground": "#374151",
           "sidebar-border": "#d6e1ea",
           "sidebar-ring": "#168f46",
+          "mp-brand-highlight": "#168f46",
+          "mp-brand-highlight-foreground": "#ffffff",
           "radius": "0.5rem",
           "shadow-card": "0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -16px rgb(0 0 0 / 0.2)",
           "shadow-overlay": "0 8px 32px -10px rgb(0 0 0 / 0.28)"
@@ -570,6 +595,8 @@
           "sidebar-accent-foreground": "#d1d5db",
           "sidebar-border": "#4b5563",
           "sidebar-ring": "#34d399",
+          "mp-brand-highlight": "#34d399",
+          "mp-brand-highlight-foreground": "#0f172a",
           "radius": "0.5rem",
           "shadow-card": "0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px -16px rgb(0 0 0 / 0.2)",
           "shadow-overlay": "0 8px 32px -10px rgb(0 0 0 / 0.28)"
@@ -583,7 +610,8 @@
         "docs": "/themes.md#ocean-breeze"
       },
       "author": "micropreneur",
-      "categories": ["themes"]
+      "categories": ["themes"],
+      "dependencies": []
     }
   ]
 }

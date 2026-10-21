@@ -81,7 +81,7 @@ export function SignUpForm({
   if (created) {
     return (
       <div className="grid gap-4 rounded-lg border bg-muted/30 p-4" role="status">
-        <CircleCheck className="size-5 text-accent" />
+        <CircleCheck className="size-5 text-mp-brand-highlight" />
         <div>
           <p className="text-sm font-medium">Your account and workspace are ready.</p>
           <p className="mt-1 text-sm text-muted-foreground">

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   applyBrandColor,
+  applyBrandHighlight,
   applyCanvasColor,
   applyDepth,
   applyRadius,
@@ -13,10 +14,12 @@ import {
   readableForeground,
   themeCatalog,
   themeColorTokenNames,
+  themeExtensionTokenNames,
   themeToCss,
   toThemeRegistryItem,
   toThemeStyle,
   typographyPacks,
+  withThemeExtensionDefaults,
 } from './themes'
 
 interface ThemeManifest {
@@ -45,6 +48,7 @@ describe('Elements theme catalog', () => {
         expect(Object.keys(mode)).toEqual(
           expect.arrayContaining([
             ...themeColorTokenNames,
+            ...themeExtensionTokenNames,
             'radius',
             'shadow-card',
             'shadow-overlay',
@@ -100,8 +104,30 @@ describe('Elements theme catalog', () => {
           contrastRatio(tokens.background, tokens.ring),
           `${preset.name} ${modeName} ring`,
         ).toBeGreaterThanOrEqual(3)
+        // accent is the shadcn interaction tint (menu focus, hovered rows): text must stay legible.
+        expect(
+          contrastRatio(tokens.accent, tokens['accent-foreground']),
+          `${preset.name} ${modeName} accent`,
+        ).toBeGreaterThanOrEqual(4.5)
+        expect(
+          contrastRatio(tokens['sidebar-accent'], tokens['sidebar-accent-foreground']),
+          `${preset.name} ${modeName} sidebar accent`,
+        ).toBeGreaterThanOrEqual(4.5)
+        // The brand highlight is a non-text mark: 3:1 against the canvas.
+        expect(
+          contrastRatio(tokens.background, tokens['mp-brand-highlight']),
+          `${preset.name} ${modeName} brand highlight`,
+        ).toBeGreaterThanOrEqual(3)
       }
     }
+  })
+
+  it('generates the Starter app theme from the default preset', async () => {
+    const header =
+      '/* Generated from packages/elements/src/themes.ts (starter preset). Do not edit by hand.\n   Run `pnpm --filter @micropreneur/elements themes:sync` after changing the preset. */\n\n'
+    await expect(header + themeToCss(defaultThemePreset)).toMatchFileSnapshot(
+      '../../config/tailwind/theme-starter.css',
+    )
   })
 
   it('creates scoped variables, deterministic CSS, and valid registry exports', () => {
@@ -131,6 +157,29 @@ describe('theme customization helpers', () => {
     expect(applySurfaceColor(tokens, '#f5f5f5').card).toBe('#f5f5f5')
     expect(applyRadius(tokens, 12).radius).toBe('0.75rem')
     expect(applyDepth(tokens, 'lifted')['shadow-card']).not.toBe(tokens['shadow-card'])
+  })
+
+  it('keeps the brand highlight separate from action and focus roles', () => {
+    const next = applyBrandHighlight(tokens, '#0f766e')
+    expect(next['mp-brand-highlight']).toBe('#0f766e')
+    expect(next.primary).toBe(tokens.primary)
+    expect(next.ring).toBe(tokens.ring)
+    expect(next.accent).toBe(tokens.accent)
+    expect(() => applyBrandHighlight(tokens, 'red')).toThrow()
+  })
+
+  it('fills extension defaults for themes that predate them', () => {
+    const { 'mp-brand-highlight': _, 'mp-brand-highlight-foreground': __, ...legacy } = tokens
+    const filled = withThemeExtensionDefaults(legacy)
+    expect(filled['mp-brand-highlight']).toBe(tokens.primary)
+    expect(filled['mp-brand-highlight-foreground']).toBe(tokens['primary-foreground'])
+  })
+
+  it('applies the workbench depth per mode', () => {
+    const dark = defaultThemePreset.dark
+    expect(applyDepth(tokens, 'workbench')['shadow-card']).toBe(tokens['shadow-card'])
+    expect(applyDepth(dark, 'workbench')['shadow-card']).toBe(dark['shadow-card'])
+    expect(applyDepth(dark, 'workbench')['shadow-card']).not.toBe(tokens['shadow-card'])
   })
 
   it('rejects unsafe or malformed custom values', () => {
