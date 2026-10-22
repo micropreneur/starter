@@ -25,5 +25,17 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm audit:prod
+      # Vulnerabilities fail the job; an unreachable npm audit endpoint only warns.
+      - name: Audit production dependencies
+        timeout-minutes: 6
+        run: |
+          set +e
+          pnpm audit:prod 2>&1 | tee audit.log
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ] && grep -Eq '^\s*(ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ERR_PNPM_AUDIT_BAD_RESPONSE)\b' audit.log; then
+            echo "::warning title=pnpm audit skipped::npm audit endpoint unreachable; dependency audit did not run."
+            exit 0
+          fi
+          exit "$status"
       - run: pnpm turbo typecheck lint build test
