@@ -5,6 +5,14 @@ import {
 } from '@micropreneur/elements/catalog'
 
 const hostedRegistryOrigin = 'https://elements.micropreneur.dev'
+/** The full Elements catalog, including Pro blocks, lives on the commercial site. */
+const hostedCatalogOrigin = 'https://www.micropreneur.dev'
+
+export function hostedCatalogHref(element?: Pick<ElementMetadata, 'name'>) {
+  return element
+    ? `${hostedCatalogOrigin}/elements/components/${element.name}`
+    : `${hostedCatalogOrigin}/elements/components`
+}
 
 export const elementOntologies = [
   'Objects',
