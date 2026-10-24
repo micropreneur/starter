@@ -40,6 +40,10 @@ pnpm --filter docs exec wrangler deploy \
 The two custom domains point at one Worker. The request hostname decides whether the Worker serves
 docs or registry files. Preview and localhost hosts keep `/mcp` and `/r/*` on one origin.
 
+Optionally add `--var ELEMENTS_CATALOG_URL:https://www.example.com/elements` to send visitors who
+open the registry hostname's root to a public component catalog. Without it, they are redirected to
+the Elements install guide. Registry item URLs under `/r/*` are unaffected either way.
+
 ## What the Worker uses
 
 | Cloudflare service | Binding | Purpose |
