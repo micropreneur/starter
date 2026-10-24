@@ -8,11 +8,14 @@ const SHORT_CACHE = 'public, max-age=300'
 
 export type DocsBindings = {
   ASSETS: Fetcher
+  /** Optional public component catalog; when set, the registry host's root points there. */
+  ELEMENTS_CATALOG_URL?: string
   ELEMENTS_REGISTRY_URL: string
   PUBLIC_DOCS_ORIGIN: string
 }
 
 type RuntimeConfig = {
+  catalogUrl?: URL
   docsOrigin: URL
   registryUrl: URL
   trustedHostnames: string[]
@@ -31,7 +34,8 @@ export async function handleRequest(request: Request, env: DocsBindings, ctx: Ex
 
   if (registryHost) {
     if (!requestUrl.pathname.startsWith(REGISTRY_PATH)) {
-      return Response.redirect(new URL(ELEMENTS_GUIDE_PATH, config.docsOrigin), 308)
+      const destination = config.catalogUrl ?? new URL(ELEMENTS_GUIDE_PATH, config.docsOrigin)
+      return Response.redirect(destination, 308)
     }
     return serveRegistryAsset(request, env)
   }
@@ -85,7 +89,11 @@ function readRuntimeConfig(env: DocsBindings, requestUrl: URL): RuntimeConfig {
   const trustedHostnames = new Set([docsOrigin.hostname, registryUrl.hostname])
   if (isPreviewHostname(requestUrl.hostname)) trustedHostnames.add(requestUrl.hostname)
 
-  return { docsOrigin, registryUrl, trustedHostnames: [...trustedHostnames] }
+  const catalogUrl = env.ELEMENTS_CATALOG_URL
+    ? parseConfiguredUrl(env.ELEMENTS_CATALOG_URL, docsOrigin.href)
+    : undefined
+
+  return { catalogUrl, docsOrigin, registryUrl, trustedHostnames: [...trustedHostnames] }
 }
 
 function parseConfiguredUrl(value: string | undefined, fallback: string) {

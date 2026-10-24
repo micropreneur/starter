@@ -72,6 +72,7 @@ import {
   getElementsByOntology,
   getElementsRegistryOrigin,
   getFirstElementPage,
+  hostedCatalogHref,
   searchElements,
 } from './lib/elements'
 import { navigateTo, usePathname } from './lib/navigation'
@@ -387,6 +388,15 @@ function ElementNavigation({
             Open visual gallery
             <ArrowRightIcon aria-hidden className="size-3" />
           </DocsAnchor>
+          <a
+            className="mt-2 flex items-center gap-1 rounded-sm text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/40"
+            href={hostedCatalogHref()}
+            rel="noreferrer"
+            target="_blank"
+          >
+            Full catalog with Pro blocks
+            <ExternalLinkIcon aria-hidden className="size-3" />
+          </a>
         </div>
 
         <div className="mt-6 space-y-6">
@@ -680,6 +690,15 @@ function ElementArticle({ element, rawHref }: { element: ElementMetadata; rawHre
             <span className="rounded border bg-muted/40 px-2 py-1">{element.kind}</span>
             <span className="rounded border bg-muted/40 px-2 py-1">{element.registryType}</span>
           </div>
+          <a
+            className="mt-4 inline-flex items-center gap-1.5 rounded-sm text-sm font-medium text-foreground underline decoration-mp-brand-highlight decoration-2 underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
+            href={hostedCatalogHref(element)}
+            rel="noreferrer"
+            target="_blank"
+          >
+            See {element.title} in the full Elements catalog
+            <ExternalLinkIcon aria-hidden className="size-3.5" />
+          </a>
         </header>
 
         <div className="docs-prose prose prose-neutral mt-9 max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-[-0.025em] prose-a:font-medium prose-a:text-foreground prose-a:decoration-mp-brand-highlight prose-a:decoration-2 prose-a:underline-offset-4 prose-code:rounded prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-th:font-medium">

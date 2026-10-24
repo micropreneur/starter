@@ -73,6 +73,27 @@ describe('docs Worker routing', () => {
     expect(mutation.headers.get('Allow')).toBe('GET, HEAD')
   })
 
+  it('sends the Elements hostname root to the configured catalog while still serving items', async () => {
+    const { env } = createEnv()
+    const configured = { ...env, ELEMENTS_CATALOG_URL: 'https://www.micropreneur.dev/elements' }
+
+    const root = await handleRequest(
+      new Request('https://elements.micropreneur.dev/'),
+      configured,
+      context,
+    )
+    expect(root.status).toBe(308)
+    expect(root.headers.get('Location')).toBe('https://www.micropreneur.dev/elements')
+
+    const item = await handleRequest(
+      new Request('https://elements.micropreneur.dev/r/status-badge.json'),
+      configured,
+      context,
+    )
+    expect(item.status).toBe(200)
+    await expect(item.text()).resolves.toBe('asset:/r/status-badge.json')
+  })
+
   it('redirects registry requests on the canonical docs hostname', async () => {
     const { env } = createEnv()
     const response = await handleRequest(
