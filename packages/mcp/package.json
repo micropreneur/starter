@@ -19,12 +19,12 @@
   "dependencies": {
     "@micropreneur/elements": "workspace:*",
     "@modelcontextprotocol/server": "^2.3.0",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@modelcontextprotocol/client": "^2.3.0",
-    "tsx": "^4.23.11",
     "tsup": "^8.5.1",
+    "tsx": "^4.23.11",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   }
